@@ -31,6 +31,14 @@ router.get(
   interviewController.getQuestions.bind(interviewController)
 );
 
+// Evaluate warmup self-introduction
+router.post(
+  '/:sessionId/warmup',
+  geminiLimiter,
+  validateSessionId,
+  interviewController.evaluateWarmup.bind(interviewController)
+);
+
 // Submit an answer (evaluates via Gemini)
 router.post(
   '/:sessionId/answer',

@@ -1,30 +1,57 @@
 import { JobRole, ExperienceLevel } from '../models/index.js';
 
 /**
+ * A pool of question framings to vary the phrasing so they never feel robotic or repeated.
+ * A random subset is injected into the prompt to nudge the LLM.
+ */
+const STYLE_HINTS = [
+  "Ask it casually like a senior colleague, not like reading from a script.",
+  "Open the question with a brief real-world context before asking.",
+  "Use 'walk me through', 'tell me about', or 'how would you approach' phrasing.",
+  "Start the question with a concise scenario, then ask the specific thing.",
+  "Make the behavioral question very specific — ask about a real past situation.",
+  "For the scenario question, describe a concrete business or engineering problem.",
+  "Avoid starting any question with 'Can you explain' or 'What is the'.",
+];
+
+function pickHints(n: number): string {
+  const shuffled = [...STYLE_HINTS].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, n).join('\n- ');
+}
+
+/**
  * Generates the prompt for creating interview questions.
- * Questions follow a specific difficulty progression:
- * Q1: Easy, Q2: Easy-Medium, Q3: Medium, Q4: Scenario Based, Q5: Behavioral
+ * Uses a high-variety, conversational framing to prevent repetition.
  */
 export function generateQuestionPrompt(role: JobRole, experience: ExperienceLevel): string {
-  return `You are an expert technical interviewer conducting an interview for a ${role} position.
-The candidate has ${experience.toLowerCase()} level experience.
+  const hints = pickHints(4);
+  const seed = Math.floor(Math.random() * 9999); // Forces LLM to consider it a "fresh" request
 
-Generate exactly 5 interview questions following this strict difficulty progression:
+  return `You are a friendly but sharp senior ${role} interviewer at a top tech company. You are conducting a live voice interview with a ${experience.toLowerCase()} candidate.
 
-Question 1: Easy - A fundamental concept question for ${role}
-Question 2: Easy-Medium - A slightly deeper technical question
-Question 3: Medium - A question requiring solid understanding and practical knowledge
-Question 4: Scenario Based - A real-world scenario or problem-solving question relevant to ${role}
-Question 5: Behavioral - A behavioral/soft-skill question relevant to a ${role} role
+Your personality: direct, curious, warm. You ask questions that feel natural — like a real conversation, not a quiz.
 
-Rules:
-- Questions MUST be specific to the ${role} role
-- Questions MUST be appropriate for ${experience.toLowerCase()} level
-- Each question should be clear, concise, and professional
-- Do NOT include answers
-- Do NOT include numbering in the question text itself
+Generate exactly 5 interview questions. SEED:${seed}
 
-Respond with ONLY valid JSON in this exact format, no other text:
+Progression:
+1. Easy warm-up — fundamental concept for ${role}
+2. Easy-Medium — slightly deeper technical follow-up
+3. Medium — requires genuine understanding + practical knowledge
+4. Scenario-based — a realistic engineering/product problem for a ${role}
+5. Behavioral — a past-experience question relevant to a ${role} role
+
+Strict rules:
+- Every question MUST be specific to the ${role} role
+- Difficulty MUST match ${experience.toLowerCase()} level
+- Questions must sound like a REAL person talking — natural, conversational phrasing
+- NO two questions can start the same way
+- Do NOT use: "Can you explain", "What is", "Define", "Tell me what" — vary it
+- Style hints for this batch:
+  - ${hints}
+- Do NOT include numbering in the question text
+- Each question should be a single complete sentence, 15-35 words
+
+Respond with ONLY valid JSON, no other text:
 {
   "questions": [
     {
@@ -32,35 +59,35 @@ Respond with ONLY valid JSON in this exact format, no other text:
       "text": "question text here",
       "difficulty": "Easy",
       "type": "Technical",
-      "category": "specific topic category"
+      "category": "specific topic"
     },
     {
       "index": 2,
       "text": "question text here",
       "difficulty": "Easy-Medium",
       "type": "Technical",
-      "category": "specific topic category"
+      "category": "specific topic"
     },
     {
       "index": 3,
       "text": "question text here",
       "difficulty": "Medium",
       "type": "Technical",
-      "category": "specific topic category"
+      "category": "specific topic"
     },
     {
       "index": 4,
       "text": "question text here",
       "difficulty": "Scenario Based",
       "type": "Scenario",
-      "category": "specific topic category"
+      "category": "specific topic"
     },
     {
       "index": 5,
       "text": "question text here",
       "difficulty": "Behavioral",
       "type": "Behavioral",
-      "category": "specific topic category"
+      "category": "specific topic"
     }
   ]
 }`;

@@ -6,6 +6,7 @@ import config from '../config/index.js';
 import { generateQuestionPrompt } from '../prompts/questionGeneration.js';
 import { generateAnswerEvaluationPrompt } from '../prompts/answerEvaluation.js';
 import { generateReportPrompt } from '../prompts/reportGeneration.js';
+import { generateWarmupEvaluationPrompt } from '../prompts/warmupEvaluation.js';
 
 interface StartInterviewInput {
   name: string;
@@ -165,6 +166,43 @@ class InterviewService {
   async getQuestions(sessionId: string) {
     const questions = await Question.find({ sessionId }).sort({ index: 1 });
     return questions;
+  }
+
+  /**
+   * Evaluates the candidate's warmup self-introduction.
+   * Returns scores + a natural AI transition message.
+   */
+  async evaluateWarmup(input: {
+    sessionId: string;
+    name: string;
+    transcript: string;
+    totalWords: number;
+    fluencyScore: number;
+  }) {
+    const session = await InterviewSession.findById(input.sessionId);
+    if (!session) throw new Error('Session not found');
+
+    const prompt = generateWarmupEvaluationPrompt(
+      input.name,
+      session.role,
+      session.experience,
+      input.transcript || 'The candidate did not provide an introduction.',
+      input.totalWords,
+      input.fluencyScore
+    );
+
+    const mockWarmup = {
+      communicationClarity: 70,
+      confidencePresence: 70,
+      backgroundRelevance: 70,
+      structureCoherence: 70,
+      highlights: ['Good energy', 'Relevant background mentioned'],
+      suggestions: ['Try to be a bit more specific about your past projects'],
+      transitionMessage: `Thanks for sharing that, ${input.name} — it sounds like you have a solid background. Let's jump into the technical questions and see how you approach problems.`,
+    };
+
+    const result = await this.callAI<typeof mockWarmup>(prompt, mockWarmup);
+    return result;
   }
 
   /**

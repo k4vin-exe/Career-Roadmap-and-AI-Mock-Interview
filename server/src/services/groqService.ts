@@ -50,9 +50,9 @@ class GroqService {
               content: prompt,
             },
           ],
-          // Enable JSON mode
+          // Use higher temperature for question generation to ensure variety
           response_format: { type: 'json_object' },
-          temperature: 0.2, // Low temp for structured stability
+          temperature: 0.85,
         });
 
         const text = response.choices[0]?.message?.content;

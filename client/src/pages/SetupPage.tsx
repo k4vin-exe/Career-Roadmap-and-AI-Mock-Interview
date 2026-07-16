@@ -26,10 +26,22 @@ export default function SetupPage() {
     setIsLoading(true);
     setError('');
 
+    // CRITICAL FIX FOR CHROME TTS:
+    // The startInterview API call takes 3-5 seconds. By the time it finishes and we navigate
+    // to /warmup, Chrome considers the "user gesture" (the click) to be expired and blocks TTS.
+    // By firing a silent utterance immediately on click, we unlock the TTS engine for the session.
+    try {
+      const unlock = new SpeechSynthesisUtterance('');
+      unlock.volume = 0;
+      window.speechSynthesis.speak(unlock);
+    } catch (e) {
+      // Ignore errors if TTS isn't supported
+    }
+
     try {
       const session = await startInterview(name.trim(), role, experience);
       dispatch({ type: 'START_SESSION', payload: session });
-      navigate('/interview');
+      navigate('/warmup');
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to start interview. Please try again.');
     } finally {

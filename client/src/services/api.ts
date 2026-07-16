@@ -4,6 +4,7 @@ import type {
   AnswerResponse,
   SubmitAnswerPayload,
   InterviewReport,
+  WarmupEvaluation,
   Question,
   ApiResponse,
 } from '../utils/types';
@@ -68,6 +69,20 @@ export async function submitAnswer(
 ): Promise<AnswerResponse> {
   const response = await api.post<ApiResponse<AnswerResponse>>(
     `/interview/${sessionId}/answer`,
+    payload
+  );
+  return response.data.data;
+}
+
+/**
+ * Evaluates the candidate's warmup self-introduction.
+ */
+export async function evaluateWarmup(
+  sessionId: string,
+  payload: { name: string; transcript: string; totalWords: number; fluencyScore: number }
+): Promise<WarmupEvaluation> {
+  const response = await api.post<ApiResponse<WarmupEvaluation>>(
+    `/interview/${sessionId}/warmup`,
     payload
   );
   return response.data.data;

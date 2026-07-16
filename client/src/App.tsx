@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { InterviewProvider } from './context/InterviewContext';
 import LandingPage from './pages/LandingPage';
 import SetupPage from './pages/SetupPage';
+import WarmupPage from './pages/WarmupPage';
 import InterviewPage from './pages/InterviewPage';
 import ReportPage from './pages/ReportPage';
 import { Header } from './components/layout/Header';
@@ -14,6 +15,7 @@ function AnimatedRoutes() {
     <Routes location={location} key={location.pathname}>
       <Route path="/" element={<PageTransition><LandingPage /></PageTransition>} />
       <Route path="/setup" element={<PageTransition><SetupPage /></PageTransition>} />
+      <Route path="/warmup" element={<PageTransition><WarmupPage /></PageTransition>} />
       <Route path="/interview" element={<PageTransition><InterviewPage /></PageTransition>} />
       <Route path="/report/:sessionId" element={<PageTransition><ReportPage /></PageTransition>} />
     </Routes>

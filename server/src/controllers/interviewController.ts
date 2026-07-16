@@ -108,6 +108,29 @@ export class InterviewController {
   }
 
   /**
+   * POST /api/interview/:sessionId/warmup
+   * Evaluates the candidate's self-introduction.
+   */
+  async evaluateWarmup(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { sessionId } = req.params;
+      const { name, transcript, totalWords, fluencyScore } = req.body;
+
+      const result = await interviewService.evaluateWarmup({
+        sessionId,
+        name: name || 'Candidate',
+        transcript: transcript || '',
+        totalWords: totalWords || 0,
+        fluencyScore: fluencyScore || 70,
+      });
+
+      res.status(200).json({ success: true, data: result });
+    } catch (error) {
+      next(createAppError((error as Error).message, 500));
+    }
+  }
+
+  /**
    * POST /api/interview/:sessionId/report
    * Generates the final interview report.
    */

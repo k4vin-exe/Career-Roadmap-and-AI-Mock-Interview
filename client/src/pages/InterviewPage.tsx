@@ -48,7 +48,7 @@ export default function InterviewPage() {
     resetTranscript,
   } = useSpeechRecognition({ continuous: true, interimResults: true, confidenceThreshold: 0.35 });
 
-  const { speak, stop: stopSpeaking, isSpeaking } = useSpeechSynthesis({ rate: 0.92 });
+  const { speak, stop: stopSpeaking, isSpeaking } = useSpeechSynthesis({ rate: 0.88, pitch: 0.95 });
 
   const [editedTranscript, setEditedTranscript] = useState('');
   const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());

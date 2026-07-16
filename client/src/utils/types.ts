@@ -100,6 +100,18 @@ export interface InterviewReport {
   aiSummary: string;
 }
 
+// ──────────────────────────── Warmup Evaluation ────────────────────────────
+
+export interface WarmupEvaluation {
+  communicationClarity: number;
+  confidencePresence: number;
+  backgroundRelevance: number;
+  structureCoherence: number;
+  highlights: string[];
+  suggestions: string[];
+  transitionMessage: string;
+}
+
 // ──────────────────────────── Submit Answer Payload ────────────────────────────
 
 export interface SubmitAnswerPayload {
