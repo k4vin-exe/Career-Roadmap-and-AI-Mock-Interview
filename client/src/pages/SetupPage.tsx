@@ -55,10 +55,10 @@ export default function SetupPage() {
         </Button>
 
         <Card variant="glass" className="p-8">
-          <h1 className="text-3xl font-bold mb-2 text-text-primary">Setup Your Interview</h1>
-          <p className="text-text-secondary mb-8">Fill in the details to begin your AI mock interview.</p>
+          <h1 className="text-3xl font-bold mb-3 text-text-primary">Setup Your Interview</h1>
+          <p className="text-text-secondary mb-10">Fill in the details to begin your AI mock interview.</p>
 
-          <div className="space-y-6 mb-8">
+          <div className="space-y-8 mb-8">
             <Input
               label="Your Name"
               icon={User}

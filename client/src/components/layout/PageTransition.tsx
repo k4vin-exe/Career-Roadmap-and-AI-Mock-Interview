@@ -13,7 +13,7 @@ export function PageTransition({ children }: PageTransitionProps) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -15 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className="w-full h-full flex flex-col flex-1"
+        className="w-full flex-1 flex flex-col"
       >
         {children}
       </motion.div>

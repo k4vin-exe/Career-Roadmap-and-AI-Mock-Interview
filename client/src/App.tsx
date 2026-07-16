@@ -26,7 +26,7 @@ export default function App() {
       <BrowserRouter>
         <div className="flex flex-col min-h-screen">
           <Header />
-          <main className="flex-1 flex flex-col relative overflow-hidden">
+          <main className="flex-1 flex flex-col relative">
              <AnimatedRoutes />
           </main>
         </div>

@@ -1,6 +1,8 @@
 import { User, InterviewSession, Question, Response, Report } from '../models/index.js';
 import type { JobRole, ExperienceLevel, IEvaluation } from '../models/index.js';
 import GeminiService from './geminiService.js';
+import GroqService from './groqService.js';
+import config from '../config/index.js';
 import { generateQuestionPrompt } from '../prompts/questionGeneration.js';
 import { generateAnswerEvaluationPrompt } from '../prompts/answerEvaluation.js';
 import { generateReportPrompt } from '../prompts/reportGeneration.js';
@@ -39,6 +41,44 @@ interface QuestionData {
  */
 class InterviewService {
   private gemini = GeminiService.getInstance();
+  private groq = GroqService.getInstance();
+
+  /**
+   * Helper to invoke the active AI provider (preferring Groq for speed/free quota).
+   * Falls back to Gemini, then falls back to a predefined mock object if both fail.
+   */
+  private async callAI<T>(prompt: string, fallbackMock: T): Promise<T> {
+    const hasGroq = !!config.groqApiKey;
+    const hasGemini = !!config.geminiApiKey;
+
+    // 1. Try Groq first if key exists
+    if (hasGroq) {
+      try {
+        console.log('🤖 Routing AI request to Groq...');
+        return await this.groq.generateJSON<T>(prompt);
+      } catch (error: any) {
+        console.warn('⚠️  Groq request failed:', error.message);
+        if (!hasGemini) {
+          console.warn('Falling back to local mock data...');
+          return fallbackMock;
+        }
+      }
+    }
+
+    // 2. Try Gemini as second option
+    if (hasGemini) {
+      try {
+        console.log('🤖 Routing AI request to Gemini...');
+        return await this.gemini.generateJSON<T>(prompt);
+      } catch (error: any) {
+        console.warn('⚠️  Gemini request failed:', error.message);
+      }
+    }
+
+    // 3. Fallback to mock if both failed or were not configured
+    console.warn('⚠️  All AI providers failed or were unconfigured. Returning mock fallback.');
+    return fallbackMock;
+  }
 
   /**
    * Starts a new interview session:
@@ -65,22 +105,17 @@ class InterviewService {
 
     // Generate questions via Gemini
     const prompt = generateQuestionPrompt(input.role, input.experience);
-    let result: { questions: QuestionData[] };
-    
-    try {
-      result = await this.gemini.generateJSON<{ questions: QuestionData[] }>(prompt);
-    } catch (error: any) {
-      console.warn('Gemini API Error, falling back to mock questions:', error.message);
-      result = {
-        questions: [
-          { index: 1, text: `Can you explain your experience as a ${input.experience} ${input.role}?`, difficulty: 'Easy', type: 'Behavioral', category: 'General' },
-          { index: 2, text: "What is the most challenging technical problem you've solved recently?", difficulty: 'Medium', type: 'Technical', category: 'Problem Solving' },
-          { index: 3, text: "How do you ensure your code is maintainable and scalable?", difficulty: 'Medium', type: 'Technical', category: 'Architecture' },
-          { index: 4, text: "Can you describe a time you disagreed with a team member on a technical decision?", difficulty: 'Scenario Based', type: 'Behavioral', category: 'Teamwork' },
-          { index: 5, text: "Where do you see your technical skills growing in the next year?", difficulty: 'Easy', type: 'Behavioral', category: 'Career Growth' }
-        ]
-      };
-    }
+    const mockQuestions = {
+      questions: [
+        { index: 1, text: `Can you explain your experience as a ${input.experience} ${input.role}?`, difficulty: 'Easy' as const, type: 'Behavioral', category: 'General' },
+        { index: 2, text: "What is the most challenging technical problem you've solved recently?", difficulty: 'Medium' as const, type: 'Technical', category: 'Problem Solving' },
+        { index: 3, text: "How do you ensure your code is maintainable and scalable?", difficulty: 'Medium' as const, type: 'Technical', category: 'Architecture' },
+        { index: 4, text: "Can you describe a time you disagreed with a team member on a technical decision?", difficulty: 'Scenario Based' as const, type: 'Behavioral', category: 'Teamwork' },
+        { index: 5, text: "Where do you see your technical skills growing in the next year?", difficulty: 'Easy' as const, type: 'Behavioral', category: 'Career Growth' }
+      ]
+    };
+
+    const result = await this.callAI<{ questions: QuestionData[] }>(prompt, mockQuestions);
 
     // Store questions in database
     const questions = await Question.insertMany(
@@ -163,20 +198,16 @@ class InterviewService {
       }
     );
 
-    let evaluation: IEvaluation;
-    try {
-      evaluation = await this.gemini.generateJSON<IEvaluation>(prompt);
-    } catch (error: any) {
-      console.warn('Gemini API Error, falling back to mock evaluation:', error.message);
-      evaluation = {
-        technicalAccuracy: 75,
-        communication: 80,
-        completeness: 70,
-        problemSolving: 85,
-        feedback: "This is a mock evaluation because the Gemini API is currently unavailable due to quota limits. You provided a reasonable answer, but could include more specific examples from your past work.",
-        expectedPoints: ["Mentioned past experience", "Gave a concrete example", "Explained the outcome"]
-      };
-    }
+    const mockEvaluation: IEvaluation = {
+      technicalAccuracy: 75,
+      communication: 80,
+      completeness: 70,
+      problemSolving: 85,
+      feedback: "This is a mock evaluation because the AI service is currently unavailable. You provided a reasonable answer, but could include more specific examples from your past work.",
+      expectedPoints: ["Mentioned past experience", "Gave a concrete example", "Explained the outcome"]
+    };
+
+    const evaluation = await this.callAI<IEvaluation>(prompt, mockEvaluation);
 
     // Store response
     const response = await Response.create({
@@ -247,32 +278,18 @@ class InterviewService {
       totalDuration,
     });
 
-    let reportData: {
-      overallTechnicalScore: number;
-      communicationScore: number;
-      strengths: string[];
-      weaknesses: string[];
-      topicsToImprove: string[];
-      practiceAreas: string[];
-      interviewReadiness: string;
-      aiSummary: string;
+    const mockReport = {
+      overallTechnicalScore: 78,
+      communicationScore: 82,
+      strengths: ["Clear communication", "Good foundational knowledge"],
+      weaknesses: ["Needs more specific technical examples", "Could structure answers better using STAR method"],
+      topicsToImprove: ["System Design", "Error Handling"],
+      practiceAreas: ["Mock Interviews", "Whiteboard coding"],
+      interviewReadiness: "Needs some practice, but generally good",
+      aiSummary: "This is a mock report because the AI service is out of quota. Overall, you performed well in this mock interview."
     };
-    
-    try {
-      reportData = await this.gemini.generateJSON<typeof reportData>(prompt);
-    } catch (error: any) {
-      console.warn('Gemini API Error, falling back to mock report:', error.message);
-      reportData = {
-        overallTechnicalScore: 78,
-        communicationScore: 82,
-        strengths: ["Clear communication", "Good foundational knowledge"],
-        weaknesses: ["Needs more specific technical examples", "Could structure answers better using STAR method"],
-        topicsToImprove: ["System Design", "Error Handling"],
-        practiceAreas: ["Mock Interviews", "Whiteboard coding"],
-        interviewReadiness: "Needs some practice, but generally good",
-        aiSummary: "This is a mock report because the Gemini API is out of quota. Overall, you performed well in this mock interview."
-      };
-    }
+
+    const reportData = await this.callAI<typeof mockReport>(prompt, mockReport);
 
     // Store report
     const report = await Report.create({

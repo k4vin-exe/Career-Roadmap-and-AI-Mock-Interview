@@ -6,6 +6,7 @@ interface Config {
   nodeEnv: string;
   mongodbUri: string;
   geminiApiKey: string;
+  groqApiKey: string;
   clientUrl: string;
 }
 
@@ -14,21 +15,19 @@ const config: Config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   mongodbUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/ai-mock-interview',
   geminiApiKey: process.env.GEMINI_API_KEY || '',
+  groqApiKey: process.env.GROQ_API_KEY || '',
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
 };
 
-// Validate critical environment variables
-const requiredVars = ['GEMINI_API_KEY'] as const;
-
+// Validate critical environment variables (need at least one AI key)
 export function validateEnv(): void {
-  const missing = requiredVars.filter(
-    (key) => !process.env[key] || process.env[key] === `your_${key.toLowerCase()}_here`
-  );
+  const hasGemini = process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here';
+  const hasGroq = process.env.GROQ_API_KEY && process.env.GROQ_API_KEY !== 'your_groq_api_key_here';
 
-  if (missing.length > 0) {
+  if (!hasGemini && !hasGroq) {
     console.warn(
-      `⚠️  Missing or placeholder environment variables: ${missing.join(', ')}\n` +
-      `   Copy .env.example to .env and fill in your values.`
+      `⚠️  Missing both GEMINI_API_KEY and GROQ_API_KEY environment variables.\n` +
+      `   Please provide at least one AI key in your .env file to enable full AI capability.`
     );
   }
 }

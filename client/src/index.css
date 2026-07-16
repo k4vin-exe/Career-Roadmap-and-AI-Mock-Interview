@@ -13,7 +13,7 @@
   /* Text Colors */
   --color-text-primary: #e8e8f0;
   --color-text-secondary: #9898b0;
-  --color-text-muted: #6868808;
+  --color-text-muted: #686880;
 
   /* Accent — Indigo/Violet Gradient */
   --color-accent: #6366f1;
@@ -69,13 +69,6 @@
 }
 
 /* ──────────────────────────── Base Styles ──────────────────────────── */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
 
 html {
   scroll-behavior: smooth;
