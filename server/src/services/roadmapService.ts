@@ -1,7 +1,5 @@
 import { RoadmapProfile } from '../models/RoadmapProfile.js';
-import GeminiService from './geminiService.js';
 import GroqService from './groqService.js';
-import config from '../config/index.js';
 import { generateRoadmapPrompt } from '../prompts/roadmapGeneration.js';
 
 interface UserProfileInput {
@@ -33,38 +31,21 @@ interface GeneratedRoadmap {
 }
 
 class RoadmapService {
-  private gemini = GeminiService.getInstance();
   private groq = GroqService.getInstance();
 
   /**
-   * AI provider helper — tries Groq, falls back to Gemini, then mock.
-   * Identical pattern to InterviewService.callAI().
+   * Uses Groq as the sole AI provider.
+   * Falls back to a mock roadmap if Groq fails.
    */
   private async callAI<T>(prompt: string, fallback: T): Promise<T> {
-    const hasGroq = !!config.groqApiKey;
-    const hasGemini = !!config.geminiApiKey;
-
-    if (hasGroq) {
-      try {
-        console.log('🗺️  Roadmap: routing to Groq...');
-        return await this.groq.generateJSON<T>(prompt);
-      } catch (err: any) {
-        console.warn('⚠️  Groq failed for roadmap:', err.message);
-        if (!hasGemini) return fallback;
-      }
+    try {
+      console.log('🗺️  Roadmap: routing to Groq...');
+      return await this.groq.generateJSON<T>(prompt);
+    } catch (err: any) {
+      console.warn('⚠️  Groq failed for roadmap:', err.message);
+      console.warn('⚠️  Using mock roadmap fallback.');
+      return fallback;
     }
-
-    if (hasGemini) {
-      try {
-        console.log('🗺️  Roadmap: routing to Gemini...');
-        return await this.gemini.generateJSON<T>(prompt);
-      } catch (err: any) {
-        console.warn('⚠️  Gemini failed for roadmap:', err.message);
-      }
-    }
-
-    console.warn('⚠️  All AI providers failed for roadmap. Using mock.');
-    return fallback;
   }
 
   /**

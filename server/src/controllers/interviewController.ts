@@ -115,11 +115,10 @@ export class InterviewController {
    */
   async evaluateWarmup(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { sessionId } = req.params;
       const { name, transcript, totalWords, fluencyScore } = req.body;
 
       const result = await interviewService.evaluateWarmup({
-        sessionId,
+        sessionId: req.params.sessionId as string,
         name: name || 'Candidate',
         transcript: transcript || '',
         totalWords: totalWords || 0,
@@ -167,8 +166,7 @@ export class InterviewController {
         return;
       }
 
-      const { sessionId } = req.params;
-      const result = await interviewService.getReport(sessionId);
+      const result = await interviewService.getReport(req.params.sessionId as string);
 
       res.status(200).json({
         success: true,

@@ -87,7 +87,7 @@ export default function SetupPage() {
           <div className="space-y-8 mb-8">
             <Input
               label="Your Name"
-              icon={User}
+              icon={<User size={18} />}
               placeholder="Enter your name"
               value={name}
               onChange={(e) => setName(e.target.value)}

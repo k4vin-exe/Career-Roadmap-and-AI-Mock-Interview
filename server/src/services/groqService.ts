@@ -9,6 +9,7 @@ class GroqService {
   private groq: Groq | null = null;
   private static instance: GroqService;
   private defaultModel = 'llama-3.3-70b-versatile';
+  private fallbackModels = ['openai/gpt-oss-20b', 'qwen/qwen3.6-27b'];
 
   private constructor() {
     if (config.groqApiKey) {
@@ -29,51 +30,59 @@ class GroqService {
    * Generates content and parses JSON from the response.
    * Utilizes Groq's native json_object response format.
    */
-  async generateJSON<T>(prompt: string, maxRetries = 3): Promise<T> {
+  async generateJSON<T>(prompt: string, maxRetries = 2): Promise<T> {
     if (!this.groq) {
       throw new Error('Groq API Key not configured. Cannot perform request.');
     }
 
+    const modelsToTry = [this.defaultModel, ...this.fallbackModels];
     let lastError: Error | null = null;
 
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        const response = await this.groq.chat.completions.create({
-          model: this.defaultModel,
-          messages: [
-            {
-              role: 'system',
-              content: 'You are an expert system that output answers strictly in JSON format. Do not write explanations outside of JSON.',
-            },
-            {
-              role: 'user',
-              content: prompt,
-            },
-          ],
-          // Use higher temperature for question generation to ensure variety
-          response_format: { type: 'json_object' },
-          temperature: 0.85,
-        });
+    for (const model of modelsToTry) {
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+          console.log(`🤖 Groq: trying model ${model} (attempt ${attempt}/${maxRetries})...`);
+          const response = await this.groq.chat.completions.create({
+            model,
+            messages: [
+              {
+                role: 'system',
+                content: 'You are an expert system. Output answers ONLY as valid JSON. No explanations, no markdown, just raw JSON.',
+              },
+              {
+                role: 'user',
+                content: prompt,
+              },
+            ],
+            response_format: { type: 'json_object' },
+            temperature: 0.7,
+            max_tokens: 4000,
+          });
 
-        const text = response.choices[0]?.message?.content;
-        if (!text) {
-          throw new Error('Groq returned an empty response.');
-        }
+          const text = response.choices[0]?.message?.content;
+          if (!text) {
+            throw new Error('Groq returned an empty response.');
+          }
 
-        // Parse directly
-        return JSON.parse(text) as T;
-      } catch (error) {
-        lastError = error as Error;
-        console.error(`Groq attempt ${attempt}/${maxRetries} failed:`, lastError.message);
-
-        if (attempt < maxRetries) {
-          // Exponential backoff: 1s, 2s, 4s
-          await this.delay(Math.pow(2, attempt - 1) * 1000);
+          // Clean up and parse JSON (handle potential markdown wrappers)
+          const cleaned = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+          return JSON.parse(cleaned) as T;
+        } catch (error: any) {
+          lastError = error as Error;
+          // If model doesn't exist, stop retrying this model immediately
+          if (error?.status === 404 || error?.error?.code === 'model_not_found') {
+            console.warn(`⚠️  Groq: model ${model} not found, trying next...`);
+            break;
+          }
+          console.error(`Groq attempt ${attempt}/${maxRetries} with ${model} failed:`, lastError.message);
+          if (attempt < maxRetries) {
+            await this.delay(Math.pow(2, attempt - 1) * 1000);
+          }
         }
       }
     }
 
-    throw new Error(`Groq API failed after ${maxRetries} attempts: ${lastError?.message}`);
+    throw new Error(`Groq API failed with all models: ${lastError?.message}`);
   }
 
   private delay(ms: number): Promise<void> {

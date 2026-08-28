@@ -1,8 +1,6 @@
 import { User, InterviewSession, Question, Response, Report } from '../models/index.js';
 import type { JobRole, ExperienceLevel, IEvaluation } from '../models/index.js';
-import GeminiService from './geminiService.js';
 import GroqService from './groqService.js';
-import config from '../config/index.js';
 import { generateQuestionPrompt } from '../prompts/questionGeneration.js';
 import { generateAnswerEvaluationPrompt } from '../prompts/answerEvaluation.js';
 import { generateReportPrompt } from '../prompts/reportGeneration.js';
@@ -42,51 +40,28 @@ interface QuestionData {
  * Orchestrates between database models and Gemini AI.
  */
 class InterviewService {
-  private gemini = GeminiService.getInstance();
   private groq = GroqService.getInstance();
 
   /**
-   * Helper to invoke the active AI provider (preferring Groq for speed/free quota).
-   * Falls back to Gemini, then falls back to a predefined mock object if both fail.
+   * Uses Groq as the sole AI provider.
+   * Falls back to a predefined mock object if Groq fails.
    */
   private async callAI<T>(prompt: string, fallbackMock: T): Promise<T> {
-    const hasGroq = !!config.groqApiKey;
-    const hasGemini = !!config.geminiApiKey;
-
-    // 1. Try Groq first if key exists
-    if (hasGroq) {
-      try {
-        console.log('🤖 Routing AI request to Groq...');
-        return await this.groq.generateJSON<T>(prompt);
-      } catch (error: any) {
-        console.warn('⚠️  Groq request failed:', error.message);
-        if (!hasGemini) {
-          console.warn('Falling back to local mock data...');
-          return fallbackMock;
-        }
-      }
+    try {
+      console.log('🤖 Routing AI request to Groq...');
+      return await this.groq.generateJSON<T>(prompt);
+    } catch (error: any) {
+      console.warn('⚠️  Groq request failed:', error.message);
+      console.warn('Falling back to mock data...');
+      return fallbackMock;
     }
-
-    // 2. Try Gemini as second option
-    if (hasGemini) {
-      try {
-        console.log('🤖 Routing AI request to Gemini...');
-        return await this.gemini.generateJSON<T>(prompt);
-      } catch (error: any) {
-        console.warn('⚠️  Gemini request failed:', error.message);
-      }
-    }
-
-    // 3. Fallback to mock if both failed or were not configured
-    console.warn('⚠️  All AI providers failed or were unconfigured. Returning mock fallback.');
-    return fallbackMock;
   }
 
   /**
    * Starts a new interview session:
    * 1. Creates/finds the user
    * 2. Creates the interview session
-   * 3. Generates questions via Gemini
+   * 3. Generates questions via Groq
    * 4. Stores questions in the database
    */
   async startInterview(input: StartInterviewInput) {
