@@ -7,6 +7,9 @@ import { apiLimiter } from './middleware/rateLimiter.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import interviewRoutes from './routes/interviewRoutes.js';
 import reportRoutes from './routes/reportRoutes.js';
+import roadmapRoutes from './routes/roadmapRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 // Validate environment variables
 validateEnv();
@@ -49,6 +52,15 @@ app.use('/api/interview', interviewRoutes);
 
 // Report routes
 app.use('/api/report', reportRoutes);
+
+// Auth routes
+app.use('/api/auth', authRoutes);
+
+// User/Dashboard routes
+app.use('/api/user', userRoutes);
+
+// Roadmap routes
+app.use('/api/roadmap', roadmapRoutes);
 
 // ────────────────────────────── Error Handling ──────────────────────────────
 

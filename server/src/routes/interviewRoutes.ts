@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import interviewController from '../controllers/interviewController.js';
 import { geminiLimiter } from '../middleware/rateLimiter.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
 import {
   validateStartInterview,
   validateSubmitAnswer,
@@ -8,6 +9,9 @@ import {
 } from '../middleware/validators.js';
 
 const router = Router();
+
+// Apply auth middleware to all interview routes
+router.use(requireAuth);
 
 // Start a new interview session (generates questions via Gemini)
 router.post(

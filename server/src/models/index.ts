@@ -3,3 +3,4 @@ export { InterviewSession, type IInterviewSession, type JobRole, type Experience
 export { Question, type IQuestion, type QuestionDifficulty } from './Question.js';
 export { Response, type IResponse, type IEvaluation } from './Response.js';
 export { Report, type IReport, type IQuestionScore } from './Report.js';
+export { RoadmapProfile, type IRoadmapProfile } from './RoadmapProfile.js';

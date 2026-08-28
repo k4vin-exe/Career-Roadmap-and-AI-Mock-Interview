@@ -28,7 +28,7 @@ const interviewSessionSchema = new Schema<IInterviewSession>(
     userId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: [true, 'User ID is required'],
+      required: true,
     },
     role: {
       type: String,

@@ -8,6 +8,7 @@ interface Config {
   geminiApiKey: string;
   groqApiKey: string;
   clientUrl: string;
+  jwtSecret: string;
 }
 
 const config: Config = {
@@ -17,6 +18,7 @@ const config: Config = {
   geminiApiKey: process.env.GEMINI_API_KEY || '',
   groqApiKey: process.env.GROQ_API_KEY || '',
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
+  jwtSecret: process.env.JWT_SECRET || 'fallback-secret-for-development-only',
 };
 
 // Validate critical environment variables (need at least one AI key)

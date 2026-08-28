@@ -14,6 +14,11 @@ export class InterviewController {
    */
   async startInterview(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+      if (!(req as any).user) {
+        res.status(401).json({ success: false, error: 'Unauthorized' });
+        return;
+      }
+
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         res.status(400).json({ success: false, errors: errors.array() });
@@ -21,7 +26,7 @@ export class InterviewController {
       }
 
       const { name, role, experience } = req.body;
-      const result = await interviewService.startInterview({ name, role, experience });
+      const result = await interviewService.startInterview({ userId: (req as any).user.id, name, role, experience });
 
       res.status(201).json({
         success: true,
@@ -44,8 +49,7 @@ export class InterviewController {
         return;
       }
 
-      const { sessionId } = req.params;
-      const result = await interviewService.getSession(sessionId);
+      const result = await interviewService.getSession(req.params.sessionId as string);
 
       res.status(200).json({
         success: true,
@@ -68,8 +72,7 @@ export class InterviewController {
         return;
       }
 
-      const { sessionId } = req.params;
-      const questions = await interviewService.getQuestions(sessionId);
+      const questions = await interviewService.getQuestions(req.params.sessionId as string);
 
       res.status(200).json({
         success: true,
@@ -92,9 +95,8 @@ export class InterviewController {
         return;
       }
 
-      const { sessionId } = req.params;
       const result = await interviewService.submitAnswer({
-        sessionId,
+        sessionId: req.params.sessionId as string,
         ...req.body,
       });
 
@@ -142,8 +144,7 @@ export class InterviewController {
         return;
       }
 
-      const { sessionId } = req.params;
-      const report = await interviewService.generateReport(sessionId);
+      const report = await interviewService.generateReport(req.params.sessionId as string);
 
       res.status(201).json({
         success: true,

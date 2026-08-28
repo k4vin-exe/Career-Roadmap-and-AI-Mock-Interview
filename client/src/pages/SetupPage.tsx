@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Briefcase, TrendingUp, ArrowRight, ArrowLeft } from 'lucide-react';
+import { User, Briefcase, TrendingUp, ArrowRight, ArrowLeft, Map } from 'lucide-react';
 import { useInterview } from '../context/InterviewContext';
 import { startInterview } from '../services/api';
 import { JOB_ROLES, EXPERIENCE_LEVELS } from '../utils/types';
@@ -10,10 +10,15 @@ import { Button, Card, Input, Select } from '../components';
 
 export default function SetupPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { dispatch } = useInterview();
 
+  // Pre-fill from roadmap query params
+  const prefilledRole = searchParams.get('role') || '';
+  const fromRoadmap = searchParams.get('from') === 'roadmap';
+
   const [name, setName] = useState('');
-  const [role, setRole] = useState<JobRole | ''>('');
+  const [role, setRole] = useState<JobRole | ''>(JOB_ROLES.includes(prefilledRole as JobRole) ? prefilledRole as JobRole : '');
   const [experience, setExperience] = useState<ExperienceLevel | ''>('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -60,11 +65,20 @@ export default function SetupPage() {
         <Button 
           variant="ghost" 
           leftIcon={<ArrowLeft size={18} />} 
-          onClick={() => navigate('/')}
-          className="mb-8"
+          onClick={() => navigate(fromRoadmap ? -1 as any : '/')}
+          className="mb-6"
         >
-          Back
+          {fromRoadmap ? 'Back to Roadmap' : 'Back'}
         </Button>
+
+        {fromRoadmap && prefilledRole && (
+          <div className="flex items-center gap-2 mb-6 px-4 py-3 rounded-xl bg-accent-glow border border-accent/20">
+            <Map size={15} className="text-accent-light flex-shrink-0" />
+            <p className="text-sm text-accent-light">
+              Practising for <strong>{prefilledRole}</strong> — from your roadmap
+            </p>
+          </div>
+        )}
 
         <Card variant="glass" className="p-8">
           <h1 className="text-3xl font-bold mb-3 text-text-primary">Setup Your Interview</h1>

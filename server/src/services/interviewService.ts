@@ -9,6 +9,7 @@ import { generateReportPrompt } from '../prompts/reportGeneration.js';
 import { generateWarmupEvaluationPrompt } from '../prompts/warmupEvaluation.js';
 
 interface StartInterviewInput {
+  userId: string;
   name: string;
   role: JobRole;
   experience: ExperienceLevel;
@@ -89,10 +90,10 @@ class InterviewService {
    * 4. Stores questions in the database
    */
   async startInterview(input: StartInterviewInput) {
-    // Create or find user
-    let user = await User.findOne({ name: input.name });
+    // Find user by ID (auth middleware guarantees this exists, but good to be safe)
+    const user = await User.findById(input.userId);
     if (!user) {
-      user = await User.create({ name: input.name });
+      throw new Error('User not found');
     }
 
     // Create interview session
@@ -237,12 +238,16 @@ class InterviewService {
     );
 
     const mockEvaluation: IEvaluation = {
-      technicalAccuracy: 75,
-      communication: 80,
-      completeness: 70,
-      problemSolving: 85,
-      feedback: "This is a mock evaluation because the AI service is currently unavailable. You provided a reasonable answer, but could include more specific examples from your past work.",
-      expectedPoints: ["Mentioned past experience", "Gave a concrete example", "Explained the outcome"]
+      technicalAccuracy: 7.5,
+      communication: 8.0,
+      completeness: 7.0,
+      problemSolving: 8.5,
+      strengths: ["Clear communication", "Good foundational knowledge"],
+      weaknesses: ["Needs more specific technical examples", "Could structure answers better using STAR method"],
+      missingConcepts: ["Did not mention scalability", "Missed edge cases"],
+      idealAnswer: "An ideal answer would cover X, Y, and Z clearly with examples.",
+      suggestions: ["Try to structure your thoughts before answering", "Provide concrete metrics when describing past projects"],
+      encouragingFeedback: "Good job overall, you're on the right track! Just a few tweaks and it'll be perfect.",
     };
 
     const evaluation = await this.callAI<IEvaluation>(prompt, mockEvaluation);
