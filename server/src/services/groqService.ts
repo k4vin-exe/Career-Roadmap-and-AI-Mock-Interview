@@ -1,5 +1,7 @@
-import { Groq } from 'groq-sdk';
+import { Groq, toFile } from 'groq-sdk';
 import config from '../config/index.js';
+import fs from 'fs';
+import path from 'path';
 
 /**
  * GroqService — Singleton wrapper around Groq Cloud SDK.
@@ -83,6 +85,34 @@ class GroqService {
     }
 
     throw new Error(`Groq API failed with all models: ${lastError?.message}`);
+  }
+
+  /**
+   * Transcribes audio using Groq's whisper-large-v3 model.
+   * @param readStream A ReadStream or Blob/File containing the audio data.
+   */
+  async transcribeAudio(filePath: string): Promise<string> {
+    if (!this.groq) {
+      throw new Error('Groq API Key not configured. Cannot perform request.');
+    }
+
+    try {
+      console.log('🎙️ Groq: transcribing audio using whisper-large-v3...');
+      const filename = path.basename(filePath);
+      const fileStream = fs.createReadStream(filePath);
+      // Wrap using toFile so Groq SDK sets the correct Content-Disposition / MIME type
+      const groqFile = await toFile(fileStream, filename, { type: 'audio/webm' });
+      const transcription = await this.groq.audio.transcriptions.create({
+        file: groqFile,
+        model: 'whisper-large-v3',
+        response_format: 'json',
+      });
+      console.log('✅ Transcription complete:', transcription.text);
+      return transcription.text;
+    } catch (error: any) {
+      console.error('Groq audio transcription failed:', error.message, error?.error);
+      throw new Error(`Groq Transcription API failed: ${error.message}`);
+    }
   }
 
   private delay(ms: number): Promise<void> {

@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
+import fs from 'fs';
 import interviewService from '../services/interviewService.js';
+import GroqService from '../services/groqService.js';
 import { createAppError } from '../middleware/errorHandler.js';
 
 /**
@@ -8,6 +10,40 @@ import { createAppError } from '../middleware/errorHandler.js';
  * Thin layer: validates input, delegates to service, formats response.
  */
 export class InterviewController {
+  /**
+   * POST /api/interview/transcribe
+   * Transcribes an uploaded audio file using Groq Whisper.
+   */
+  async transcribeAudio(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (!req.file) {
+        res.status(400).json({ success: false, error: 'No audio file provided' });
+        return;
+      }
+
+      const filePath = req.file.path;
+      console.log(`📁 Received audio file: ${filePath} (${req.file.size} bytes)`);
+      
+      const groqService = GroqService.getInstance();
+      // Pass the file path — groqService internally wraps it with toFile
+      const transcript = await groqService.transcribeAudio(filePath);
+
+      // Clean up temp file
+      fs.unlink(filePath, (err) => {
+        if (err) console.error('Failed to delete temp audio file:', err);
+      });
+
+      res.status(200).json({ success: true, text: transcript });
+    } catch (error) {
+      // Ensure temp file is cleaned up on error too
+      if (req.file) {
+        fs.unlink(req.file.path, () => {});
+      }
+      console.error('transcribeAudio controller error:', (error as Error).message);
+      next(createAppError((error as Error).message, 500));
+    }
+  }
+
   /**
    * POST /api/interview/start
    * Creates a new interview session and generates questions.

@@ -11,15 +11,15 @@ import { Edit3, Check, RotateCcw } from 'lucide-react';
 
 interface TranscriptDisplayProps {
   transcript: string;
-  interimTranscript: string;
   isListening: boolean;
+  isTranscribing: boolean;
   onTranscriptChange: (edited: string) => void;
 }
 
 export default function TranscriptDisplay({
   transcript,
-  interimTranscript,
   isListening,
+  isTranscribing,
   onTranscriptChange,
 }: TranscriptDisplayProps) {
   const [isEditing, setIsEditing] = useState(false);
@@ -104,16 +104,16 @@ export default function TranscriptDisplay({
             {/* Finalized transcript text */}
             <span className="text-text-primary">{displayText}</span>
 
-            {/* Interim (still-being-spoken) text */}
+            {/* Transcribing loading state */}
             <AnimatePresence>
-              {isListening && interimTranscript && (
+              {isTranscribing && (
                 <motion.span
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="text-text-muted italic"
+                  className="text-text-muted italic flex items-center gap-2 mt-2"
                 >
-                  {' '}{interimTranscript}
+                  Transcribing audio...
                 </motion.span>
               )}
             </AnimatePresence>
@@ -129,13 +129,22 @@ export default function TranscriptDisplay({
 
             {/* Empty state */}
             {!hasContent && !isListening && (
-              <p className="text-text-muted italic">
-                Press the microphone button and start speaking. Your answer will appear here.
-              </p>
+              <div className="flex flex-col items-start gap-4">
+                <p className="text-text-muted italic">
+                  Press the microphone button and start speaking. Your answer will appear here.
+                </p>
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border border-white/10 hover:border-white/20 hover:bg-white/5 transition-colors text-text-secondary hover:text-text-primary"
+                >
+                  <Edit3 size={14} />
+                  Or type your answer manually
+                </button>
+              </div>
             )}
 
             {/* Listening empty state */}
-            {!hasContent && isListening && !interimTranscript && (
+            {!hasContent && isListening && (
               <p className="text-text-muted italic">Listening...</p>
             )}
           </div>

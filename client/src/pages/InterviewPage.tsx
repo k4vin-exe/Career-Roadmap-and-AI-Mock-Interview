@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { Volume2, VolumeX, Clock, Loader2, AlertCircle, ChevronRight } from 'lucide-react';
 
 import { useInterview } from '../context/InterviewContext';
-import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
+import { useAudioRecording } from '../hooks/useAudioRecording';
 import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis';
 import { computeSpeechMetrics } from '../utils/speechMetrics';
 import { submitAnswer, generateReport } from '../services/api';
@@ -39,14 +39,13 @@ export default function InterviewPage() {
 
   const {
     transcript,
-    interimTranscript,
-    isListening,
-    isSupported: micSupported,
+    isRecording: isListening,
+    isTranscribing,
     error: micError,
-    startListening,
-    stopListening,
+    startRecording: startListening,
+    stopRecording: stopListening,
     resetTranscript,
-  } = useSpeechRecognition({ continuous: true, interimResults: true, confidenceThreshold: 0.35 });
+  } = useAudioRecording();
 
   const { speak, stop: stopSpeaking, isSpeaking } = useSpeechSynthesis({ rate: 0.88, pitch: 0.95 });
 
@@ -278,17 +277,17 @@ export default function InterviewPage() {
               {/* Transcript Display */}
               <TranscriptDisplay
                 transcript={transcript}
-                interimTranscript={interimTranscript}
                 isListening={isListening}
+                isTranscribing={isTranscribing}
                 onTranscriptChange={setEditedTranscript}
               />
 
               {/* Error banners */}
-              {(micError || !micSupported) && (
+              {micError && (
                 <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20">
                   <AlertCircle size={15} className="text-red-400 flex-shrink-0" />
                   <p className="text-sm text-red-300">
-                    {micError || 'Speech recognition not supported. Please use Chrome or Edge.'}
+                    {micError}
                   </p>
                 </div>
               )}
@@ -309,6 +308,8 @@ export default function InterviewPage() {
                       ? '🔊 AI is reading the question aloud...'
                       : isListening
                       ? '🎙️ Recording — speak clearly, then click Stop'
+                      : isTranscribing
+                      ? '⏳ Sending audio to AI for transcription...'
                       : editedTranscript.trim().length > 5
                       ? '✅ Answer captured — review then submit'
                       : '🎤 Click the microphone to start answering'}
@@ -335,7 +336,7 @@ export default function InterviewPage() {
                     {/* Main mic button */}
                     <MicrophoneButton
                       isListening={isListening}
-                      isDisabled={isSubmitting || !micSupported}
+                      isDisabled={isSubmitting || isTranscribing}
                       onStart={() => {
                         if (isSpeaking) stopSpeaking();
                         startListening();
