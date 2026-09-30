@@ -1,12 +1,5 @@
-/**
- * TranscriptDisplay — Live Speech Transcript Component
- *
- * Shows the candidate's speech in real time with animated interim results,
- * a character count, and an editable correction textarea.
- */
-
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Edit3, Check, RotateCcw } from 'lucide-react';
 
 interface TranscriptDisplayProps {
@@ -25,12 +18,10 @@ export default function TranscriptDisplay({
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState('');
 
-  // Sync editable text when new transcript arrives
   useEffect(() => {
     setEditedText(transcript);
     onTranscriptChange(transcript);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transcript]);
+  }, [transcript, onTranscriptChange]);
 
   const handleSaveEdit = () => {
     onTranscriptChange(editedText);
@@ -47,118 +38,82 @@ export default function TranscriptDisplay({
   const hasContent = transcript.trim().length > 0;
 
   return (
-    <div className="card shadow-sm rounded-2xl p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider">
+    <div style={{ background: '#fff', padding: 32, borderRadius: '24px 4px 24px 24px', boxShadow: '0 10px 40px rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.03)', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+        <p style={{ fontSize: 13, color: 'var(--primary)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>
           Your Answer
-        </h3>
+        </p>
+        
         {hasContent && !isListening && (
-          <div className="flex items-center gap-2">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             {isEditing ? (
               <>
                 <motion.button
-                  id="transcript-save-btn"
                   whileTap={{ scale: 0.95 }}
                   onClick={handleSaveEdit}
-                  className="btn btn-primary btn-sm flex items-center gap-1.5"
+                  style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 12, background: 'var(--primary)', color: '#fff', fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer', boxShadow: '0 4px 10px rgba(99,102,241,0.3)' }}
                 >
-                  <Check size={13} /> Save
+                  <Check size={14} strokeWidth={3} /> Save
                 </motion.button>
                 <motion.button
-                  id="transcript-reset-btn"
                   whileTap={{ scale: 0.95 }}
                   onClick={handleReset}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-text-secondary hover:text-text-primary border border-border hover:border-primary/20 transition-colors"
+                  style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 12, background: 'var(--surface-muted)', color: 'var(--text-secondary)', fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer' }}
                 >
-                  <RotateCcw size={13} /> Reset
+                  <RotateCcw size={14} strokeWidth={2.5} /> Reset
                 </motion.button>
               </>
             ) : (
               <motion.button
-                id="transcript-edit-btn"
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsEditing(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-text-secondary hover:text-text-primary border border-border hover:border-primary/20 transition-colors"
+                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 12, background: 'var(--surface-muted)', color: 'var(--text-secondary)', fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer' }}
               >
-                <Edit3 size={13} /> Edit
+                <Edit3 size={14} strokeWidth={2.5} /> Edit
               </motion.button>
             )}
           </div>
         )}
       </div>
 
-      {/* Transcript content area */}
-      <div className="min-h-[180px]">
+      <div style={{ minHeight: 180 }}>
         {isEditing ? (
           <textarea
-            id="transcript-textarea"
             value={editedText}
             onChange={(e) => setEditedText(e.target.value)}
-            className="w-full h-32 bg-surface-muted border border-border rounded-xl p-3 text-text-primary text-base resize-none focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10 transition-colors"
-            placeholder="Edit your answer here..."
             autoFocus
+            style={{ 
+              width: '100%', height: 180, background: 'var(--surface-muted)', border: '2px solid var(--primary-soft)', 
+              borderRadius: 16, padding: 20, color: 'var(--text)', fontSize: 16, lineHeight: 1.6, fontWeight: 500, 
+              resize: 'none', outline: 'none', transition: 'all 0.2s'
+            }}
           />
         ) : (
-          <div className="relative text-base leading-relaxed">
-            {/* Finalized transcript text */}
-            <span className="text-text-primary">{displayText}</span>
-
-            {/* Transcribing loading state */}
-            <AnimatePresence>
-              {isTranscribing && (
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="text-text-muted italic flex items-center gap-2 mt-2"
-                >
-                  Transcribing audio...
-                </motion.span>
-              )}
-            </AnimatePresence>
-
-            {/* Blinking cursor when listening */}
+          <div style={{ fontSize: 16, color: hasContent ? 'var(--text)' : 'var(--text-muted)', lineHeight: 1.7, fontWeight: 500 }}>
+            {hasContent ? (
+              displayText
+            ) : (
+              <span style={{ fontStyle: 'italic', opacity: 0.6 }}>Your voice transcript will appear here as you speak...</span>
+            )}
+            
             {isListening && (
               <motion.span
-                className="inline-block w-0.5 h-5 bg-primary ml-1 align-middle"
-                animate={{ opacity: [1, 0, 1] }}
-                transition={{ duration: 0.8, repeat: Infinity }}
+                animate={{ opacity: [0.3, 1, 0.3] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                style={{ display: 'inline-block', width: 4, height: 18, background: 'var(--primary)', marginLeft: 6, borderRadius: 2, verticalAlign: 'middle' }}
               />
-            )}
-
-            {/* Empty state */}
-            {!hasContent && !isListening && (
-              <div className="flex flex-col items-start gap-4">
-                <p className="text-text-muted italic">
-                  Press the microphone button and start speaking. Your answer will appear here.
-                </p>
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border border-border hover:border-primary/20 hover:bg-surface-muted transition-colors text-text-secondary hover:text-text-primary"
-                >
-                  <Edit3 size={14} />
-                  Or type your answer manually
-                </button>
-              </div>
-            )}
-
-            {/* Listening empty state */}
-            {!hasContent && isListening && (
-              <p className="text-text-muted italic">Listening...</p>
             )}
           </div>
         )}
       </div>
 
-      {/* Word count */}
       {hasContent && (
-        <div className="mt-3 pt-3 border-t border-border flex justify-end">
-          <span className="text-xs text-text-muted">
-            {transcript.trim().split(/\s+/).filter(Boolean).length} words
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginTop: 16 }}>
+          <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)' }}>
+            {displayText.split(/\s+/).filter(Boolean).length} words
           </span>
         </div>
       )}
     </div>
   );
 }
-

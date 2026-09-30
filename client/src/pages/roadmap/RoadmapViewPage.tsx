@@ -9,6 +9,8 @@ import {
 import { useRoadmap } from '../../context/RoadmapContext';
 import { getRoadmap } from '../../services/roadmapApi';
 import { useRoadmapProgress } from '../../hooks/useRoadmapProgress';
+import { useInterview } from '../../context/InterviewContext';
+import { startInterview } from '../../services/api';
 import type { Roadmap, WeeklyPlan } from '../../utils/roadmapTypes';
 
 function ProgressRing({ pct, size = 120, stroke = 10 }: { pct: number; size?: number; stroke?: number }) {
@@ -30,12 +32,14 @@ function ProgressRing({ pct, size = 120, stroke = 10 }: { pct: number; size?: nu
 }
 
 function WeekCard({
-  plan, isActive, onToggle, isTaskCompleted, onTaskToggle, targetRole,
+  plan, isActive, onToggle, isTaskCompleted, onTaskToggle, targetRole, onStartInterview, isStartingInterview,
 }: {
   plan: WeeklyPlan; isActive: boolean; onToggle: () => void;
   isTaskCompleted: (w: number, d: number) => boolean;
   onTaskToggle: (w: number, d: number) => void;
   targetRole: string;
+  onStartInterview: (week: number) => void;
+  isStartingInterview: boolean;
 }) {
   const DAY = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const done = plan.dailyBreakdown.filter((d) => isTaskCompleted(plan.week, d.day)).length;
@@ -175,6 +179,43 @@ function WeekCard({
                 </div>
               </div>
 
+              {plan.resources && plan.resources.length > 0 && (
+                <div>
+                  <p style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10, margin: '0 0 10px' }}>
+                    Learning Resources
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {plan.resources.map((res, i) => (
+                      <a 
+                        key={i} 
+                        href={res.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: 10,
+                          padding: '12px 16px', borderRadius: 10,
+                          background: 'var(--surface-solid)', border: '1px solid var(--border)',
+                          color: 'var(--primary)', textDecoration: 'none',
+                          fontSize: 14, fontWeight: 500, boxShadow: 'var(--shadow-sm)',
+                          transition: 'all 0.15s'
+                        }}
+                        onMouseEnter={(e) => {
+                          (e.currentTarget as HTMLAnchorElement).style.borderColor = 'var(--primary)';
+                          (e.currentTarget as HTMLAnchorElement).style.background = 'var(--primary-soft)';
+                        }}
+                        onMouseLeave={(e) => {
+                          (e.currentTarget as HTMLAnchorElement).style.borderColor = 'var(--border)';
+                          (e.currentTarget as HTMLAnchorElement).style.background = 'var(--surface-solid)';
+                        }}
+                      >
+                        <BookOpen size={18} />
+                        {res.title}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div>
                 <p style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10, margin: '0 0 10px' }}>
                   Daily Tasks
@@ -252,14 +293,19 @@ function WeekCard({
               </div>
 
               {plan.practiceInterview && (
-                <Link
-                  to={'/setup?role=' + encodeURIComponent(targetRole) + '&from=roadmap'}
+                <button
+                  onClick={() => onStartInterview(plan.week)}
+                  disabled={isStartingInterview}
                   style={{
+                    width: '100%',
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
-                    padding: '18px 20px', borderRadius: 14, textDecoration: 'none',
+                    padding: '18px 20px', borderRadius: 14, cursor: isStartingInterview ? 'not-allowed' : 'pointer',
                     background: 'var(--primary-soft)', border: '1px solid rgba(128,103,232,0.2)',
-                    boxShadow: 'var(--shadow-sm)', transition: 'all 0.2s',
+                    boxShadow: 'var(--shadow-sm)', transition: 'all 0.2s', textAlign: 'left',
+                    opacity: isStartingInterview ? 0.7 : 1,
                   }}
+                  onMouseEnter={(e) => { if (!isStartingInterview) e.currentTarget.style.background = 'rgba(128,103,232,0.15)'; }}
+                  onMouseLeave={(e) => { if (!isStartingInterview) e.currentTarget.style.background = 'var(--primary-soft)'; }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                     <div style={{
@@ -267,15 +313,17 @@ function WeekCard({
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       boxShadow: 'var(--shadow-sm)',
                     }}>
-                      <Mic size={20} style={{ color: 'var(--primary)' }} />
+                      {isStartingInterview ? <Loader2 size={20} className="animate-spin" style={{ color: 'var(--primary)' }} /> : <Mic size={20} style={{ color: 'var(--primary)' }} />}
                     </div>
                     <div>
-                      <p style={{ fontSize: 15, fontWeight: 800, color: 'var(--primary-text)', marginBottom: 2, margin: '0 0 2px' }}>Practice Interview</p>
+                      <p style={{ fontSize: 15, fontWeight: 800, color: 'var(--primary-text)', marginBottom: 2, margin: '0 0 2px' }}>
+                        {isStartingInterview ? 'Starting Interview...' : 'Practice Interview'}
+                      </p>
                       <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0 }}>Test your knowledge from this week</p>
                     </div>
                   </div>
-                  <ArrowRight size={20} style={{ color: 'var(--primary)', flexShrink: 0 }} />
-                </Link>
+                  {!isStartingInterview && <ArrowRight size={20} style={{ color: 'var(--primary)', flexShrink: 0 }} />}
+                </button>
               )}
             </div>
           </motion.div>
@@ -307,6 +355,41 @@ export default function RoadmapViewPage() {
 
   const { stats, toggleTask, isTaskCompleted } = useRoadmapProgress(roadmap);
   const handleWeekToggle = useCallback((w: number) => setActiveWeek((p) => (p === w ? 0 : w)), []);
+
+  const { dispatch: interviewDispatch } = useInterview();
+  const [startingInterviewWeek, setStartingInterviewWeek] = useState<number | null>(null);
+
+  const handleStartInterview = useCallback(async (week: number) => {
+    if (!roadmap) return;
+    setStartingInterviewWeek(week);
+    
+    try {
+      const unlock = new SpeechSynthesisUtterance('');
+      unlock.volume = 0;
+      window.speechSynthesis.speak(unlock);
+    } catch { /* ignored */ }
+
+    try {
+      // Begin Mock Interview Session
+      let mappedExp = 'Beginner';
+      const rawExp = String(roadmap.profile?.workExperience || '').toLowerCase();
+      if (rawExp.includes('3') || rawExp.includes('4') || rawExp.includes('5') || rawExp === '1-2') mappedExp = 'Intermediate';
+      if (rawExp.includes('10') || rawExp.includes('5-10')) mappedExp = 'Experienced';
+
+      const userName = roadmap.profile?.name || 'Candidate';
+
+      const session = await startInterview(userName, roadmap.targetRole, mappedExp);
+      interviewDispatch({ type: 'START_SESSION', payload: session });
+      navigate('/warmup');
+    } catch (err: any) {
+      console.error("Interview start error:", err);
+      const errorMsg = err.response?.data?.errors 
+        ? err.response.data.errors.map((e: any) => e.msg).join(', ')
+        : (err.response?.data?.error || err.message || 'Failed to start interview.');
+      alert(`Error starting interview: ${errorMsg}`);
+      setStartingInterviewWeek(null);
+    }
+  }, [roadmap, interviewDispatch, navigate]);
 
   if (loading) return (
     <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 500 }}>
@@ -464,6 +547,8 @@ export default function RoadmapViewPage() {
                   isTaskCompleted={isTaskCompleted}
                   onTaskToggle={toggleTask}
                   targetRole={roadmap.targetRole}
+                  onStartInterview={handleStartInterview}
+                  isStartingInterview={startingInterviewWeek === plan.week}
                 />
               </motion.div>
             ))}

@@ -174,7 +174,13 @@ export default function InterviewPage() {
   const progressPct = ((state.currentQuestionIndex + (showEvaluation ? 1 : 0)) / state.questions.length) * 100;
 
   return (
-    <div className="flex-1 w-full flex flex-col" >
+    <div className="flex-1 w-full flex flex-col relative" style={{ background: '#f8fafc', minHeight: 'calc(100vh - 64px)' }}>
+      {/* Dynamic Background */}
+      <div style={{
+        position: 'absolute', top: '-10%', left: '-10%', width: '120%', height: '120%', zIndex: 0,
+        background: 'radial-gradient(circle at 80% 20%, rgba(99,102,241,0.06) 0%, transparent 50%), radial-gradient(circle at 20% 80%, rgba(16,185,129,0.04) 0%, transparent 50%)',
+        pointerEvents: 'none', filter: 'blur(80px)'
+      }} />
 
       {/* ── Sticky Sub-Header (interview-specific) ── */}
       <div className="sticky top-[60px] w-full z-20 border-b border-border bg-surface-solid/95 backdrop-blur-md shadow-sm">
@@ -204,9 +210,9 @@ export default function InterviewPage() {
             </div>
 
             <div className="text-right">
-              <p className="text-[10px] text-text-muted uppercase tracking-wide">Question</p>
-              <p className="text-lg font-bold gradient-text leading-none">
-                {state.currentQuestionIndex + 1}<span className="text-sm text-text-muted font-normal">/{state.questions.length}</span>
+              <p className="text-[10px] text-text-muted uppercase tracking-wide font-bold">Question</p>
+              <p className="text-lg font-black text-primary leading-none">
+                {state.currentQuestionIndex + 1}<span className="text-sm text-text-muted font-bold">/{state.questions.length}</span>
               </p>
             </div>
           </div>
@@ -224,7 +230,7 @@ export default function InterviewPage() {
       </div>
 
       {/* ── Page Body ── */}
-      <div className="flex-1 max-w-4xl w-full mx-auto px-4 md:px-6 py-6 flex flex-col gap-5">
+      <div className="flex-1 max-w-4xl w-full mx-auto px-4 md:px-6 py-8 flex flex-col gap-6 relative z-10">
         <AnimatePresence mode="wait">
 
           {/* ── QUESTION + ANSWER VIEW ── */}

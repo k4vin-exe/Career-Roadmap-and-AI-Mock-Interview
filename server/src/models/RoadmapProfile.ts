@@ -14,6 +14,7 @@ interface IWeeklyPlan {
   goal: string;
   topics: string[];
   dailyBreakdown: IDailyTask[];
+  resources: { title: string; url: string }[];
   milestone: string;
   practiceInterview: boolean;
 }
@@ -61,6 +62,12 @@ const WeeklyPlanSchema = new Schema<IWeeklyPlan>(
     goal: { type: String, required: true },
     topics: [{ type: String }],
     dailyBreakdown: [DailyTaskSchema],
+    resources: [
+      {
+        title: { type: String, required: true },
+        url: { type: String, required: true },
+      }
+    ],
     milestone: { type: String, required: true },
     practiceInterview: { type: Boolean, default: false },
   },

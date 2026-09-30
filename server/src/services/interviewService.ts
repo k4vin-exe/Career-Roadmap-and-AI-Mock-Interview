@@ -285,29 +285,50 @@ class InterviewService {
     // Calculate total duration (application logic)
     const totalDuration = responses.reduce((sum, r) => sum + r.questionDuration, 0);
 
-    // Send to Gemini for report generation
-    const prompt = generateReportPrompt({
-      role: session.role,
-      experience: session.experience,
-      questionScores,
-      questions: questions.map((q) => q.text),
-      answers: responses.map((r) => r.editedTranscript || r.transcript),
-      averageFluency,
-      totalDuration,
-    });
+    // --- LOCAL RULE-BASED ENGINE ---
+    const avgTech = Math.round(questionScores.reduce((sum, q) => sum + q.technicalAccuracy, 0) / questionScores.length * 10);
+    const avgComm = Math.round(questionScores.reduce((sum, q) => sum + q.communication, 0) / questionScores.length * 10);
+    const avgProblem = Math.round(questionScores.reduce((sum, q) => sum + q.problemSolving, 0) / questionScores.length * 10);
+    
+    const overallScore = Math.round((avgTech + avgComm + avgProblem + averageFluency) / 4);
+    
+    const strengths = [];
+    const weaknesses = [];
+    
+    if (avgTech >= 80) strengths.push('Strong technical accuracy and domain knowledge');
+    else weaknesses.push('Technical depth needs improvement; review core concepts');
+    
+    if (avgComm >= 80) strengths.push('Clear and concise communication');
+    else weaknesses.push('Communication can be clearer; try using the STAR method');
+    
+    if (averageFluency >= 80) strengths.push('Excellent speaking fluency');
+    else weaknesses.push('Work on reducing pauses and hesitations during speech');
 
-    const mockReport = {
-      overallTechnicalScore: 78,
-      communicationScore: 82,
-      strengths: ["Clear communication", "Good foundational knowledge"],
-      weaknesses: ["Needs more specific technical examples", "Could structure answers better using STAR method"],
-      topicsToImprove: ["System Design", "Error Handling"],
-      practiceAreas: ["Mock Interviews", "Whiteboard coding"],
-      interviewReadiness: "Needs some practice, but generally good",
-      aiSummary: "This is a mock report because the AI service is out of quota. Overall, you performed well in this mock interview."
+    const totalFillerWords = responses.reduce((sum, r) => sum + (r.fillerWordCount || 0), 0);
+    let aiSummary = `This is a system-generated report. Overall, you scored ${overallScore}/100. `;
+    
+    if (overallScore >= 80) {
+      aiSummary += `You demonstrated excellent proficiency for the ${session.role} position and performed like a Strong Hire. `;
+    } else if (overallScore >= 60) {
+      aiSummary += `You showed good potential but have some clear areas for improvement before taking a real interview. `;
+    } else {
+      aiSummary += `You need significant preparation and foundational review before proceeding with interviews for this role. `;
+    }
+
+    if (totalFillerWords > 10) {
+      aiSummary += `\n\nNotice: You used a high number of filler words (${totalFillerWords} total). Consider pacing your speech and taking deliberate pauses instead of using fillers like "um" and "uh". `;
+    }
+
+    const reportData = {
+      overallTechnicalScore: avgTech,
+      communicationScore: avgComm,
+      strengths: strengths.length > 0 ? strengths : ['Willingness to learn'],
+      weaknesses: weaknesses.length > 0 ? weaknesses : ['Overall confidence'],
+      topicsToImprove: ['Role-specific fundamentals', 'System Architecture'],
+      practiceAreas: ['Mock Interviews', 'Pacing and delivery'],
+      interviewReadiness: overallScore >= 80 ? 'Interview Ready' : 'Needs Practice',
+      aiSummary,
     };
-
-    const reportData = await this.callAI<typeof mockReport>(prompt, mockReport);
 
     // Store report
     const report = await Report.create({

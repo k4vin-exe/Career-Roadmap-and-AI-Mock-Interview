@@ -1,13 +1,36 @@
 // ──────────────────────────── Job Roles ────────────────────────────
 
 export const JOB_ROLES = [
+  // Core Software Development
   'Frontend Developer',
+  'Frontend Engineer',
   'Backend Developer',
-  'Cloud Engineer',
+  'Backend Engineer',
+  'Full Stack Engineer',
   'Java Developer',
   'Python Developer',
+  
+  // Data & AI
+  'Data Scientist',
   'Data Analyst',
   'Machine Learning Engineer',
+  
+  // Cloud & Infrastructure
+  'Cloud Engineer',
+  'DevOps Engineer',
+  'Site Reliability Engineer',
+  'Cybersecurity Engineer',
+  
+  // Mobile & Product
+  'Mobile Developer (Android)',
+  'Mobile Developer (iOS)',
+  'React Native Developer',
+  'UI/UX Designer',
+  'Product Manager',
+  
+  // Other Engineering
+  'Blockchain Developer',
+  'Embedded Systems Engineer',
 ] as const;
 
 export type JobRole = (typeof JOB_ROLES)[number];

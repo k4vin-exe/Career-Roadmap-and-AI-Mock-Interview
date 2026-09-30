@@ -1,13 +1,6 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
 
-export type JobRole =
-  | 'Frontend Developer'
-  | 'Backend Developer'
-  | 'Cloud Engineer'
-  | 'Java Developer'
-  | 'Python Developer'
-  | 'Data Analyst'
-  | 'Machine Learning Engineer';
+export type JobRole = string;
 
 export type ExperienceLevel = 'Beginner' | 'Intermediate' | 'Experienced';
 
@@ -33,15 +26,6 @@ const interviewSessionSchema = new Schema<IInterviewSession>(
     role: {
       type: String,
       required: [true, 'Job role is required'],
-      enum: [
-        'Frontend Developer',
-        'Backend Developer',
-        'Cloud Engineer',
-        'Java Developer',
-        'Python Developer',
-        'Data Analyst',
-        'Machine Learning Engineer',
-      ],
     },
     experience: {
       type: String,

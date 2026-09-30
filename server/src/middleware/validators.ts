@@ -11,17 +11,7 @@ export const validateStartInterview = [
   body('role')
     .trim()
     .notEmpty()
-    .withMessage('Job role is required')
-    .isIn([
-      'Frontend Developer',
-      'Backend Developer',
-      'Cloud Engineer',
-      'Java Developer',
-      'Python Developer',
-      'Data Analyst',
-      'Machine Learning Engineer',
-    ])
-    .withMessage('Invalid job role'),
+    .withMessage('Job role is required'),
   body('experience')
     .trim()
     .notEmpty()

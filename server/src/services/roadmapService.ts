@@ -1,6 +1,10 @@
 import { RoadmapProfile } from '../models/RoadmapProfile.js';
-import GroqService from './groqService.js';
-import { generateRoadmapPrompt } from '../prompts/roadmapGeneration.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 interface UserProfileInput {
   name: string;
@@ -13,83 +17,70 @@ interface UserProfileInput {
   desiredRole: string;
 }
 
-interface GeneratedRoadmap {
-  targetRole: string;
-  totalWeeks: number;
-  weeklyPlan: Array<{
-    week: number;
-    theme: string;
-    goal: string;
-    topics: string[];
-    dailyBreakdown: Array<{ day: number; task: string; estimatedHours: number }>;
-    milestone: string;
-    practiceInterview: boolean;
-  }>;
-  keySkillsToLearn: string[];
-  estimatedReadinessDate: string;
-  aiSummary: string;
-}
-
 class RoadmapService {
-  private groq = GroqService.getInstance();
-
   /**
-   * Uses Groq as the sole AI provider.
-   * Falls back to a mock roadmap if Groq fails.
-   */
-  private async callAI<T>(prompt: string, fallback: T): Promise<T> {
-    try {
-      console.log('🗺️  Roadmap: routing to Groq...');
-      return await this.groq.generateJSON<T>(prompt);
-    } catch (err: any) {
-      console.warn('⚠️  Groq failed for roadmap:', err.message);
-      console.warn('⚠️  Using mock roadmap fallback.');
-      return fallback;
-    }
-  }
-
-  /**
-   * Generates a personalized roadmap for the given user profile,
-   * stores it in MongoDB, and returns the full roadmap with profileId.
+   * Generates a personalized roadmap using our local curated JSON dataset,
+   * stores it in MongoDB, and returns the full roadmap.
    */
   async generateRoadmap(userId: string, profileInput: UserProfileInput) {
-    const prompt = generateRoadmapPrompt(profileInput);
+    const roadmapsPath = path.resolve(__dirname, '../data/roadmaps.json');
+    let localData: any = {};
+    if (fs.existsSync(roadmapsPath)) {
+      localData = JSON.parse(fs.readFileSync(roadmapsPath, 'utf-8'));
+    }
 
-    const mockRoadmap: GeneratedRoadmap = {
-      targetRole: profileInput.desiredRole,
-      totalWeeks: 8,
-      weeklyPlan: Array.from({ length: 8 }, (_, i) => ({
-        week: i + 1,
-        theme: `Week ${i + 1} — Foundation ${i + 1}`,
-        goal: `Complete foundational learning for week ${i + 1}.`,
-        topics: ['Topic A', 'Topic B', 'Topic C'],
-        dailyBreakdown: Array.from({ length: 5 }, (_, d) => ({
-          day: d + 1,
-          task: `Day ${d + 1} task for week ${i + 1}`,
-          estimatedHours: 2,
-        })),
-        milestone: `Build a small project for week ${i + 1}`,
-        practiceInterview: i === 3 || i === 7,
-      })),
-      keySkillsToLearn: ['Core Skill 1', 'Core Skill 2', 'Core Skill 3'],
-      estimatedReadinessDate: new Date(Date.now() + 56 * 24 * 60 * 60 * 1000)
-        .toISOString()
-        .split('T')[0],
-      aiSummary: `This is a mock 8-week roadmap for ${profileInput.name} targeting the role of ${profileInput.desiredRole}. AI service was unavailable during generation.`,
-    };
+    // Match role (fallback to Frontend Developer if not found in db)
+    const roleKey = localData[profileInput.desiredRole] ? profileInput.desiredRole : 'Frontend Developer';
+    
+    // Parse experience to Beginner/Intermediate/Experienced
+    let expKey = 'Beginner';
+    const expLower = profileInput.workExperience.toLowerCase();
+    if (expLower.includes('2') || expLower.includes('3') || expLower.includes('4')) expKey = 'Intermediate';
+    if (expLower.includes('5') || expLower.includes('6') || expLower.includes('experienced') || expLower.includes('senior')) expKey = 'Experienced';
 
-    const roadmapData = await this.callAI<GeneratedRoadmap>(prompt, mockRoadmap);
+    const fallbackData = localData[roleKey]?.[expKey] || [];
+    
+    // Map JSON to the WeeklyPlan schema.
+    // The githubRoadmapScraper already formats the JSON directly into the WeeklyPlan schema!
+    const weeklyPlan = fallbackData.map((item: any, i: number) => {
+      return {
+        week: item.week || i + 1,
+        theme: item.theme || `Week ${i + 1}`,
+        goal: item.goal || 'Master the topics.',
+        topics: item.topics || [],
+        resources: item.resources || [],
+        dailyBreakdown: item.dailyBreakdown || [],
+        milestone: item.milestone || 'Complete the week.',
+        practiceInterview: item.practiceInterview || false
+      };
+    });
+
+    // If dataset is missing or empty, provide a single generic week so UI doesn't crash
+    if (weeklyPlan.length === 0) {
+      weeklyPlan.push({
+        week: 1,
+        theme: 'Week 1 — Fundamentals',
+        goal: 'Core concepts.',
+        topics: [profileInput.desiredRole],
+        resources: [],
+        dailyBreakdown: [{ day: 1, task: 'Getting started', estimatedHours: 2 }],
+        milestone: 'Complete setup',
+        practiceInterview: false
+      });
+    }
+
+    const totalWeeks = weeklyPlan.length;
 
     // Persist to DB
     const doc = await RoadmapProfile.create({
       userId,
       profile: profileInput,
-      targetRole: roadmapData.targetRole || profileInput.desiredRole,
-      totalWeeks: roadmapData.totalWeeks,
-      weeklyPlan: roadmapData.weeklyPlan,
-      keySkillsToLearn: roadmapData.keySkillsToLearn,
-      estimatedReadinessDate: roadmapData.estimatedReadinessDate,
-      aiSummary: roadmapData.aiSummary,
+      targetRole: profileInput.desiredRole,
+      totalWeeks,
+      weeklyPlan,
+      keySkillsToLearn: [profileInput.desiredRole, 'System Architecture', 'Best Practices'],
+      estimatedReadinessDate: new Date(Date.now() + totalWeeks * 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      aiSummary: `System-generated highly-structured roadmap for ${profileInput.name} targeting ${profileInput.desiredRole}. Features curated real-world resources and milestones instead of AI hallucination.`,
     });
 
     return this.formatRoadmap(doc);
@@ -111,7 +102,6 @@ class RoadmapService {
     const doc = await RoadmapProfile.findOne({ _id: profileId, userId });
     if (!doc) throw new Error('Roadmap not found or unauthorized');
 
-    // Convert plain object to Map for Mongoose
     doc.completedTasks = new Map(Object.entries(completedTasks));
     await doc.save();
     
@@ -121,6 +111,7 @@ class RoadmapService {
   private formatRoadmap(doc: any) {
     return {
       profileId: String(doc._id),
+      profile: doc.profile,
       targetRole: doc.targetRole,
       totalWeeks: doc.totalWeeks,
       weeklyPlan: doc.weeklyPlan,

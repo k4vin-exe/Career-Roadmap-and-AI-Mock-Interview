@@ -23,6 +23,7 @@ export interface WeeklyPlan {
   theme: string;
   goal: string;
   topics: string[];
+  resources: { title: string; url: string }[];
   dailyBreakdown: DailyTask[];
   milestone: string;
   practiceInterview: boolean;
@@ -31,6 +32,7 @@ export interface WeeklyPlan {
 
 export interface Roadmap {
   profileId: string;
+  profile: UserProfile;
   targetRole: string;
   totalWeeks: number;
   weeklyPlan: WeeklyPlan[];

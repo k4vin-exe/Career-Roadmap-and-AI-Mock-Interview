@@ -1,0 +1,2572 @@
+{
+  "Frontend Developer": {
+    "Beginner": [
+      {
+        "week": 1,
+        "theme": "Week 1 — Accessibility",
+        "goal": "Master Accessibility, AI Agents",
+        "topics": [
+          "Accessibility",
+          "AI Agents"
+        ],
+        "resources": [
+          {
+            "title": "Accessibility for Developers by Google",
+            "url": "https://web.dev/accessibility"
+          },
+          {
+            "title": "Complete Playlist on Accessibility",
+            "url": "https://youtube.com/playlist?list=PLNYkxOF6rcICWx0C9LVWWVqvHlYJyqw7g"
+          },
+          {
+            "title": "Visit the Dedicated AI Agents Roadmap",
+            "url": "https://roadmap.sh/ai-agents"
+          },
+          {
+            "title": "What are AI Agents? - IBM",
+            "url": "https://www.ibm.com/think/topics/ai-agents"
+          },
+          {
+            "title": "From Zero to Your First AI Agent in 25 Minutes (No Coding)",
+            "url": "https://www.youtube.com/watch?v=EH5jx5qPabU"
+          },
+          {
+            "title": "What are AI Agents?",
+            "url": "https://www.youtube.com/watch?v=F8NKVhkZZWI"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Accessibility for Developers by Google",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Complete Playlist on Accessibility",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Visit the Dedicated AI Agents Roadmap",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: What are AI Agents? - IBM",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 1",
+        "practiceInterview": false
+      },
+      {
+        "week": 2,
+        "theme": "Week 2 — AI-Assisted Coding",
+        "goal": "Master AI-Assisted Coding, AI vs. Traditional Software Development",
+        "topics": [
+          "AI-Assisted Coding",
+          "AI vs. Traditional Software Development"
+        ],
+        "resources": [
+          {
+            "title": "AI-Assisted Programming",
+            "url": "https://www.hkdca.com/wp-content/uploads/2025/06/ai-assisted-programming-oreilly.pdf"
+          },
+          {
+            "title": "How to Become an Expert in AI-Assisted Coding",
+            "url": "https://www.freecodecamp.org/news/how-to-become-an-expert-in-ai-assisted-coding-a-handbook-for-developers/"
+          },
+          {
+            "title": "The 10 Best Vibe Coding Tools in 2026: Our Choices",
+            "url": "https://roadmap.sh/vibe-coding/best-tools"
+          },
+          {
+            "title": "How to elevate software development with AI-assisted coding",
+            "url": "https://www.youtube.com/watch?v=S2GqQ4gJAH0"
+          },
+          {
+            "title": "Visit the Dedicated Vibe Coding Roadmap",
+            "url": "https://roadmap.sh/vibe-coding"
+          },
+          {
+            "title": "What is vibe coding?",
+            "url": "https://www.ibm.com/think/topics/vibe-coding"
+          },
+          {
+            "title": "How AI is transforming work at Anthropic",
+            "url": "https://www.anthropic.com/research/how-ai-is-transforming-work-at-anthropic"
+          },
+          {
+            "title": "AI Systems vs Traditional Coding",
+            "url": "https://www.youtube.com/watch?v=P7lryCIvxgA"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: AI-Assisted Programming",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: How to Become an Expert in AI-Assisted Coding",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Visit the Dedicated Vibe Coding Roadmap",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: What is vibe coding?",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 2",
+        "practiceInterview": false
+      },
+      {
+        "week": 3,
+        "theme": "Week 3 — Advanced Topics",
+        "goal": "Master Angular",
+        "topics": [
+          "Angular"
+        ],
+        "resources": [
+          {
+            "title": "Visit Dedicated Angular Roadmap",
+            "url": "https://roadmap.sh/angular"
+          },
+          {
+            "title": "Getting started with Angular",
+            "url": "https://angular.dev/tutorials/learn-angular"
+          },
+          {
+            "title": "Angular for Beginners Course",
+            "url": "https://www.youtube.com/watch?v=3qBXWUpoPHo"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Visit Dedicated Angular Roadmap",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Getting started with Angular",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 3",
+        "practiceInterview": true
+      }
+    ],
+    "Intermediate": [
+      {
+        "week": 1,
+        "theme": "Week 1 — Angular",
+        "goal": "Master Angular, Anthropic",
+        "topics": [
+          "Angular",
+          "Anthropic"
+        ],
+        "resources": [
+          {
+            "title": "Visit Dedicated Angular Roadmap",
+            "url": "https://roadmap.sh/angular"
+          },
+          {
+            "title": "Getting started with Angular",
+            "url": "https://angular.dev/tutorials/learn-angular"
+          },
+          {
+            "title": "Angular for Beginners Course",
+            "url": "https://www.youtube.com/watch?v=3qBXWUpoPHo"
+          },
+          {
+            "title": "Anthropic",
+            "url": "https://www.anthropic.com/"
+          },
+          {
+            "title": "Anthropic Academy",
+            "url": "https://www.anthropic.com/learn"
+          },
+          {
+            "title": "Anthropic Tutorials",
+            "url": "https://claude.com/resources/tutorials"
+          },
+          {
+            "title": "Anthropic: What We Know About the Company Behind Claude AI",
+            "url": "https://builtin.com/articles/anthropic"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Visit Dedicated Angular Roadmap",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Getting started with Angular",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Anthropic",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Anthropic Academy",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 1",
+        "practiceInterview": false
+      },
+      {
+        "week": 2,
+        "theme": "Week 2 — Antigravity",
+        "goal": "Master Antigravity, Apollo",
+        "topics": [
+          "Antigravity",
+          "Apollo"
+        ],
+        "resources": [
+          {
+            "title": "Google Antigravity",
+            "url": "https://antigravity.google/"
+          },
+          {
+            "title": "Getting Started with Google Antigravity",
+            "url": "https://codelabs.developers.google.com/getting-started-google-antigravity#0"
+          },
+          {
+            "title": "Hands-On With Antigravity: Google’s Newest AI Coding Experiment",
+            "url": "https://thenewstack.io/hands-on-with-antigravity-googles-newest-ai-coding-experiment/"
+          },
+          {
+            "title": "Welcome to Google Antigravity 🚀",
+            "url": "https://www.youtube.com/watch?v=SVCBA-pBgt0"
+          },
+          {
+            "title": "Visit Dedicated GraphQL Roadmap",
+            "url": "https://roadmap.sh/graphql"
+          },
+          {
+            "title": "Apollo Website",
+            "url": "https://www.apollographql.com"
+          },
+          {
+            "title": "Apollo Docs",
+            "url": "https://www.apollographql.com/docs/"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Google Antigravity",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Getting Started with Google Antigravity",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Visit Dedicated GraphQL Roadmap",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Apollo Website",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 2",
+        "practiceInterview": false
+      },
+      {
+        "week": 3,
+        "theme": "Week 3 — Advanced Topics",
+        "goal": "Master AI Applications in Frontend Development",
+        "topics": [
+          "AI Applications in Frontend Development"
+        ],
+        "resources": [
+          {
+            "title": "AI in software development",
+            "url": "https://www.ibm.com/think/topics/ai-in-software-development"
+          },
+          {
+            "title": "AI in software development: How to use it, benefits, and key trends",
+            "url": "https://appfire.com/resources/blog/ai-in-software-development"
+          },
+          {
+            "title": "AI-Assisted Software Development: A Comprehensive Guide with Practical Prompts (Part 1/3)",
+            "url": "https://aalapdavjekar.medium.com/ai-assisted-software-development-a-comprehensive-guide-with-practical-prompts-part-1-3-989a529908e0"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: AI in software development",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: AI in software development: How to use it, benefits, and key trends",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 3",
+        "practiceInterview": true
+      }
+    ],
+    "Experienced": [
+      {
+        "week": 1,
+        "theme": "Week 1 — Astro",
+        "goal": "Master Astro, Astro",
+        "topics": [
+          "Astro",
+          "Astro"
+        ],
+        "resources": [
+          {
+            "title": "Astro Web Framework Crash Course",
+            "url": "https://www.youtube.com/watch?v=e-hTm5VmofI"
+          },
+          {
+            "title": "Getting Started with Astro",
+            "url": "https://docs.astro.build/en/getting-started/"
+          },
+          {
+            "title": "What is Astro?",
+            "url": "https://www.contentful.com/blog/what-is-astro/"
+          },
+          {
+            "title": "Astro Web Framework Crash Course",
+            "url": "https://www.youtube.com/watch?v=e-hTm5VmofI"
+          },
+          {
+            "title": "Astro Website",
+            "url": "https://astro.build/"
+          },
+          {
+            "title": "What is Astro?",
+            "url": "https://www.contentful.com/blog/what-is-astro/"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Astro Web Framework Crash Course",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Getting Started with Astro",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Astro Web Framework Crash Course",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Astro Website",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 1",
+        "practiceInterview": false
+      },
+      {
+        "week": 2,
+        "theme": "Week 2 — Authentication Strategies",
+        "goal": "Master Authentication Strategies, Biome",
+        "topics": [
+          "Authentication Strategies",
+          "Biome"
+        ],
+        "resources": [
+          {
+            "title": "Basic Authentication",
+            "url": "https://roadmap.sh/guides/basic-authentication"
+          },
+          {
+            "title": "Session Based Authentication",
+            "url": "https://roadmap.sh/guides/session-based-authentication-visually-explained"
+          },
+          {
+            "title": "Token Based Authentication",
+            "url": "https://roadmap.sh/guides/token-authentication"
+          },
+          {
+            "title": "JWT Authentication",
+            "url": "https://roadmap.sh/guides/jwt-authentication"
+          },
+          {
+            "title": "OAuth",
+            "url": "https://roadmap.sh/guides/oauth"
+          },
+          {
+            "title": "SSO - Single Sign On",
+            "url": "https://roadmap.sh/guides/sso"
+          },
+          {
+            "title": "Biome",
+            "url": "https://biomejs.dev/"
+          },
+          {
+            "title": "biome",
+            "url": "https://github.com/biomejs/biome"
+          },
+          {
+            "title": "Biome: The All-in-One Toolchain for Modern Frontend Projects",
+            "url": "https://blog.openreplay.com/biome-toolchain-modern-frontend-projects/"
+          },
+          {
+            "title": "The EASIEST Way To Switch to Biome",
+            "url": "https://www.youtube.com/watch?v=lEkXbneUnWg"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Basic Authentication",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Session Based Authentication",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Biome",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: biome",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 2",
+        "practiceInterview": false
+      },
+      {
+        "week": 3,
+        "theme": "Week 3 — Advanced Topics",
+        "goal": "Master Browsers",
+        "topics": [
+          "Browsers"
+        ],
+        "resources": [
+          {
+            "title": "How Browsers Work",
+            "url": "https://www.ramotion.com/blog/what-is-web-browser/"
+          },
+          {
+            "title": "Populating the Page: How Browsers Work",
+            "url": "https://developer.mozilla.org/en-US/docs/Web/Performance/How_browsers_work"
+          },
+          {
+            "title": "How Do Web Browsers Work?",
+            "url": "https://www.youtube.com/watch?v=5rLFYtXHo9s"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: How Browsers Work",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Populating the Page: How Browsers Work",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 3",
+        "practiceInterview": true
+      }
+    ]
+  },
+  "Backend Developer": {
+    "Beginner": [
+      {
+        "week": 1,
+        "theme": "Week 1 — ACID",
+        "goal": "Master ACID, AI Agents",
+        "topics": [
+          "ACID",
+          "AI Agents"
+        ],
+        "resources": [
+          {
+            "title": "PostgreSQL Tutorial on Transactions",
+            "url": "https://www.postgresql.org/docs/current/tutorial-transactions.html"
+          },
+          {
+            "title": "MySQL InnoDB and the ACID Model",
+            "url": "https://dev.mysql.com/doc/refman/8.0/en/mysql-acid.html"
+          },
+          {
+            "title": "What is an ACID Compliant Database?",
+            "url": "https://retool.com/blog/whats-an-acid-compliant-database/"
+          },
+          {
+            "title": "Database System Concepts - Silberschatz, Korth, Sudarshan",
+            "url": "https://db-book.com/"
+          },
+          {
+            "title": "ACID Explained: Atomic, Consistent, Isolated & Durable",
+            "url": "https://www.youtube.com/watch?v=yaQ5YMWkxq4"
+          },
+          {
+            "title": "Visit the Dedicated AI Agents Roadmap",
+            "url": "https://roadmap.sh/ai-agents"
+          },
+          {
+            "title": "What are AI Agents? - IBM",
+            "url": "https://www.ibm.com/think/topics/ai-agents"
+          },
+          {
+            "title": "What are AI Agents?",
+            "url": "https://www.youtube.com/watch?v=F8NKVhkZZWI"
+          },
+          {
+            "title": "From Zero to Your First AI Agent in 25 Minutes (No Coding)",
+            "url": "https://www.youtube.com/watch?v=EH5jx5qPabU"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: PostgreSQL Tutorial on Transactions",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: MySQL InnoDB and the ACID Model",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Visit the Dedicated AI Agents Roadmap",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: What are AI Agents? - IBM",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 1",
+        "practiceInterview": false
+      },
+      {
+        "week": 2,
+        "theme": "Week 2 — AI-Assisted Coding",
+        "goal": "Master AI-Assisted Coding, AI vs. Traditional Software Development",
+        "topics": [
+          "AI-Assisted Coding",
+          "AI vs. Traditional Software Development"
+        ],
+        "resources": [
+          {
+            "title": "Visit the Dedicated Vibe Coding Roadmap",
+            "url": "https://roadmap.sh/vibe-coding"
+          },
+          {
+            "title": "How to Become an Expert in AI-Assisted Coding – A Handbook for Developers",
+            "url": "https://www.freecodecamp.org/news/how-to-become-an-expert-in-ai-assisted-coding-a-handbook-for-developers/"
+          },
+          {
+            "title": "The 10 Best Vibe Coding Tools in 2026: Our Choices",
+            "url": "https://roadmap.sh/vibe-coding/best-tools"
+          },
+          {
+            "title": "Everything You Need to Know About Coding with AI // NOT vibe coding",
+            "url": "https://www.youtube.com/watch?v=5fhcklZe-qE"
+          },
+          {
+            "title": "Visit the Dedicated Vibe Coding Roamdap",
+            "url": "https://roadmap.sh/vibe-coding"
+          },
+          {
+            "title": "What is vibe coding?",
+            "url": "https://www.ibm.com/think/topics/vibe-coding"
+          },
+          {
+            "title": "How AI is transforming work at Anthropic",
+            "url": "https://www.anthropic.com/research/how-ai-is-transforming-work-at-anthropic"
+          },
+          {
+            "title": "AI Systems vs Traditional Coding",
+            "url": "https://www.youtube.com/watch?v=P7lryCIvxgA"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Visit the Dedicated Vibe Coding Roadmap",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: How to Become an Expert in AI-Assisted Coding – A Handbook for Developers",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Visit the Dedicated Vibe Coding Roamdap",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: What is vibe coding?",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 2",
+        "practiceInterview": false
+      },
+      {
+        "week": 3,
+        "theme": "Week 3 — Advanced Topics",
+        "goal": "Master Anthropic",
+        "topics": [
+          "Anthropic"
+        ],
+        "resources": [
+          {
+            "title": "Visit the Dedicated Claude Code Roamdap",
+            "url": "https://roadmap.sh/claude-code"
+          },
+          {
+            "title": "Anthropic",
+            "url": "https://www.anthropic.com/"
+          },
+          {
+            "title": "Claude Tutorials",
+            "url": "https://claude.com/resources/tutorials"
+          },
+          {
+            "title": "Anthropic: What We Know About the Company Behind Claude AI",
+            "url": "https://builtin.com/articles/anthropic"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Visit the Dedicated Claude Code Roamdap",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Anthropic",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 3",
+        "practiceInterview": true
+      }
+    ],
+    "Intermediate": [
+      {
+        "week": 1,
+        "theme": "Week 1 — Antigravity",
+        "goal": "Master Antigravity, Apache",
+        "topics": [
+          "Antigravity",
+          "Apache"
+        ],
+        "resources": [
+          {
+            "title": "Google Antigravity",
+            "url": "https://antigravity.google/"
+          },
+          {
+            "title": "Getting Started with Google Antigravity",
+            "url": "https://codelabs.developers.google.com/getting-started-google-antigravity#0"
+          },
+          {
+            "title": "Hands-On With Antigravity: Google’s Newest AI Coding Experiment",
+            "url": "https://thenewstack.io/hands-on-with-antigravity-googles-newest-ai-coding-experiment/"
+          },
+          {
+            "title": "Antigravity + Stitch MCP: AI Agents That Build Complete Websites",
+            "url": "https://www.youtube.com/watch?v=7wa4Ey_tCCE"
+          },
+          {
+            "title": "Apache Server",
+            "url": "https://httpd.apache.org/"
+          },
+          {
+            "title": "Apache Server Documentation",
+            "url": "https://httpd.apache.org/docs/2.4/"
+          },
+          {
+            "title": "What is Apache Web Server?",
+            "url": "https://www.youtube.com/watch?v=kaaenHXO4t4"
+          },
+          {
+            "title": "Apache vs NGINX",
+            "url": "https://www.youtube.com/watch?v=9nyiY-psbMs"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Google Antigravity",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Getting Started with Google Antigravity",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Apache Server",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Apache Server Documentation",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 1",
+        "practiceInterview": false
+      },
+      {
+        "week": 2,
+        "theme": "Week 2 — AI Applications in Software Development",
+        "goal": "Master AI Applications in Software Development, Architectural Patterns",
+        "topics": [
+          "AI Applications in Software Development",
+          "Architectural Patterns"
+        ],
+        "resources": [
+          {
+            "title": "AI in software development",
+            "url": "https://www.ibm.com/think/topics/ai-in-software-development"
+          },
+          {
+            "title": "AI in software development: How to use it, benefits, and key trends",
+            "url": "https://appfire.com/resources/blog/ai-in-software-development"
+          },
+          {
+            "title": "AI-Assisted Software Development: A Comprehensive Guide with Practical Prompts (Part 1/3)",
+            "url": "https://aalapdavjekar.medium.com/ai-assisted-software-development-a-comprehensive-guide-with-practical-prompts-part-1-3-989a529908e0"
+          },
+          {
+            "title": "14 Architectural Patterns to know - Red Hat",
+            "url": "https://www.redhat.com/architect/14-software-architecture-patterns"
+          },
+          {
+            "title": "10 Common Software Architectural Patterns in a nutshell",
+            "url": "https://towardsdatascience.com/10-common-software-architectural-patterns-in-a-nutshell-a0b47a1e9013"
+          },
+          {
+            "title": "Software Architecture Patterns - O'Reilly",
+            "url": "https://www.oreilly.com/library/view/software-architecture-patterns/9781491971437/"
+          },
+          {
+            "title": "10 Architecture Patterns Used In Enterprise Software Development Today",
+            "url": "https://www.youtube.com/watch?v=BrT3AO8bVQY"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: AI in software development",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: AI in software development: How to use it, benefits, and key trends",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: 14 Architectural Patterns to know - Red Hat",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: 10 Common Software Architectural Patterns in a nutshell",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 2",
+        "practiceInterview": false
+      },
+      {
+        "week": 3,
+        "theme": "Week 3 — Advanced Topics",
+        "goal": "Master Authentication",
+        "topics": [
+          "Authentication"
+        ],
+        "resources": [
+          {
+            "title": "Basic Authentication",
+            "url": "https://roadmap.sh/guides/basic-authentication"
+          },
+          {
+            "title": "Session Based Authentication",
+            "url": "https://roadmap.sh/guides/session-based-authentication"
+          },
+          {
+            "title": "Token Based Authentication",
+            "url": "https://roadmap.sh/guides/token-authentication"
+          },
+          {
+            "title": "JWT Authentication",
+            "url": "https://roadmap.sh/guides/jwt-authentication"
+          },
+          {
+            "title": "OAuth - Open Authorization",
+            "url": "https://roadmap.sh/guides/oauth"
+          },
+          {
+            "title": "SSO - Single Sign On",
+            "url": "https://roadmap.sh/guides/sso"
+          },
+          {
+            "title": "Broken Authentication: Hands-on Exercise",
+            "url": "https://ransomleak.com/exercises/broken-user-authentication/"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Basic Authentication",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Session Based Authentication",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 3",
+        "practiceInterview": true
+      }
+    ],
+    "Experienced": [
+      {
+        "week": 1,
+        "theme": "Week 1 — AWS Neptune",
+        "goal": "Master AWS Neptune, Backpressure",
+        "topics": [
+          "AWS Neptune",
+          "Backpressure"
+        ],
+        "resources": [
+          {
+            "title": "AWS Neptune",
+            "url": "https://aws.amazon.com/neptune/"
+          },
+          {
+            "title": "Setting Up Amazon Neptune Graph Database",
+            "url": "https://cliffordedsouza.medium.com/setting-up-amazon-neptune-graph-database-2b73512a7388"
+          },
+          {
+            "title": "Getting Started with Neptune Serverless",
+            "url": "https://www.youtube.com/watch?v=b04-jjM9t4g"
+          },
+          {
+            "title": "Awesome Architecture: Backpressure",
+            "url": "https://awesome-architecture.com/back-pressure/"
+          },
+          {
+            "title": "Backpressure explained — the flow of data through software",
+            "url": "https://medium.com/@jayphelps/backpressure-explained-the-flow-of-data-through-software-2350b3e77ce7"
+          },
+          {
+            "title": "Handling Backpressure in Node.js Streams",
+            "url": "https://nodejs.org/learn/modules/backpressuring-in-streams"
+          },
+          {
+            "title": "What is Back Pressure",
+            "url": "https://www.youtube.com/watch?v=viTGm_cV7lE"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: AWS Neptune",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Setting Up Amazon Neptune Graph Database",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Awesome Architecture: Backpressure",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Backpressure explained — the flow of data through software",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 1",
+        "practiceInterview": false
+      },
+      {
+        "week": 2,
+        "theme": "Week 2 — Basic authentication",
+        "goal": "Master Basic authentication, Bcrypt",
+        "topics": [
+          "Basic authentication",
+          "Bcrypt"
+        ],
+        "resources": [
+          {
+            "title": "HTTP Basic Authentication",
+            "url": "https://roadmap.sh/guides/http-basic-authentication"
+          },
+          {
+            "title": "Basic Authentication in 5 minutes",
+            "url": "https://www.youtube.com/watch?v=rhi1eIjSbvk"
+          },
+          {
+            "title": "Illustrated HTTP Basic Authentication",
+            "url": "https://www.youtube.com/watch?v=mwccHwUn7Gc"
+          },
+          {
+            "title": "bcrypt for Node.js",
+            "url": "https://github.com/kelektiv/node.bcrypt.js"
+          },
+          {
+            "title": "Understanding bcrypt",
+            "url": "https://auth0.com/blog/hashing-in-action-understanding-bcrypt/"
+          },
+          {
+            "title": "bcrypt explained",
+            "url": "https://www.youtube.com/watch?v=AzA_LTDoFqY"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: HTTP Basic Authentication",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Basic Authentication in 5 minutes",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: bcrypt for Node.js",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Understanding bcrypt",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 2",
+        "practiceInterview": false
+      },
+      {
+        "week": 3,
+        "theme": "Week 3 — Advanced Topics",
+        "goal": "Master Browsers",
+        "topics": [
+          "Browsers"
+        ],
+        "resources": [
+          {
+            "title": "How Browsers Work",
+            "url": "https://www.ramotion.com/blog/what-is-web-browser/"
+          },
+          {
+            "title": "Populating the Page: How Browsers Work",
+            "url": "https://developer.mozilla.org/en-US/docs/Web/Performance/How_browsers_work"
+          },
+          {
+            "title": "How Do Web Browsers Work?",
+            "url": "https://www.youtube.com/watch?v=5rLFYtXHo9s"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: How Browsers Work",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Populating the Page: How Browsers Work",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 3",
+        "practiceInterview": true
+      }
+    ]
+  },
+  "Cloud Engineer": {
+    "Beginner": [
+      {
+        "week": 1,
+        "theme": "Week 1 — Alibaba Cloud",
+        "goal": "Master Alibaba Cloud, Ansible",
+        "topics": [
+          "Alibaba Cloud",
+          "Ansible"
+        ],
+        "resources": [
+          {
+            "title": "Alibaba Cloud",
+            "url": "https://www.alibabacloud.com/"
+          },
+          {
+            "title": "Getting Started with Alibaba Cloud",
+            "url": "https://www.alibabacloud.com/getting-started"
+          },
+          {
+            "title": "Ansible Full Course for Beginners",
+            "url": "https://www.youtube.com/watch?v=9Ua2b06oAr4"
+          },
+          {
+            "title": "Ansible Website",
+            "url": "https://www.ansible.com/"
+          },
+          {
+            "title": "Ansible in 100 Seconds",
+            "url": "https://www.youtube.com/watch?v=xRMPKQweySE"
+          },
+          {
+            "title": "Ansible Full Course to Zero to Hero",
+            "url": "https://www.youtube.com/watch?v=GROqwFFLl3s"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Alibaba Cloud",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Getting Started with Alibaba Cloud",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Ansible Full Course for Beginners",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Ansible Website",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 1",
+        "practiceInterview": false
+      },
+      {
+        "week": 2,
+        "theme": "Week 2 — Apache",
+        "goal": "Master Apache, ArgoCD",
+        "topics": [
+          "Apache",
+          "ArgoCD"
+        ],
+        "resources": [
+          {
+            "title": "Apache Server Website",
+            "url": "https://httpd.apache.org/"
+          },
+          {
+            "title": "What is Apache Web Server?",
+            "url": "https://www.youtube.com/watch?v=kaaenHXO4t4"
+          },
+          {
+            "title": "Apache Web Server Setup on Ubuntu 22.04 (with SSL)",
+            "url": "https://www.youtube.com/watch?v=VXSgEvZKp-8"
+          },
+          {
+            "title": "Argo CD - Argo Project",
+            "url": "https://argo-cd.readthedocs.io/en/stable/"
+          },
+          {
+            "title": "ArgoCD Tutorial for Beginners",
+            "url": "https://www.youtube.com/watch?v=MeU5_k9ssrs"
+          },
+          {
+            "title": "What is ArgoCD",
+            "url": "https://www.youtube.com/watch?v=p-kAqxuJNik"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Apache Server Website",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: What is Apache Web Server?",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Argo CD - Argo Project",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: ArgoCD Tutorial for Beginners",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 2",
+        "practiceInterview": false
+      },
+      {
+        "week": 3,
+        "theme": "Week 3 — Advanced Topics",
+        "goal": "Master Artifact Management",
+        "topics": [
+          "Artifact Management"
+        ],
+        "resources": [
+          {
+            "title": "What are Artifacts - Oracle",
+            "url": "https://docs.oracle.com/en-us/iaas/Content/devops/using/artifacts.htm"
+          },
+          {
+            "title": "What is an Artifact - Atlassian",
+            "url": "https://support.atlassian.com/bitbucket-cloud/docs/use-artifacts-in-steps/"
+          },
+          {
+            "title": "Learn about GitLab Artifacts and Cache",
+            "url": "https://www.youtube.com/watch?v=gEfsCU-Sj1g"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: What are Artifacts - Oracle",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: What is an Artifact - Atlassian",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 3",
+        "practiceInterview": true
+      }
+    ],
+    "Intermediate": [
+      {
+        "week": 1,
+        "theme": "Week 1 — Artifactory",
+        "goal": "Master Artifactory, Availability",
+        "topics": [
+          "Artifactory",
+          "Availability"
+        ],
+        "resources": [
+          {
+            "title": "Artifactory Website",
+            "url": "https://jfrog.com/artifactory/"
+          },
+          {
+            "title": "Key Features of JFrog Artifactory in 5 Minutes",
+            "url": "https://www.youtube.com/watch?v=LoTyOSCssvM"
+          },
+          {
+            "title": "Defining Availability, Maintainability and Reliability in SRE",
+            "url": "https://devops.com/defining-availability-maintainability-and-reliability-in-sre/"
+          },
+          {
+            "title": "Techniques for Achieving High Availability",
+            "url": "https://www.sqlservercentral.com/articles/cloud-computing-basics-achieving-high-availability-2"
+          },
+          {
+            "title": "SLIs, SLOs, SLAs, oh my! (class SRE implements DevOps)",
+            "url": "https://www.youtube.com/watch?v=tEylFyxbDLE"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Artifactory Website",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Key Features of JFrog Artifactory in 5 Minutes",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Defining Availability, Maintainability and Reliability in SRE",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Techniques for Achieving High Availability",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 1",
+        "practiceInterview": false
+      },
+      {
+        "week": 2,
+        "theme": "Week 2 — AWS CDK",
+        "goal": "Master AWS CDK, ECS / Fargate",
+        "topics": [
+          "AWS CDK",
+          "ECS / Fargate"
+        ],
+        "resources": [
+          {
+            "title": "AWS CDK Crash Course for Beginners",
+            "url": "https://www.youtube.com/watch?v=D4Asp5g4fp8"
+          },
+          {
+            "title": "AWS CDK",
+            "url": "https://aws.amazon.com/cdk/"
+          },
+          {
+            "title": "AWS CDK Documentation",
+            "url": "https://docs.aws.amazon.com/cdk/index.html"
+          },
+          {
+            "title": "AWS - Fargate Docs",
+            "url": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html"
+          },
+          {
+            "title": "AWS - ECS Docs",
+            "url": "https://docs.aws.amazon.com/ecs/"
+          },
+          {
+            "title": "Amazon ECS: AWS Fargate Overview",
+            "url": "https://www.youtube.com/watch?v=yi22xrvPnPk"
+          },
+          {
+            "title": "AWS ECS Tutorial",
+            "url": "https://www.youtube.com/watch?v=esISkPlnxL0"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: AWS CDK Crash Course for Beginners",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: AWS CDK",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: AWS - Fargate Docs",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: AWS - ECS Docs",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 2",
+        "practiceInterview": false
+      },
+      {
+        "week": 3,
+        "theme": "Week 3 — Advanced Topics",
+        "goal": "Master AWS Lambda",
+        "topics": [
+          "AWS Lambda"
+        ],
+        "resources": [
+          {
+            "title": "AWS Lambda Introduction",
+            "url": "https://docs.aws.amazon.com/lambda/latest/operatorguide/intro.html"
+          },
+          {
+            "title": "AWS Lambda Tutorial: Getting Started with Serverless Computing",
+            "url": "https://www.youtube.com/watch?v=RtiWU1DrMaM"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: AWS Lambda Introduction",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: AWS Lambda Tutorial: Getting Started with Serverless Computing",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 3",
+        "practiceInterview": true
+      }
+    ],
+    "Experienced": [
+      {
+        "week": 1,
+        "theme": "Week 1 — AWS",
+        "goal": "Master AWS, Azure Functions",
+        "topics": [
+          "AWS",
+          "Azure Functions"
+        ],
+        "resources": [
+          {
+            "title": "Visit the Dedicated AWS Roadmap",
+            "url": "https://roadmap.sh/aws"
+          },
+          {
+            "title": "100 hour AWS Complete Course 2024",
+            "url": "https://www.youtube.com/watch?v=zA8guDqfv40"
+          },
+          {
+            "title": "AWS Cloud Essentials",
+            "url": "https://aws.amazon.com/getting-started/cloud-essentials/"
+          },
+          {
+            "title": "Overview of Amazon Web Services",
+            "url": "https://docs.aws.amazon.com/whitepapers/latest/aws-overview/introduction.html"
+          },
+          {
+            "title": "Azure Functions - Serverless Computing",
+            "url": "https://azure.microsoft.com/en-in/products/functions"
+          },
+          {
+            "title": "Azure Functions Overview",
+            "url": "https://learn.microsoft.com/en-us/azure/azure-functions/functions-overview"
+          },
+          {
+            "title": "Getting Started With Azure Functions",
+            "url": "https://www.youtube.com/watch?v=l3beXs3o-0w"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Visit the Dedicated AWS Roadmap",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: 100 hour AWS Complete Course 2024",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Azure Functions - Serverless Computing",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Azure Functions Overview",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 1",
+        "practiceInterview": false
+      },
+      {
+        "week": 2,
+        "theme": "Week 2 — Azure",
+        "goal": "Master Azure, Bash",
+        "topics": [
+          "Azure",
+          "Bash"
+        ],
+        "resources": [
+          {
+            "title": "Azure Website",
+            "url": "https://azure.microsoft.com/en-us/"
+          },
+          {
+            "title": "Microsoft Azure Fundamentals Certification Course (AZ-900)",
+            "url": "https://www.youtube.com/watch?v=5abffC-K40c"
+          },
+          {
+            "title": "Visit the Dedicated Bash/Shell Roadmap",
+            "url": "https://roadmap.sh/shell-bash"
+          },
+          {
+            "title": "Bash Scripting Tutorial for Beginners",
+            "url": "https://www.youtube.com/watch?v=tK9Oc6AEnR4"
+          },
+          {
+            "title": "Interactive Shell Scripting Tutorial",
+            "url": "https://www.learnshell.org/en/Welcome"
+          },
+          {
+            "title": "Bash in 100 Seconds",
+            "url": "https://www.youtube.com/watch?v=I4EWvMFj37g"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Azure Website",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Microsoft Azure Fundamentals Certification Course (AZ-900)",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Visit the Dedicated Bash/Shell Roadmap",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Bash Scripting Tutorial for Beginners",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 2",
+        "practiceInterview": false
+      },
+      {
+        "week": 3,
+        "theme": "Week 3 — Advanced Topics",
+        "goal": "Master Bitbucket",
+        "topics": [
+          "Bitbucket"
+        ],
+        "resources": [
+          {
+            "title": "Bitbucket Website",
+            "url": "https://bitbucket.org"
+          },
+          {
+            "title": "Bitbucket Overview",
+            "url": "https://bitbucket.org/product/guides/getting-started/overview"
+          },
+          {
+            "title": "Bitbucket Tutorial | How to use Bitbucket Cloud",
+            "url": "https://www.youtube.com/watch?v=M44nEyd_5To"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Bitbucket Website",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Bitbucket Overview",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 3",
+        "practiceInterview": true
+      }
+    ]
+  },
+  "Python Developer": {
+    "Beginner": [
+      {
+        "week": 1,
+        "theme": "Week 1 — @ (Matrix Multiplication Operator)",
+        "goal": "Master @ (Matrix Multiplication Operator), AIOHTTP",
+        "topics": [
+          "@ (Matrix Multiplication Operator)",
+          "AIOHTTP"
+        ],
+        "resources": [
+          {
+            "title": "A dedicated infix operator for matrix multiplication",
+            "url": "https://peps.python.org/pep-0465/"
+          },
+          {
+            "title": "Matrix Multiplication in Python: The Complete Decision Guide",
+            "url": "https://roadmap.sh/python-data-analysis/matrix-multiplication"
+          },
+          {
+            "title": "aiohttp docs",
+            "url": "https://docs.aiohttp.org/en/stable/"
+          },
+          {
+            "title": "Creating a RESTful API with Python and aiohttp",
+            "url": "https://tutorialedge.net/python/create-rest-api-python-aiohttp/"
+          },
+          {
+            "title": "Python Asyncio, Requests, Aiohttp | Make faster API Calls",
+            "url": "https://www.youtube.com/watch?v=nFn4_nA_yk8"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: A dedicated infix operator for matrix multiplication",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Matrix Multiplication in Python: The Complete Decision Guide",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: aiohttp docs",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Creating a RESTful API with Python and aiohttp",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 1",
+        "practiceInterview": false
+      },
+      {
+        "week": 2,
+        "theme": "Week 2 — Arrays and Linked lists",
+        "goal": "Master Arrays and Linked lists, Asynchrony",
+        "topics": [
+          "Arrays and Linked lists",
+          "Asynchrony"
+        ],
+        "resources": [
+          {
+            "title": "Arrays in Python",
+            "url": "https://www.edureka.co/blog/arrays-in-python/"
+          },
+          {
+            "title": "Linked Lists vs Python Lists: When to Use Each",
+            "url": "https://roadmap.sh/python/linked-list"
+          },
+          {
+            "title": "Array Data Structure | Illustrated Data Structures",
+            "url": "https://www.youtube.com/watch?v=QJNwK2uJyGs"
+          },
+          {
+            "title": "Linked List Data Structure | Illustrated Data Structures",
+            "url": "https://www.youtube.com/watch?v=odW9FU8jPRQ"
+          },
+          {
+            "title": "Python AsyncIO library",
+            "url": "https://docs.python.org/3/library/asyncio.html"
+          },
+          {
+            "title": "Async IO in Python: A Complete Walkthrough",
+            "url": "https://realpython.com/async-io-python/"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Arrays in Python",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Linked Lists vs Python Lists: When to Use Each",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Python AsyncIO library",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Async IO in Python: A Complete Walkthrough",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 2",
+        "practiceInterview": false
+      },
+      {
+        "week": 3,
+        "theme": "Week 3 — Advanced Topics",
+        "goal": "Master Basic Syntax",
+        "topics": [
+          "Basic Syntax"
+        ],
+        "resources": [
+          {
+            "title": "Python Basics",
+            "url": "https://www.tutorialspoint.com/python/python_basic_syntax.htm"
+          },
+          {
+            "title": "Fix \"Invalid Syntax\" in Python (8 Common Causes)",
+            "url": "https://roadmap.sh/python/invalid-syntax"
+          },
+          {
+            "title": "Python Print New Line: Methods, Examples, and Best Practices",
+            "url": "https://roadmap.sh/python/print-new-line"
+          },
+          {
+            "title": "Python for Beginners - Learn Python in 1 Hour",
+            "url": "https://www.youtube.com/watch?v=kqtD5dpn9C8"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Python Basics",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Fix \"Invalid Syntax\" in Python (8 Common Causes)",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 3",
+        "practiceInterview": true
+      }
+    ],
+    "Intermediate": [
+      {
+        "week": 1,
+        "theme": "Week 1 — Binary Search Trees",
+        "goal": "Master Binary Search Trees, black",
+        "topics": [
+          "Binary Search Trees",
+          "black"
+        ],
+        "resources": [
+          {
+            "title": "Binary search in Python 101: Implementation and use cases",
+            "url": "https://roadmap.sh/python/binary-search"
+          },
+          {
+            "title": "How to Implement Binary Search Tree in Python",
+            "url": "https://web.archive.org/web/20230601181553/https://www.section.io/engineering-education/implementing-binary-search-tree-using-python/"
+          },
+          {
+            "title": "Binary Search Tree in Python",
+            "url": "https://www.pythonforbeginners.com/data-structures/binary-search-tree-in-python"
+          },
+          {
+            "title": "Tree Data Structure | Illustrated Data Structures",
+            "url": "https://www.youtube.com/watch?v=S2W3SXGPVyU"
+          },
+          {
+            "title": "Getting Started with Black",
+            "url": "https://black.readthedocs.io/en/stable/getting_started.html"
+          },
+          {
+            "title": "Black Documentation",
+            "url": "https://black.readthedocs.io/en/stable/"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Binary search in Python 101: Implementation and use cases",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: How to Implement Binary Search Tree in Python",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Getting Started with Black",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Black Documentation",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 1",
+        "practiceInterview": false
+      },
+      {
+        "week": 2,
+        "theme": "Week 2 — Builtin Modules",
+        "goal": "Master Builtin Modules, Classes",
+        "topics": [
+          "Builtin Modules",
+          "Classes"
+        ],
+        "resources": [
+          {
+            "title": "Python Module Index",
+            "url": "https://docs.python.org/3/py-modindex.html"
+          },
+          {
+            "title": "Python Modules",
+            "url": "https://www.digitalocean.com/community/tutorials/python-modules"
+          },
+          {
+            "title": "Python - Built-In Modules",
+            "url": "https://www.knowledgehut.com/tutorials/python-tutorial/python-built-in-modules"
+          },
+          {
+            "title": "How to Set Environment Variables in Python (Step-by-Step)",
+            "url": "https://roadmap.sh/python/set-environment-variable"
+          },
+          {
+            "title": "Classes in Python",
+            "url": "https://docs.python.org/3/tutorial/classes.html"
+          },
+          {
+            "title": "Encapsulation in Python: All You Need to Know",
+            "url": "https://roadmap.sh/python/encapsulation"
+          },
+          {
+            "title": "Python OOP Tutorial",
+            "url": "https://www.youtube.com/watch?v=ZDa-Z5JzLYM&list=PL-osiE80TeTsqhIuOqKhwlXsIBIdSeYtc"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Python Module Index",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Python Modules",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Classes in Python",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Encapsulation in Python: All You Need to Know",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 2",
+        "practiceInterview": false
+      },
+      {
+        "week": 3,
+        "theme": "Week 3 — Advanced Topics",
+        "goal": "Master Code Formatting",
+        "topics": [
+          "Code Formatting"
+        ],
+        "resources": [
+          {
+            "title": "Pylint for Python",
+            "url": "https://www.pylint.org/"
+          },
+          {
+            "title": "Black Documentation",
+            "url": "https://black.readthedocs.io/en/stable/"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Pylint for Python",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Black Documentation",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 3",
+        "practiceInterview": true
+      }
+    ],
+    "Experienced": [
+      {
+        "week": 1,
+        "theme": "Week 1 — Docstrings and Comments",
+        "goal": "Master Docstrings and Comments, Common Packages and Modules",
+        "topics": [
+          "Docstrings and Comments",
+          "Common Packages and Modules"
+        ],
+        "resources": [
+          {
+            "title": "Docstring Conventions",
+            "url": "https://peps.python.org/pep-0257/"
+          },
+          {
+            "title": "Python Comments",
+            "url": "https://www.w3schools.com/python/python_comments.asp"
+          },
+          {
+            "title": "requests",
+            "url": "https://docs.python-requests.org/en/latest/"
+          },
+          {
+            "title": "pathlib",
+            "url": "https://docs.python.org/3/library/pathlib.html"
+          },
+          {
+            "title": "asyncio",
+            "url": "https://docs.python.org/3/library/asyncio.html"
+          },
+          {
+            "title": "dataclasses",
+            "url": "https://docs.python.org/3/library/dataclasses.html"
+          },
+          {
+            "title": "python-dotenv",
+            "url": "https://pypi.org/project/python-dotenv/"
+          },
+          {
+            "title": "numpy",
+            "url": "https://numpy.org/doc/stable/"
+          },
+          {
+            "title": "pandas",
+            "url": "https://pandas.pydata.org/docs/"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Docstring Conventions",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Python Comments",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: requests",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: pathlib",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 1",
+        "practiceInterview": false
+      },
+      {
+        "week": 2,
+        "theme": "Week 2 — Concurrency",
+        "goal": "Master Concurrency, Conda",
+        "topics": [
+          "Concurrency",
+          "Conda"
+        ],
+        "resources": [
+          {
+            "title": "Concurrent Execution",
+            "url": "https://docs.python.org/3/library/concurrency.html"
+          },
+          {
+            "title": "Python Concurrency",
+            "url": "https://realpython.com/python-concurrency/"
+          },
+          {
+            "title": "Python Multithreading: The Most Practical Intro",
+            "url": "https://roadmap.sh/python/multithreading"
+          },
+          {
+            "title": "Conda Documentation",
+            "url": "https://docs.conda.io/en/latest/"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Concurrent Execution",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Python Concurrency",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Conda Documentation",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 2",
+        "practiceInterview": false
+      },
+      {
+        "week": 3,
+        "theme": "Week 3 — Advanced Topics",
+        "goal": "Master Conditionals",
+        "topics": [
+          "Conditionals"
+        ],
+        "resources": [
+          {
+            "title": "Conditional Statements in Python",
+            "url": "https://realpython.com/python-conditional-statements/"
+          },
+          {
+            "title": "Python Switch Statement 101: Match-case and alternatives",
+            "url": "https://roadmap.sh/python/switch"
+          },
+          {
+            "title": "How to Use a Match Statement in Python",
+            "url": "https://learnpython.com/blog/python-match-case-statement/"
+          },
+          {
+            "title": "Python not Operator: The Complete Guide to Logical Negation",
+            "url": "https://roadmap.sh/python/not-operator"
+          },
+          {
+            "title": "The or Operator in Python: Complete Guide with Examples",
+            "url": "https://roadmap.sh/python/or"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Conditional Statements in Python",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Python Switch Statement 101: Match-case and alternatives",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 3",
+        "practiceInterview": true
+      }
+    ]
+  },
+  "Java Developer": {
+    "Beginner": [
+      {
+        "week": 1,
+        "theme": "Week 1 — Abstraction",
+        "goal": "Master Abstraction, Access Specifiers",
+        "topics": [
+          "Abstraction",
+          "Access Specifiers"
+        ],
+        "resources": [
+          {
+            "title": "Java Abstract Classes",
+            "url": "https://jenkov.com/tutorials/java/abstract-classes.html"
+          },
+          {
+            "title": "Java Interfaces vs. Abstract Classes",
+            "url": "https://jenkov.com/tutorials/java/interfaces-vs-abstract-classes.html"
+          },
+          {
+            "title": "Java Access Modifiers",
+            "url": "https://jenkov.com/tutorials/java/access-modifiers.html"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Java Abstract Classes",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Java Interfaces vs. Abstract Classes",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Java Access Modifiers",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 1",
+        "practiceInterview": false
+      },
+      {
+        "week": 2,
+        "theme": "Week 2 — Annotations",
+        "goal": "Master Annotations, Array vs ArrayList",
+        "topics": [
+          "Annotations",
+          "Array vs ArrayList"
+        ],
+        "resources": [
+          {
+            "title": "Java Annotations Tutorial",
+            "url": "https://jenkov.com/tutorials/java/annotations.html"
+          },
+          {
+            "title": "Java Arrays",
+            "url": "https://jenkov.com/tutorials/java/arrays.html"
+          },
+          {
+            "title": "Java ArrayLists",
+            "url": "https://jenkov.com/tutorials/java-collections/list.html"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Java Annotations Tutorial",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Java Arrays",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Java ArrayLists",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 2",
+        "practiceInterview": false
+      },
+      {
+        "week": 3,
+        "theme": "Week 3 — Advanced Topics",
+        "goal": "Master Arrays",
+        "topics": [
+          "Arrays"
+        ],
+        "resources": [
+          {
+            "title": "Java Arrays",
+            "url": "https://jenkov.com/tutorials/java/arrays.html"
+          },
+          {
+            "title": "Java Arrays Tutorial",
+            "url": "https://www.youtube.com/watch?v=ei_4Nt7XWOw"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Java Arrays",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Java Arrays Tutorial",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 3",
+        "practiceInterview": true
+      }
+    ],
+    "Intermediate": [
+      {
+        "week": 1,
+        "theme": "Week 1 — Attributes and Methods",
+        "goal": "Master Attributes and Methods, Basic Syntax",
+        "topics": [
+          "Attributes and Methods",
+          "Basic Syntax"
+        ],
+        "resources": [
+          {
+            "title": "Java Classes",
+            "url": "https://jenkov.com/tutorials/java/classes.html"
+          },
+          {
+            "title": "Java Methods",
+            "url": "https://jenkov.com/tutorials/java/methods.html"
+          },
+          {
+            "title": "Java Properties",
+            "url": "https://jenkov.com/tutorials/java-collections/properties.html"
+          },
+          {
+            "title": "Java Language Basics",
+            "url": "https://dev.java/learn/language-basics"
+          },
+          {
+            "title": "Java - Basic Syntax",
+            "url": "https://www.youtube.com/watch?v=81piDKqPxjQ"
+          },
+          {
+            "title": "Java Tutorial for Beginners",
+            "url": "https://www.youtube.com/watch?v=RRubcjpTkks"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Java Classes",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Java Methods",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Java Language Basics",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Java - Basic Syntax",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 1",
+        "practiceInterview": false
+      },
+      {
+        "week": 2,
+        "theme": "Week 2 — Basics of OOP",
+        "goal": "Master Basics of OOP, Bazel",
+        "topics": [
+          "Basics of OOP",
+          "Bazel"
+        ],
+        "resources": [
+          {
+            "title": "Java Classes and Objects",
+            "url": "https://jenkov.com/tutorials/java/classes.html"
+          },
+          {
+            "title": "Getting started with Bazel",
+            "url": "https://bazel.build/start"
+          },
+          {
+            "title": "Build Java Projects with Bazel",
+            "url": "https://earthly.dev/blog/build-java-projects-with-bazel/"
+          },
+          {
+            "title": "Introduction to the Bazel Build Tool",
+            "url": "https://www.baeldung.com/bazel-build-tool"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Java Classes and Objects",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Getting started with Bazel",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Build Java Projects with Bazel",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 2",
+        "practiceInterview": false
+      },
+      {
+        "week": 3,
+        "theme": "Week 3 — Advanced Topics",
+        "goal": "Master Classes and Objects",
+        "topics": [
+          "Classes and Objects"
+        ],
+        "resources": [
+          {
+            "title": "Java Class and Objects",
+            "url": "https://www.programiz.com/java-programming/class-objects"
+          },
+          {
+            "title": "Java Classes and Objects",
+            "url": "https://www.youtube.com/watch?v=IUqKuGNasdM"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Java Class and Objects",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Java Classes and Objects",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 3",
+        "practiceInterview": true
+      }
+    ],
+    "Experienced": [
+      {
+        "week": 1,
+        "theme": "Week 1 — Concurrency",
+        "goal": "Master Concurrency, Conditionals",
+        "topics": [
+          "Concurrency",
+          "Conditionals"
+        ],
+        "resources": [
+          {
+            "title": "Java Concurrency and Multithreading Tutorial",
+            "url": "https://jenkov.com/tutorials/java-concurrency/index.html"
+          },
+          {
+            "title": "Java Concurrency in Practice",
+            "url": "https://www.baeldung.com/java-concurrency"
+          },
+          {
+            "title": "What are Conditional statements?",
+            "url": "https://www.educative.io/answers/what-are-conditional-statements-in-programming"
+          },
+          {
+            "title": "Conditionals and Loops in Java",
+            "url": "https://youtu.be/ldYLYRNaucM"
+          },
+          {
+            "title": "Switch Statements + Nested Case in Java",
+            "url": "https://youtu.be/mA23x39DjbI"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Java Concurrency and Multithreading Tutorial",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Java Concurrency in Practice",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: What are Conditional statements?",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Conditionals and Loops in Java",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 1",
+        "practiceInterview": false
+      },
+      {
+        "week": 2,
+        "theme": "Week 2 — Cryptography",
+        "goal": "Master Cryptography, Cucumber JVM",
+        "topics": [
+          "Cryptography",
+          "Cucumber JVM"
+        ],
+        "resources": [
+          {
+            "title": "Java Cryptography Tutorial",
+            "url": "https://jenkov.com/tutorials/java-cryptography/index.html"
+          },
+          {
+            "title": "Cryptography 101 for Java developers",
+            "url": "https://www.youtube.com/watch?v=itmNhVckTPc"
+          },
+          {
+            "title": "Cucumber",
+            "url": "https://cucumber.io/"
+          },
+          {
+            "title": "Cucumber Documentation",
+            "url": "https://cucumber.io/docs/cucumber/"
+          },
+          {
+            "title": "Cucumber-JVM for Java",
+            "url": "https://automationpanda.com/2017/10/24/cucumber-jvm-for-java/"
+          },
+          {
+            "title": "Cucumber-JVM 5 with Enhanced Cucumber Expression",
+            "url": "https://www.youtube.com/watch?v=jCzpxvAJoZM"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Java Cryptography Tutorial",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Cryptography 101 for Java developers",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Cucumber",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Cucumber Documentation",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 2",
+        "practiceInterview": false
+      }
+    ]
+  },
+  "Data Analyst": {
+    "Beginner": [
+      {
+        "week": 1,
+        "theme": "Week 1 — Coding",
+        "goal": "Master Coding, Deep Learning",
+        "topics": [
+          "Coding",
+          "Deep Learning"
+        ],
+        "resources": [
+          {
+            "title": "The Python Tutorial",
+            "url": "https://docs.python.org/3/tutorial/"
+          },
+          {
+            "title": "The R Manuals (CRAN)",
+            "url": "https://cran.r-project.org/manuals.html"
+          },
+          {
+            "title": "Python for Data Science, AI & Development",
+            "url": "https://www.coursera.org/learn/python-for-applied-data-science-ai"
+          },
+          {
+            "title": "Kaggle Learn: Python",
+            "url": "https://www.kaggle.com/learn/python"
+          },
+          {
+            "title": "Introduction to Data Science with Python (Harvard)",
+            "url": "https://pll.harvard.edu/course/introduction-data-science-python"
+          },
+          {
+            "title": "Visit the Dedicated Machine Learning Roadmap",
+            "url": "https://roadmap.sh/machine-learning"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: The Python Tutorial",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: The R Manuals (CRAN)",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Visit the Dedicated Machine Learning Roadmap",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 1",
+        "practiceInterview": false
+      },
+      {
+        "week": 2,
+        "theme": "Week 2 — Econometrics",
+        "goal": "Master Econometrics, Exploratory Data Analysis",
+        "topics": [
+          "Econometrics",
+          "Exploratory Data Analysis"
+        ],
+        "resources": [
+          {
+            "title": "Econometrics (MIT OpenCourseWare)",
+            "url": "https://ocw.mit.edu/courses/14-382-econometrics-spring-2017/"
+          },
+          {
+            "title": "Econometrics: Methods and Applications",
+            "url": "https://www.coursera.org/learn/erasmus-econometrics"
+          },
+          {
+            "title": "Lecture Notes and Short Texts in Econometrics",
+            "url": "https://economicsnetwork.ac.uk/teaching/Lecture%20Notes%20and%20Short%20Texts/Econometrics"
+          },
+          {
+            "title": "pandas User Guide: Essential Basic Functionality",
+            "url": "https://pandas.pydata.org/docs/user_guide/basics.html"
+          },
+          {
+            "title": "Exploratory Data Analysis with Python and Pandas",
+            "url": "https://www.coursera.org/projects/exploratory-data-analysis-python-pandas"
+          },
+          {
+            "title": "Exploratory Data Analysis in Python",
+            "url": "https://towardsdatascience.com/exploratory-data-analysis-in-python-c9a77dfa39ce/"
+          },
+          {
+            "title": "Step-by-Step Exploratory Data Analysis (EDA) using Python",
+            "url": "https://www.analyticsvidhya.com/blog/2022/07/step-by-step-exploratory-data-analysis-eda-using-python/"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Econometrics (MIT OpenCourseWare)",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: Econometrics: Methods and Applications",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: pandas User Guide: Essential Basic Functionality",
+            "estimatedHours": 2
+          },
+          {
+            "day": 4,
+            "task": "Study: Exploratory Data Analysis with Python and Pandas",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 2",
+        "practiceInterview": false
+      },
+      {
+        "week": 3,
+        "theme": "Week 3 — Advanced Topics",
+        "goal": "Master Machine Learning",
+        "topics": [
+          "Machine Learning"
+        ],
+        "resources": [
+          {
+            "title": "Visit the Dedicated Machine Learning Roadmap",
+            "url": "https://roadmap.sh/machine-learning"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Visit the Dedicated Machine Learning Roadmap",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 3",
+        "practiceInterview": true
+      }
+    ],
+    "Intermediate": [
+      {
+        "week": 1,
+        "theme": "Week 1 — Mathematics",
+        "goal": "Master Mathematics, MLOps",
+        "topics": [
+          "Mathematics",
+          "MLOps"
+        ],
+        "resources": [
+          {
+            "title": "Linear Algebra Done Right - Sheldon Axler",
+            "url": "https://linear.axler.net/LADR4e.pdf"
+          },
+          {
+            "title": "Visit the Dedicated MLOps Roadmap",
+            "url": "https://roadmap.sh/mlops"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Linear Algebra Done Right - Sheldon Axler",
+            "estimatedHours": 2
+          },
+          {
+            "day": 3,
+            "task": "Study: Visit the Dedicated MLOps Roadmap",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 1",
+        "practiceInterview": false
+      },
+      {
+        "week": 2,
+        "theme": "Week 2 — Advanced Topics",
+        "goal": "Master Statistics",
+        "topics": [
+          "Statistics"
+        ],
+        "resources": [
+          {
+            "title": "Statistics and Probability (Khan Academy)",
+            "url": "https://www.khanacademy.org/math/statistics-probability"
+          },
+          {
+            "title": "OpenIntro Statistics (free textbook)",
+            "url": "https://www.openintro.org/book/os/"
+          },
+          {
+            "title": "Statistics with Python Specialization",
+            "url": "https://www.coursera.org/specializations/statistics-with-python"
+          },
+          {
+            "title": "StatQuest with Josh Starmer",
+            "url": "https://www.youtube.com/@statquest"
+          }
+        ],
+        "dailyBreakdown": [
+          {
+            "day": 1,
+            "task": "Study: Statistics and Probability (Khan Academy)",
+            "estimatedHours": 2
+          },
+          {
+            "day": 2,
+            "task": "Study: OpenIntro Statistics (free textbook)",
+            "estimatedHours": 2
+          }
+        ],
+        "milestone": "Complete resources for Week 2",
+        "practiceInterview": true
+      }
+    ],
+    "Experienced": []
+  }
+}
