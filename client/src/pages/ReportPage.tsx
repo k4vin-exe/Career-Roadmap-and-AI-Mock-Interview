@@ -79,7 +79,7 @@ function CircularScore({ score, size = 110, label, sublabel, delay = 0 }: Circul
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="rgba(255,255,255,0.06)"
+            stroke="var(--border)"
             strokeWidth={8}
           />
         </svg>
@@ -120,7 +120,7 @@ function ScoreBar({ label, score, delay = 0 }: { label: string; score: number; d
   return (
     <div className="flex items-center gap-3">
       <span className="text-xs text-text-secondary w-32 flex-shrink-0">{label}</span>
-      <div className="flex-1 h-2 rounded-full bg-white/5 overflow-hidden">
+      <div className="flex-1 h-2 rounded-full bg-surface-muted overflow-hidden">
         <motion.div
           className="h-full rounded-full"
           style={{ background: color }}
@@ -152,11 +152,11 @@ function QuestionCard({ q, qs, index }: QuestionCardProps) {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.08 }}
-      className="glass rounded-xl overflow-hidden"
+      className="card shadow-sm rounded-xl overflow-hidden"
     >
       <button
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center gap-3 px-5 py-4 text-left hover:bg-white/3 transition-colors cursor-pointer"
+        className="w-full flex items-center gap-3 px-5 py-4 text-left hover:bg-surface-muted transition-colors cursor-pointer"
       >
         <div
           className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-sm font-bold"
@@ -183,7 +183,7 @@ function QuestionCard({ q, qs, index }: QuestionCardProps) {
             transition={{ duration: 0.25 }}
             className="overflow-hidden"
           >
-            <div className="px-5 pb-5 space-y-2 border-t border-white/5 pt-4">
+            <div className="px-5 pb-5 space-y-2 border-t border-border pt-4">
               <ScoreBar label="Technical Accuracy" score={qs.technicalAccuracy} delay={0} />
               <ScoreBar label="Communication"     score={qs.communication}     delay={0.05} />
               <ScoreBar label="Completeness"      score={qs.completeness}      delay={0.1} />
@@ -250,8 +250,8 @@ export default function ReportPage() {
   if (error || !report) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center gap-6 py-24 px-6">
-        <div className="w-14 h-14 rounded-full bg-error/10 flex items-center justify-center">
-          <AlertCircle size={26} className="text-error" />
+        <div className="w-14 h-14 rounded-full bg-danger-soft flex items-center justify-center">
+          <AlertCircle size={26} className="text-danger" />
         </div>
         <div className="text-center">
           <p className="text-text-primary font-semibold text-lg mb-1">Report unavailable</p>
@@ -260,13 +260,13 @@ export default function ReportPage() {
         <div className="flex gap-3">
           <button
             onClick={loadReport}
-            className="flex items-center gap-2 px-5 py-2.5 bg-accent/10 border border-accent/30 rounded-xl text-accent-light text-sm hover:bg-accent/20 transition-colors cursor-pointer"
+            className="btn btn-primary btn-sm flex items-center gap-2"
           >
             <RotateCcw size={15} /> Retry
           </button>
           <button
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 px-5 py-2.5 glass rounded-xl text-text-secondary text-sm hover:text-text-primary transition-colors cursor-pointer"
+            className="btn btn-ghost btn-sm flex items-center gap-2"
           >
             <ArrowLeft size={15} /> Home
           </button>
@@ -283,7 +283,7 @@ export default function ReportPage() {
   const rColor = readinessColor(report.interviewReadiness);
 
   return (
-    <div className="flex-1 w-full" style={{ background: '#0a0a0f' }}>
+    <div className="flex-1 w-full" style={{ background: 'var(--bg)' }}>
       <div className="max-w-4xl mx-auto px-4 md:px-6 py-10 space-y-8">
 
         {/* ── Back ── */}
@@ -302,7 +302,7 @@ export default function ReportPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass rounded-2xl p-8 text-center relative overflow-hidden"
+          className="card shadow-sm rounded-2xl p-8 text-center relative overflow-hidden"
         >
           {/* Background glow */}
           <div
@@ -354,7 +354,7 @@ export default function ReportPage() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="glass rounded-2xl p-6"
+          className="card shadow-sm rounded-2xl p-6"
         >
           <div className="flex items-center gap-3 mb-4">
             <div className="w-8 h-8 rounded-lg bg-accent-glow flex items-center justify-center">
@@ -372,7 +372,7 @@ export default function ReportPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="glass rounded-2xl p-6"
+            className="card shadow-sm rounded-2xl p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#22c55e15' }}>
@@ -405,7 +405,7 @@ export default function ReportPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35 }}
-            className="glass rounded-2xl p-6"
+            className="card shadow-sm rounded-2xl p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#f59e0b15' }}>
@@ -441,7 +441,7 @@ export default function ReportPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="glass rounded-2xl p-6"
+            className="card shadow-sm rounded-2xl p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#6366f115' }}>
@@ -456,8 +456,7 @@ export default function ReportPage() {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.4 + i * 0.04 }}
-                  className="px-3 py-1 text-xs rounded-lg font-medium"
-                  style={{ background: '#6366f115', border: '1px solid #6366f130', color: '#818cf8' }}
+                  className="badge badge-primary"
                 >
                   {t}
                 </motion.span>
@@ -473,7 +472,7 @@ export default function ReportPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.45 }}
-            className="glass rounded-2xl p-6"
+            className="card shadow-sm rounded-2xl p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#3b82f615' }}>
@@ -488,8 +487,7 @@ export default function ReportPage() {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.45 + i * 0.04 }}
-                  className="px-3 py-1 text-xs rounded-lg font-medium"
-                  style={{ background: '#3b82f615', border: '1px solid #3b82f630', color: '#60a5fa' }}
+                  className="badge badge-cyan"
                 >
                   {p}
                 </motion.span>
@@ -534,7 +532,7 @@ export default function ReportPage() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="glass rounded-2xl p-8 text-center"
+          className="card shadow-sm rounded-2xl p-8 text-center"
         >
           <div className="w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center" style={{ background: '#6366f115' }}>
             <MessageSquare size={22} className="text-accent-light" />
@@ -548,8 +546,7 @@ export default function ReportPage() {
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => navigate('/setup')}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white cursor-pointer"
-              style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}
+              className="btn btn-primary btn-md flex items-center gap-2"
             >
               <Target size={16} />
               Practice Again
@@ -558,7 +555,7 @@ export default function ReportPage() {
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => navigate('/')}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold glass text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+              className="btn btn-ghost btn-md flex items-center gap-2"
             >
               <ArrowLeft size={16} />
               Back to Home
@@ -570,3 +567,5 @@ export default function ReportPage() {
     </div>
   );
 }
+
+

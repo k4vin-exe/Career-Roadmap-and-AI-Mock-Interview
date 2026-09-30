@@ -72,7 +72,7 @@ export default function MicrophoneButton({
           background: isListening
             ? 'linear-gradient(135deg, #ef4444, #dc2626)'
             : isDisabled
-            ? 'rgba(255,255,255,0.05)'
+            ? 'var(--surface-muted)'
             : 'linear-gradient(135deg, var(--accent-primary, #7c3aed), var(--accent-secondary, #4f46e5))',
           boxShadow: isListening
             ? '0 0 30px rgba(239, 68, 68, 0.5), 0 8px 24px rgba(0,0,0,0.3)'
@@ -104,3 +104,4 @@ export default function MicrophoneButton({
     </div>
   );
 }
+

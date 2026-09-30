@@ -41,7 +41,7 @@ function ScoreBar({
         <span className="text-sm text-text-secondary">{label}</span>
         <span className="text-sm font-semibold text-text-primary">{score}%</span>
       </div>
-      <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+      <div className="h-2 bg-surface-muted rounded-full overflow-hidden">
         <motion.div
           className="h-full rounded-full"
           style={{ backgroundColor: color }}
@@ -75,7 +75,7 @@ export default function EvaluationCard({
       className="space-y-4"
     >
       {/* Overall Score Header */}
-      <div className="glass rounded-2xl p-6 text-center">
+      <div className="card shadow-sm rounded-2xl p-6 text-center">
         <p className="text-sm text-text-secondary uppercase tracking-wider mb-2">
           Answer Score
         </p>
@@ -90,7 +90,7 @@ export default function EvaluationCard({
       </div>
 
       {/* Score Breakdown */}
-      <div className="glass rounded-2xl p-6">
+      <div className="card shadow-sm rounded-2xl p-6">
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp size={16} className="text-accent-light" />
           <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider">
@@ -104,7 +104,7 @@ export default function EvaluationCard({
       </div>
 
       {/* AI Feedback */}
-      <div className="glass rounded-2xl p-6">
+      <div className="card shadow-sm rounded-2xl p-6">
         <div className="flex items-center gap-2 mb-3">
           <MessageSquare size={16} className="text-accent-light" />
           <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider">
@@ -118,7 +118,7 @@ export default function EvaluationCard({
 
       {/* Expected Talking Points */}
       {evaluation.expectedPoints && evaluation.expectedPoints.length > 0 && (
-        <div className="glass rounded-2xl p-6">
+        <div className="card shadow-sm rounded-2xl p-6">
           <div className="flex items-center gap-2 mb-3">
             <Target size={16} className="text-accent-light" />
             <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider">
@@ -134,7 +134,7 @@ export default function EvaluationCard({
                 transition={{ delay: 0.3 + idx * 0.1 }}
                 className="flex items-start gap-2.5"
               >
-                <CheckCircle size={15} className="text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckCircle size={15} className="text-success flex-shrink-0 mt-0.5" />
                 <span className="text-text-primary text-sm">{point}</span>
               </motion.li>
             ))}
@@ -146,9 +146,8 @@ export default function EvaluationCard({
       <motion.button
         id="next-question-btn"
         onClick={onNext}
-        className="w-full py-4 rounded-2xl font-semibold text-white transition-all duration-300"
-        style={{ background: 'linear-gradient(135deg, #7c3aed, #4f46e5)' }}
-        whileHover={{ scale: 1.01, boxShadow: '0 0 30px rgba(124,58,237,0.4)' }}
+        className="w-full btn btn-primary py-4 rounded-2xl font-semibold text-base"
+        whileHover={{ scale: 1.01 }}
         whileTap={{ scale: 0.99 }}
       >
         {isLastQuestion ? '📊 Generate Final Report' : '→ Next Question'}
@@ -156,3 +155,4 @@ export default function EvaluationCard({
     </motion.div>
   );
 }
+

@@ -1,12 +1,24 @@
+/**
+ * DashboardPage — Career command center overview.
+ * Shows metric cards, recent interviews, roadmap snapshot, and next best actions.
+ */
+
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  Map, BrainCircuit, ArrowRight, LayoutDashboard, Target, Trophy,
-  ShieldAlert, LogOut, Plus, Clock, CheckCircle, Circle
+  Map, BrainCircuit, Trophy, CheckCircle,
+  Clock, Plus, Target, Play,
+  ChevronRight,
 } from 'lucide-react';
+
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
+import { MetricCard } from '../../components/common/MetricCard';
+import { ProgressRing } from '../../components/common/ProgressRing';
+import { EmptyState } from '../../components/common/EmptyState';
+import { SkeletonCard, Skeleton } from '../../components/common/Skeleton';
+import { StatusBadge } from '../../components/common/StatusBadge';
 
 interface DashboardData {
   roadmaps: Array<{
@@ -27,51 +39,79 @@ interface DashboardData {
   }>;
 }
 
-function StatCard({ value, label, icon }: { value: string | number; label: string; icon: React.ReactNode }) {
+const stagger = { initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 } };
+
+function ScoreBadge({ score }: { score: number }) {
+  const color =
+    score >= 80 ? 'var(--success-text)' :
+    score >= 60 ? 'var(--warning-text)' :
+    'var(--danger-text)';
+  const bg =
+    score >= 80 ? 'var(--success-soft)' :
+    score >= 60 ? 'var(--warning-soft)' :
+    'var(--danger-soft)';
+
   return (
-    <div className="p-5 rounded-2xl border border-[#2a2a45] bg-[#12121a]">
-      <div className="flex items-center justify-between mb-3">
-        <div className="w-10 h-10 rounded-xl bg-indigo-500/15 flex items-center justify-center text-indigo-400">
-          {icon}
-        </div>
-      </div>
-      <p className="text-2xl font-bold text-white">{value}</p>
-      <p className="text-sm text-[#686880] mt-0.5">{label}</p>
-    </div>
+    <span
+      style={{
+        padding: '3px 10px',
+        borderRadius: 100,
+        fontSize: 12,
+        fontWeight: 700,
+        color,
+        background: bg,
+      }}
+    >
+      {score}%
+    </span>
   );
 }
 
 export default function DashboardPage() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        const res = await api.get('/user/dashboard');
-        setData(res.data.data);
-      } catch {
-        setError('Failed to load dashboard data');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDashboard();
+    api.get('/user/dashboard')
+      .then((res) => setData(res.data.data))
+      .catch(() => setError('Failed to load dashboard'))
+      .finally(() => setLoading(false));
   }, []);
+
+  // Computed stats
+  const totalCompleted = data?.interviews.filter((i) => i.status === 'completed').length ?? 0;
+  const scores = data?.interviews.filter((i) => i.score != null).map((i) => i.score as number) ?? [];
+  const avgScore = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
+  const latestRoadmap = data?.roadmaps[0] ?? null;
+  const recentInterviews = data?.interviews.slice(0, 4) ?? [];
+  const roadmapProgress =
+    latestRoadmap && latestRoadmap.totalWeeks > 0
+      ? Math.min(100, Math.round((latestRoadmap.completedTasksCount / (latestRoadmap.totalWeeks * 5)) * 100))
+      : 0;
+
+  const greeting =
+    new Date().getHours() < 12 ? 'Good morning' :
+    new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening';
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
-            className="w-12 h-12 rounded-full border-2 border-transparent border-t-indigo-500"
-          />
-          <p className="text-[#686880] text-sm">Loading your dashboard...</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        {/* Welcome skeleton */}
+        <div>
+          <Skeleton width={240} height={28} borderRadius={10} />
+          <Skeleton width={160} height={16} borderRadius={8} style={{ marginTop: 8 }} />
+        </div>
+        {/* Metric cards skeleton */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
+          {[1, 2, 3, 4].map((i) => <SkeletonCard key={i} height={120} />)}
+        </div>
+        {/* Content skeletons */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+          <SkeletonCard height={200} />
+          <SkeletonCard height={200} />
         </div>
       </div>
     );
@@ -79,204 +119,312 @@ export default function DashboardPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
-        <p className="text-red-400">{error}</p>
+      <div
+        style={{
+          padding: '48px 0',
+          textAlign: 'center',
+          color: 'var(--danger-text)',
+        }}
+      >
+        {error}
       </div>
     );
   }
 
-  const totalCompleted = data?.interviews.filter(i => i.status === 'completed').length || 0;
-  const avgScore = data?.interviews
-    .filter(i => i.score !== null)
-    .reduce((sum, i, _, arr) => sum + (i.score || 0) / arr.length, 0) || 0;
-
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
-      {/* Top Nav */}
-      <header className="border-b border-[#2a2a45] bg-[#0a0a0f]/80 backdrop-blur sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-1.5 rounded-lg bg-indigo-500/15">
-              <BrainCircuit size={20} className="text-indigo-400" />
-            </div>
-            <span className="font-bold text-white text-lg">Career R&I</span>
-          </div>
-          <div className="flex items-center gap-3">
-            {user?.role === 'admin' && (
-              <button
-                onClick={() => navigate('/admin')}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm font-medium hover:bg-amber-500/20 transition-all"
-              >
-                <ShieldAlert size={14} />
-                Admin
-              </button>
-            )}
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#1a1a2e] border border-[#2a2a45]">
-              <div className="w-6 h-6 rounded-full bg-indigo-500/30 flex items-center justify-center text-indigo-300 text-xs font-bold">
-                {user?.name?.[0]?.toUpperCase()}
-              </div>
-              <span className="text-sm text-[#9898b0]">{user?.name}</span>
-            </div>
-            <button
-              onClick={logout}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[#686880] hover:text-white hover:bg-[#1a1a2e] transition-all text-sm"
-            >
-              <LogOut size={15} />
-              Sign out
-            </button>
-          </div>
-        </div>
-      </header>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
 
-      <div className="max-w-7xl mx-auto px-6 py-10 space-y-10">
-        {/* Welcome */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="text-3xl font-bold text-white mb-1">
-            Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening'}, {user?.name?.split(' ')[0]} 👋
-          </h1>
-          <p className="text-[#686880]">Here's your career progress overview.</p>
-        </motion.div>
+      {/* ── Welcome banner ── */}
+      <motion.div {...stagger} transition={{ duration: 0.3 }}>
+        <h1 style={{ fontSize: 26, fontWeight: 800, color: 'var(--text)', marginBottom: 4, letterSpacing: '-0.3px' }}>
+          {greeting}, {user?.name?.split(' ')[0]} 👋
+        </h1>
+        <p style={{ fontSize: 14, color: 'var(--text-muted)' }}>
+          Here's your career preparation overview for today.
+        </p>
+      </motion.div>
 
-        {/* Stats */}
+      {/* ── Metric cards ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08, duration: 0.3 }}
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: 16,
+        }}
+      >
+        <MetricCard
+          label="Roadmap Progress"
+          value={latestRoadmap ? `${roadmapProgress}%` : '—'}
+          sublabel={latestRoadmap ? `${latestRoadmap.completedTasksCount} tasks done` : 'No roadmap yet'}
+          icon={<Map size={20} />}
+          color="primary"
+          progress={roadmapProgress}
+        />
+        <MetricCard
+          label="Interviews Done"
+          value={data?.interviews.length ?? 0}
+          sublabel={`${totalCompleted} completed`}
+          icon={<BrainCircuit size={20} />}
+          color="coral"
+          trend={totalCompleted > 0 ? { direction: 'up', label: `${totalCompleted} completed` } : undefined}
+        />
+        <MetricCard
+          label="Avg Interview Score"
+          value={avgScore > 0 ? `${avgScore}%` : '—'}
+          sublabel={scores.length ? `Based on ${scores.length} session${scores.length > 1 ? 's' : ''}` : 'No scores yet'}
+          icon={<Trophy size={20} />}
+          color="warning"
+          trend={avgScore > 0 ? { direction: avgScore >= 70 ? 'up' : 'neutral', label: avgScore >= 70 ? 'On track' : 'Keep practicing' } : undefined}
+        />
+        <MetricCard
+          label="Roadmaps Created"
+          value={data?.roadmaps.length ?? 0}
+          sublabel={latestRoadmap ? latestRoadmap.targetRole : 'Create your first roadmap'}
+          icon={<Target size={20} />}
+          color="cyan"
+        />
+      </motion.div>
+
+      {/* ── Main grid: roadmap + interviews ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+
+        {/* My Roadmap card */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15, duration: 0.3 }}
         >
-          <StatCard value={data?.roadmaps.length || 0} label="Roadmaps Created" icon={<Map size={20} />} />
-          <StatCard value={data?.interviews.length || 0} label="Interviews Taken" icon={<BrainCircuit size={20} />} />
-          <StatCard value={totalCompleted} label="Interviews Completed" icon={<CheckCircle size={20} />} />
-          <StatCard value={avgScore > 0 ? `${Math.round(avgScore)}%` : '—'} label="Avg Score" icon={<Trophy size={20} />} />
-        </motion.div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Roadmaps */}
-          <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <Map size={18} className="text-indigo-400" /> Career Roadmaps
-              </h2>
+          <div className="card" style={{ padding: 24, height: '100%' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--primary-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
+                  <Map size={17} />
+                </div>
+                <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>Career Roadmaps</h2>
+              </div>
               <button
                 onClick={() => navigate('/roadmap/start')}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/15 border border-indigo-500/20 text-indigo-400 text-sm font-medium hover:bg-indigo-500/25 transition-all"
+                className="btn btn-ghost btn-sm"
+                style={{ display: 'flex', alignItems: 'center', gap: 6 }}
               >
                 <Plus size={14} /> New
               </button>
             </div>
 
-            <div className="space-y-3">
-              {data?.roadmaps.length === 0 ? (
-                <div className="p-8 rounded-2xl border border-dashed border-[#2a2a45] text-center">
-                  <Target size={36} className="mx-auto text-[#686880] mb-3" />
-                  <p className="text-white font-semibold mb-1">No roadmaps yet</p>
-                  <p className="text-[#686880] text-sm mb-4">Generate a personalized week-by-week plan</p>
-                  <button
-                    onClick={() => navigate('/roadmap/start')}
-                    className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors"
+            {!data?.roadmaps.length ? (
+              <EmptyState
+                icon={<Map size={28} />}
+                title="No roadmaps yet"
+                body="Generate a personalized week-by-week learning plan for your target role."
+                cta={{ label: 'Build my roadmap', onClick: () => navigate('/roadmap/start') }}
+              />
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {data.roadmaps.map((rm, i) => (
+                  <Link
+                    key={rm.id}
+                    to={`/roadmap/${rm.id}`}
+                    style={{ textDecoration: 'none' }}
                   >
-                    Create First Roadmap
-                  </button>
-                </div>
-              ) : (
-                data?.roadmaps.map((roadmap, i) => (
-                  <motion.div
-                    key={roadmap.id}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 * i }}
-                  >
-                    <Link to={`/roadmap/${roadmap.id}`}>
-                      <div className="p-4 rounded-2xl border border-[#2a2a45] bg-[#12121a] hover:border-indigo-500/40 hover:bg-[#1a1a2e] transition-all group cursor-pointer flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-indigo-500/15 flex items-center justify-center text-indigo-400 flex-shrink-0">
-                            <Map size={18} />
-                          </div>
-                          <div>
-                            <p className="font-semibold text-white group-hover:text-indigo-300 transition-colors">{roadmap.targetRole}</p>
-                            <p className="text-xs text-[#686880] mt-0.5">{roadmap.totalWeeks} weeks • {roadmap.completedTasksCount} tasks done</p>
-                          </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '14px 16px',
+                        borderRadius: 14,
+                        border: '1px solid var(--border)',
+                        background: 'var(--surface-muted)',
+                        transition: 'all 0.15s',
+                        cursor: 'pointer',
+                      }}
+                      onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLDivElement).style.background = 'var(--primary-soft)';
+                        (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--primary)';
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLDivElement).style.background = 'var(--surface-muted)';
+                        (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--border)';
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <ProgressRing
+                          progress={Math.min(100, Math.round((rm.completedTasksCount / (rm.totalWeeks * 5)) * 100))}
+                          size={40}
+                          strokeWidth={4}
+                          label={`${Math.min(100, Math.round((rm.completedTasksCount / (rm.totalWeeks * 5)) * 100))}%`}
+                        />
+                        <div>
+                          <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', marginBottom: 2 }}>{rm.targetRole}</p>
+                          <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                            {rm.totalWeeks} weeks · {rm.completedTasksCount} tasks done
+                          </p>
                         </div>
-                        <ArrowRight size={16} className="text-[#686880] group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
                       </div>
-                    </Link>
-                  </motion.div>
-                ))
-              )}
-            </div>
-          </motion.div>
+                      <ChevronRight size={16} style={{ color: 'var(--text-light)', flexShrink: 0 }} />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        </motion.div>
 
-          {/* Interviews */}
-          <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}>
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <BrainCircuit size={18} className="text-indigo-400" /> Mock Interviews
-              </h2>
+        {/* Mock Interviews card */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.3 }}
+        >
+          <div className="card" style={{ padding: 24, height: '100%' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--coral-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--coral)' }}>
+                  <BrainCircuit size={17} />
+                </div>
+                <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>Mock Interviews</h2>
+              </div>
               <button
                 onClick={() => navigate('/setup')}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/15 border border-indigo-500/20 text-indigo-400 text-sm font-medium hover:bg-indigo-500/25 transition-all"
+                className="btn btn-coral btn-sm"
+                style={{ display: 'flex', alignItems: 'center', gap: 6 }}
               >
-                <Plus size={14} /> Practice
+                <Play size={13} /> Practice
               </button>
             </div>
 
-            <div className="space-y-3">
-              {data?.interviews.length === 0 ? (
-                <div className="p-8 rounded-2xl border border-dashed border-[#2a2a45] text-center">
-                  <Trophy size={36} className="mx-auto text-[#686880] mb-3" />
-                  <p className="text-white font-semibold mb-1">No interviews yet</p>
-                  <p className="text-[#686880] text-sm mb-4">Start your first AI-powered mock interview</p>
-                  <button
-                    onClick={() => navigate('/setup')}
-                    className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors"
+            {!data?.interviews.length ? (
+              <EmptyState
+                icon={<BrainCircuit size={28} />}
+                title="No interviews yet"
+                body="Start your first AI-powered mock interview and get real-time feedback."
+                cta={{ label: 'Start Interview', onClick: () => navigate('/setup'), variant: 'coral' }}
+              />
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {recentInterviews.map((iv) => (
+                  <Link
+                    key={iv.id}
+                    to={iv.status === 'completed' ? `/report/${iv.id}` : `/interview?sessionId=${iv.id}`}
+                    style={{ textDecoration: 'none' }}
                   >
-                    Start Interview
-                  </button>
-                </div>
-              ) : (
-                data?.interviews.map((interview, i) => (
-                  <motion.div
-                    key={interview.id}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 * i }}
-                  >
-                    <Link to={interview.status === 'completed' ? `/report/${interview.id}` : `/interview?sessionId=${interview.id}`}>
-                      <div className="p-4 rounded-2xl border border-[#2a2a45] bg-[#12121a] hover:border-indigo-500/40 hover:bg-[#1a1a2e] transition-all group cursor-pointer flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-indigo-500/15 flex items-center justify-center text-indigo-400 flex-shrink-0">
-                            {interview.status === 'completed' ? <CheckCircle size={18} /> : <Circle size={18} />}
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <p className="font-semibold text-white group-hover:text-indigo-300 transition-colors">{interview.role}</p>
-                              {interview.status === 'in-progress' && (
-                                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/20 text-amber-400">
-                                  Active
-                                </span>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-3 mt-0.5">
-                              <span className="text-xs text-[#686880] flex items-center gap-1">
-                                <Clock size={11} />
-                                {new Date(interview.startedAt).toLocaleDateString()}
-                              </span>
-                              {interview.score !== null && (
-                                <span className="text-xs text-emerald-400 flex items-center gap-1">
-                                  <Trophy size={11} /> {interview.score}%
-                                </span>
-                              )}
-                            </div>
-                          </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '12px 14px',
+                        borderRadius: 14,
+                        border: '1px solid var(--border)',
+                        background: 'var(--surface-muted)',
+                        transition: 'all 0.15s',
+                        cursor: 'pointer',
+                      }}
+                      onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLDivElement).style.background = 'var(--coral-soft)';
+                        (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--coral)';
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLDivElement).style.background = 'var(--surface-muted)';
+                        (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--border)';
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+                        <div style={{
+                          width: 34, height: 34, borderRadius: 9,
+                          background: iv.status === 'completed' ? 'var(--success-soft)' : 'var(--primary-soft)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          color: iv.status === 'completed' ? 'var(--success)' : 'var(--primary)',
+                          flexShrink: 0,
+                        }}>
+                          {iv.status === 'completed' ? <CheckCircle size={15} /> : <Clock size={15} />}
                         </div>
-                        <ArrowRight size={16} className="text-[#686880] group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
+                        <div style={{ minWidth: 0 }}>
+                          <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {iv.role}
+                          </p>
+                          <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                            {new Date(iv.startedAt).toLocaleDateString()}
+                          </p>
+                        </div>
                       </div>
-                    </Link>
-                  </motion.div>
-                ))
-              )}
-            </div>
-          </motion.div>
-        </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                        {iv.score != null && <ScoreBadge score={iv.score} />}
+                        {iv.status === 'in-progress' && <StatusBadge status="active" label="Active" />}
+                        <ChevronRight size={15} style={{ color: 'var(--text-light)' }} />
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        </motion.div>
       </div>
+
+      {/* ── Dark CTA card ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.28, duration: 0.3 }}
+        className="card-dark"
+        style={{
+          padding: '28px 32px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 24,
+          flexWrap: 'wrap',
+          background: 'linear-gradient(135deg, #1a1c26 0%, #232538 100%)',
+        }}
+      >
+        <div>
+          <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
+            Next up
+          </p>
+          <h3 style={{ fontSize: 20, fontWeight: 800, color: '#fff', marginBottom: 8 }}>
+            {latestRoadmap
+              ? `Continue your ${latestRoadmap.targetRole} roadmap`
+              : 'Start your career journey today'}
+          </h3>
+          <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, maxWidth: 440 }}>
+            {latestRoadmap
+              ? `${roadmapProgress}% complete — keep the momentum going and finish this week's tasks.`
+              : 'Generate a personalized roadmap and start practising mock interviews to land your dream role.'}
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexShrink: 0 }}>
+          {latestRoadmap ? (
+            <>
+              <button
+                onClick={() => navigate(`/roadmap/${latestRoadmap.id}`)}
+                className="btn btn-primary btn-md"
+                style={{ whiteSpace: 'nowrap' }}
+              >
+                <Map size={16} /> View Roadmap
+              </button>
+              <button
+                onClick={() => navigate('/setup')}
+                className="btn btn-ghost btn-md"
+                style={{ color: 'rgba(255,255,255,0.7)', borderColor: 'rgba(255,255,255,0.15)', whiteSpace: 'nowrap' }}
+              >
+                Practice Interview
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => navigate('/roadmap/start')}
+              className="btn btn-primary btn-md"
+            >
+              <Target size={16} /> Build My Roadmap
+            </button>
+          )}
+        </div>
+      </motion.div>
+
     </div>
   );
 }

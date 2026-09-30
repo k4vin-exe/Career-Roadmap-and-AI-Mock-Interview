@@ -1,20 +1,32 @@
+/**
+ * RegisterPage — Light theme registration page.
+ * All auth logic (axios POST, login context, redirect) is fully preserved.
+ */
+
 import { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { UserPlus, Mail, Lock, User, BrainCircuit, Eye, EyeOff } from 'lucide-react';
+import { UserPlus, Mail, Lock, User, BrainCircuit, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
 
+const BENEFITS = [
+  'Personalized AI career roadmaps',
+  'Voice-based mock interview practice',
+  'Detailed performance analytics',
+  'Week-by-week progress tracking',
+];
+
 export default function RegisterPage() {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const navigate  = useNavigate();
+  const location  = useLocation();
   const { login } = useAuth();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [name,     setName]     = useState('');
+  const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [showPw,   setShowPw]   = useState(false);
+  const [error,    setError]    = useState('');
+  const [loading,  setLoading]  = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,170 +51,176 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] flex">
-      {/* Left side — Branding */}
-      <div className="hidden lg:flex flex-col justify-between w-1/2 p-12 bg-gradient-to-br from-[#12121a] to-[#0a0a0f] border-r border-[#2a2a45]">
-        <Link to="/" className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-indigo-500/15 border border-indigo-500/20">
-            <BrainCircuit size={28} className="text-indigo-400" />
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        background: 'var(--bg)',
+        fontFamily: 'var(--font-sans)',
+      }}
+    >
+      {/* ── Left branding panel (desktop) ── */}
+      <div
+        className="auth-brand-panel"
+        style={{
+          width: '42%',
+          flexShrink: 0,
+          display: 'none',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          padding: '40px 48px',
+          background: 'linear-gradient(155deg, #090a0d 0%, #1a1c26 50%, #232538 100%)',
+          color: '#fff',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 42, height: 42, borderRadius: 12, background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <BrainCircuit size={22} color="#fff" />
           </div>
-          <span className="font-bold text-xl text-white tracking-tight">Career R&I</span>
-        </Link>
-
-        <div className="space-y-8">
-          <div>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-4xl font-bold text-white leading-tight mb-4"
-            >
-              Start your journey<br />
-              <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-                to your dream job
-              </span>
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-[#9898b0] text-lg leading-relaxed"
-            >
-              Join thousands of candidates using AI to supercharge their interview preparation and career growth.
-            </motion.p>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="p-6 rounded-2xl bg-indigo-500/10 border border-indigo-500/20"
-          >
-            <p className="text-indigo-300 font-semibold mb-3">✨ What you get for free:</p>
-            <ul className="space-y-2 text-[#9898b0] text-sm">
-              <li>✅ Unlimited career roadmap generation</li>
-              <li>✅ AI-powered mock interviews</li>
-              <li>✅ Voice analysis &amp; fluency scoring</li>
-              <li>✅ Detailed performance reports</li>
-              <li>✅ Progress tracking &amp; history</li>
-            </ul>
-          </motion.div>
+          <span style={{ fontWeight: 800, fontSize: 20 }}>Career R&amp;I</span>
         </div>
 
-        <p className="text-[#686880] text-sm">© 2025 Career R&I</p>
+        <div>
+          <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>
+            What you get
+          </p>
+          <h2 style={{ fontSize: 32, fontWeight: 800, lineHeight: 1.2, marginBottom: 28, letterSpacing: '-0.4px' }}>
+            Everything you need<br />to land your dream role
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {BENEFITS.map((b) => (
+              <div key={b} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <CheckCircle2 size={18} style={{ color: 'var(--success)', flexShrink: 0 }} />
+                <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.8)' }}>{b}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)' }}>© 2025 Career R&amp;I</p>
       </div>
 
-      {/* Right side — Register Form */}
-      <div className="flex-1 flex items-center justify-center p-6">
+      {/* ── Right form panel ── */}
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '40px 24px',
+        }}
+      >
         <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-          className="w-full max-w-md"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          style={{ width: '100%', maxWidth: 420 }}
         >
           {/* Mobile logo */}
-          <Link to="/" className="flex lg:hidden items-center gap-2 mb-8">
-            <div className="p-2 rounded-xl bg-indigo-500/15 border border-indigo-500/20">
-              <BrainCircuit size={22} className="text-indigo-400" />
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', marginBottom: 32 }}>
+            <div style={{ width: 38, height: 38, borderRadius: 10, background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <BrainCircuit size={20} color="#fff" />
             </div>
-            <span className="font-bold text-lg text-white">Career R&I</span>
+            <span style={{ fontWeight: 800, fontSize: 18, color: 'var(--text)' }}>Career R&amp;I</span>
           </Link>
 
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">Create your account</h1>
-            <p className="text-[#9898b0]">Free forever. No credit card required.</p>
+          <h1 style={{ fontSize: 28, fontWeight: 800, color: 'var(--text)', marginBottom: 6, letterSpacing: '-0.3px' }}>Create your account</h1>
+          <p style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 28 }}>Free forever. No credit card required.</p>
+
+          <div className="card" style={{ padding: 28 }}>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {/* Name */}
+              <div>
+                <label className="input-label">Full name</label>
+                <div style={{ position: 'relative' }}>
+                  <User size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)', pointerEvents: 'none' }} />
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    placeholder="Your name"
+                    className="input-field"
+                    style={{ paddingLeft: 40 }}
+                  />
+                </div>
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="input-label">Email address</label>
+                <div style={{ position: 'relative' }}>
+                  <Mail size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)', pointerEvents: 'none' }} />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    placeholder="you@example.com"
+                    className="input-field"
+                    style={{ paddingLeft: 40 }}
+                  />
+                </div>
+              </div>
+
+              {/* Password */}
+              <div>
+                <label className="input-label">Password</label>
+                <div style={{ position: 'relative' }}>
+                  <Lock size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)', pointerEvents: 'none' }} />
+                  <input
+                    type={showPw ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    placeholder="Min 6 characters"
+                    className="input-field"
+                    style={{ paddingLeft: 40, paddingRight: 44 }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPw(!showPw)}
+                    style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-light)', display: 'flex', alignItems: 'center' }}
+                    aria-label={showPw ? 'Hide password' : 'Show password'}
+                  >
+                    {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Error */}
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  style={{ padding: '10px 14px', borderRadius: 10, background: 'var(--danger-soft)', border: '1px solid rgba(217,87,87,0.2)', color: 'var(--danger-text)', fontSize: 13 }}
+                >
+                  {error}
+                </motion.div>
+              )}
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn btn-primary btn-lg"
+                style={{ width: '100%', marginTop: 4, justifyContent: 'center' }}
+              >
+                {loading ? (
+                  <svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeOpacity="0.3" />
+                    <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                  </svg>
+                ) : (
+                  <><UserPlus size={17} /> Create Account</>
+                )}
+              </button>
+            </form>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Full Name */}
-            <div>
-              <label className="block text-sm font-medium text-[#9898b0] mb-1.5">Full Name</label>
-              <div className="relative">
-                <User size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#686880] pointer-events-none" />
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  placeholder="John Doe"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#1a1a2e] border border-[#2a2a45] text-white placeholder:text-[#686880] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all"
-                />
-              </div>
-            </div>
-
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-medium text-[#9898b0] mb-1.5">Email address</label>
-              <div className="relative">
-                <Mail size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#686880] pointer-events-none" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="you@example.com"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#1a1a2e] border border-[#2a2a45] text-white placeholder:text-[#686880] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all"
-                />
-              </div>
-            </div>
-
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-medium text-[#9898b0] mb-1.5">Password</label>
-              <div className="relative">
-                <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#686880] pointer-events-none" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  placeholder="At least 6 characters"
-                  className="w-full pl-10 pr-12 py-3 rounded-xl bg-[#1a1a2e] border border-[#2a2a45] text-white placeholder:text-[#686880] focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#686880] hover:text-[#9898b0] transition-colors"
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-            </div>
-
-            {/* Error */}
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center"
-              >
-                {error}
-              </motion.div>
-            )}
-
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold text-base shadow-lg shadow-indigo-500/25 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
-            >
-              {loading ? (
-                <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-              ) : (
-                <>
-                  <UserPlus size={18} />
-                  Create Account
-                </>
-              )}
-            </button>
-          </form>
-
-          <p className="text-center text-sm text-[#686880] mt-6">
+          <p style={{ textAlign: 'center', fontSize: 14, color: 'var(--text-muted)', marginTop: 20 }}>
             Already have an account?{' '}
-            <Link to="/login" className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">
+            <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>
               Sign in
             </Link>
           </p>

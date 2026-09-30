@@ -1,9 +1,17 @@
+/**
+ * AdminDashboardPage — Light theme admin panel.
+ * All API calls, stats fetching, and table data are fully preserved.
+ */
+
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShieldAlert, Users, BrainCircuit, Map, ArrowLeft, TrendingUp, Activity } from 'lucide-react';
+import { ShieldAlert, Users, BrainCircuit, Map, ArrowLeft, Activity } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
+import { MetricCard } from '../../components/common/MetricCard';
+import { SkeletonCard, Skeleton } from '../../components/common/Skeleton';
+import { StatusBadge } from '../../components/common/StatusBadge';
 
 interface AdminStats {
   totalUsers: number;
@@ -21,169 +29,185 @@ interface RecentUser {
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
-  const [stats, setStats] = useState<AdminStats | null>(null);
+  const { user } = useAuth();
+  const [stats,       setStats]       = useState<AdminStats | null>(null);
   const [recentUsers, setRecentUsers] = useState<RecentUser[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [loading,     setLoading]     = useState(true);
+  const [error,       setError]       = useState('');
 
   useEffect(() => {
-    const fetchAdminData = async () => {
-      try {
-        const res = await api.get('/user/admin/dashboard');
+    api.get('/user/admin/dashboard')
+      .then((res) => {
         setStats(res.data.data.stats);
         setRecentUsers(res.data.data.recentUsers);
-      } catch {
-        setError('Failed to load admin data. Make sure you have admin access.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAdminData();
+      })
+      .catch(() => setError('Failed to load admin data. Make sure you have admin access.'))
+      .finally(() => setLoading(false));
   }, []);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
-          className="w-12 h-12 rounded-full border-2 border-transparent border-t-amber-500"
-        />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <Skeleton width={260} height={28} borderRadius={10} />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 16 }}>
+          {[1, 2, 3].map((i) => <SkeletonCard key={i} height={120} />)}
+        </div>
+        <SkeletonCard height={300} />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center flex-col gap-4">
-        <ShieldAlert size={40} className="text-red-400" />
-        <p className="text-red-400 text-center">{error}</p>
-        <button onClick={() => navigate('/dashboard')} className="text-indigo-400 hover:underline">
-          Back to Dashboard
+      <div style={{ padding: '60px 0', textAlign: 'center' }}>
+        <ShieldAlert size={48} style={{ color: 'var(--danger)', margin: '0 auto 16px' }} />
+        <p style={{ color: 'var(--danger-text)', marginBottom: 16 }}>{error}</p>
+        <button onClick={() => navigate('/dashboard')} className="btn btn-ghost btn-md">
+          <ArrowLeft size={15} /> Back to Dashboard
         </button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
-      {/* Top Nav */}
-      <header className="border-b border-[#2a2a45] bg-[#0a0a0f]/80 backdrop-blur sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-1.5 rounded-lg bg-amber-500/15">
-              <ShieldAlert size={20} className="text-amber-400" />
-            </div>
-            <span className="font-bold text-white text-lg">Admin Panel</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1a1a2e] border border-[#2a2a45] text-[#9898b0] text-sm hover:text-white transition-all"
-            >
-              <ArrowLeft size={14} />
-              My Dashboard
-            </button>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#1a1a2e] border border-[#2a2a45]">
-              <div className="w-6 h-6 rounded-full bg-amber-500/30 flex items-center justify-center text-amber-300 text-xs font-bold">
-                {user?.name?.[0]?.toUpperCase()}
-              </div>
-              <span className="text-sm text-[#9898b0]">{user?.name}</span>
-              <span className="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/20 text-amber-400">admin</span>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
 
-      <div className="max-w-7xl mx-auto px-6 py-10 space-y-10">
-        {/* Title */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="text-3xl font-bold text-white mb-1 flex items-center gap-3">
-            <ShieldAlert size={28} className="text-amber-400" />
+      {/* ── Page header ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        style={{ display: 'flex', alignItems: 'center', gap: 12 }}
+      >
+        <div style={{ width: 44, height: 44, borderRadius: 12, background: 'var(--warning-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--warning)', flexShrink: 0 }}>
+          <ShieldAlert size={22} />
+        </div>
+        <div>
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.3px' }}>
             System Overview
           </h1>
-          <p className="text-[#686880]">Platform-wide statistics and user management.</p>
-        </motion.div>
+          <p style={{ fontSize: 14, color: 'var(--text-muted)' }}>Platform-wide statistics and user management.</p>
+        </div>
+      </motion.div>
 
-        {/* Stats Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4"
-        >
-          {[
-            { icon: <Users size={22} />, value: stats?.totalUsers, label: 'Total Users', color: 'text-indigo-400', bg: 'bg-indigo-500/15' },
-            { icon: <BrainCircuit size={22} />, value: stats?.totalInterviews, label: 'Total Interviews', color: 'text-emerald-400', bg: 'bg-emerald-500/15' },
-            { icon: <Map size={22} />, value: stats?.totalRoadmaps, label: 'Roadmaps Generated', color: 'text-violet-400', bg: 'bg-violet-500/15' },
-          ].map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 * i }}
-              className="p-6 rounded-2xl border border-[#2a2a45] bg-[#12121a]"
-            >
-              <div className={`w-12 h-12 rounded-xl ${stat.bg} flex items-center justify-center ${stat.color} mb-4`}>
-                {stat.icon}
-              </div>
-              <p className="text-3xl font-bold text-white">{stat.value ?? '—'}</p>
-              <p className="text-sm text-[#686880] mt-1">{stat.label}</p>
-            </motion.div>
-          ))}
-        </motion.div>
+      {/* ── Metric cards ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08 }}
+        style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 16 }}
+      >
+        <MetricCard
+          label="Total Users"
+          value={stats?.totalUsers ?? '—'}
+          icon={<Users size={20} />}
+          color="primary"
+          trend={{ direction: 'up', label: 'Registered users' }}
+        />
+        <MetricCard
+          label="Total Interviews"
+          value={stats?.totalInterviews ?? '—'}
+          icon={<BrainCircuit size={20} />}
+          color="coral"
+          trend={{ direction: 'up', label: 'All time' }}
+        />
+        <MetricCard
+          label="Roadmaps Generated"
+          value={stats?.totalRoadmaps ?? '—'}
+          icon={<Map size={20} />}
+          color="cyan"
+          trend={{ direction: 'up', label: 'Career plans' }}
+        />
+      </motion.div>
 
-        {/* Recent Users Table */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-          <h2 className="text-lg font-bold text-white mb-5 flex items-center gap-2">
-            <Activity size={18} className="text-indigo-400" /> Recent Registrations
-          </h2>
-          <div className="rounded-2xl border border-[#2a2a45] bg-[#12121a] overflow-hidden">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-[#2a2a45] bg-[#0a0a0f]/50">
-                  <th className="px-6 py-4 text-xs font-semibold text-[#686880] uppercase tracking-wider">User</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-[#686880] uppercase tracking-wider">Email</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-[#686880] uppercase tracking-wider">Role</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-[#686880] uppercase tracking-wider">Joined</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#2a2a45]">
-                {recentUsers.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="px-6 py-10 text-center text-[#686880]">No users found</td>
-                  </tr>
-                ) : (
-                  recentUsers.map((u) => (
-                    <tr key={u._id} className="hover:bg-[#1a1a2e]/50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-300 text-sm font-bold">
-                            {u.name?.[0]?.toUpperCase()}
-                          </div>
-                          <span className="text-sm font-medium text-white">{u.name}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-[#9898b0]">{u.email}</td>
-                      <td className="px-6 py-4">
-                        <span className={`px-2 py-1 rounded-lg text-xs font-bold uppercase ${
-                          u.role === 'admin'
-                            ? 'bg-amber-500/20 text-amber-400'
-                            : 'bg-[#1a1a2e] text-[#9898b0]'
-                        }`}>
-                          {u.role}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-[#686880]">
-                        {new Date(u.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+      {/* ── Recent registrations ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.16 }}
+        className="card"
+        style={{ padding: 24 }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+          <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--primary-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
+            <Activity size={15} />
           </div>
-        </motion.div>
-      </div>
+          <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>Recent Registrations</h2>
+          <span className="badge badge-muted" style={{ marginLeft: 'auto' }}>
+            {recentUsers.length} users
+          </span>
+        </div>
+
+        {/* Desktop table */}
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                {['User', 'Email', 'Role', 'Joined'].map((h) => (
+                  <th
+                    key={h}
+                    style={{
+                      padding: '8px 12px',
+                      textAlign: 'left',
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: 'var(--text-muted)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.06em',
+                    }}
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {recentUsers.length === 0 ? (
+                <tr>
+                  <td colSpan={4} style={{ padding: '40px 12px', textAlign: 'center', color: 'var(--text-light)' }}>
+                    No users found
+                  </td>
+                </tr>
+              ) : (
+                recentUsers.map((u, i) => (
+                  <motion.tr
+                    key={u._id}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2 + i * 0.04 }}
+                    style={{ borderBottom: '1px solid var(--border)' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--surface-muted)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                  >
+                    <td style={{ padding: '12px 12px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div
+                          style={{
+                            width: 32, height: 32, borderRadius: '50%',
+                            background: 'var(--primary-soft)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: 12, fontWeight: 700, color: 'var(--primary-text)',
+                            flexShrink: 0,
+                          }}
+                        >
+                          {u.name?.[0]?.toUpperCase()}
+                        </div>
+                        <span style={{ fontWeight: 600, color: 'var(--text)' }}>{u.name}</span>
+                      </div>
+                    </td>
+                    <td style={{ padding: '12px 12px', color: 'var(--text-muted)' }}>{u.email}</td>
+                    <td style={{ padding: '12px 12px' }}>
+                      <StatusBadge status={u.role} />
+                    </td>
+                    <td style={{ padding: '12px 12px', color: 'var(--text-muted)', fontSize: 13 }}>
+                      {new Date(u.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                    </td>
+                  </motion.tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </motion.div>
     </div>
   );
 }

@@ -1,175 +1,303 @@
-import { useNavigate } from 'react-router-dom';
+/**
+ * LandingPage — Redesigned in the light design system.
+ * Preserves all navigation calls and feature content.
+ */
+
+import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Mic, Brain, BarChart3, Sparkles, ArrowRight, Map, Target, CheckCircle2 } from 'lucide-react';
-import { Button, Card } from '../components';
+import {
+  Mic, Brain, BarChart3, Sparkles, ArrowRight, Map,
+  Target, CheckCircle2, BrainCircuit,
+} from 'lucide-react';
 
-const interviewFeatures = [
-  { icon: Brain, title: 'AI-Powered Questions', description: 'Dynamic questions tailored to your role and experience level' },
-  { icon: Mic, title: 'Voice Interaction', description: 'Speak naturally — AI listens, transcribes, and evaluates your answers' },
-  { icon: BarChart3, title: 'Speech Analysis', description: 'Real-time fluency scoring, filler word detection, and communication feedback' },
-  { icon: Sparkles, title: 'Detailed Reports', description: 'Comprehensive interview reports with actionable improvement suggestions' },
+const ROADMAP_FEATURES = [
+  { icon: Target,      title: 'Personalized Plans',     desc: 'AI builds a week-by-week roadmap based on your skills and target role' },
+  { icon: CheckCircle2,title: 'Progress Tracking',      desc: 'Check off daily tasks and watch your progress grow week by week' },
+  { icon: Map,         title: 'Structured Learning',    desc: 'Guided topics sequenced like roadmap.sh for your specific career path' },
+  { icon: Mic,         title: 'Practice Integration',   desc: 'Jump into mock interviews at the end of each learning phase' },
 ];
 
-const roadmapFeatures = [
-  { icon: Target, title: 'Personalized Plans', description: 'AI builds a week-by-week roadmap based on your skills and target role' },
-  { icon: CheckCircle2, title: 'Progress Tracking', description: 'Check off daily tasks and watch your progress grow week by week' },
-  { icon: Map, title: 'Structured Learning', description: 'Guided topics sequenced like roadmap.sh for your specific career path' },
-  { icon: Mic, title: 'Practice Integration', description: 'Jump into mock interviews at the end of each learning phase' },
+const INTERVIEW_FEATURES = [
+  { icon: Brain,    title: 'AI-Powered Questions',  desc: 'Dynamic questions tailored to your role and experience level' },
+  { icon: Mic,      title: 'Voice Interaction',     desc: 'Speak naturally — AI listens, transcribes, and evaluates your answers' },
+  { icon: BarChart3,title: 'Speech Analysis',       desc: 'Real-time fluency scoring, filler word detection, and communication feedback' },
+  { icon: Sparkles, title: 'Detailed Reports',      desc: 'Comprehensive interview reports with actionable improvement suggestions' },
 ];
+
+function FeatureCard({ icon: Icon, title, desc, delay }: { icon: React.ElementType; title: string; desc: string; delay: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4, delay }}
+      className="card"
+      style={{ padding: 24 }}
+    >
+      <div
+        style={{
+          width: 48,
+          height: 48,
+          borderRadius: 14,
+          background: 'var(--primary-soft)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'var(--primary)',
+          marginBottom: 16,
+        }}
+      >
+        <Icon size={22} />
+      </div>
+      <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>{title}</h3>
+      <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.65 }}>{desc}</p>
+    </motion.div>
+  );
+}
 
 export default function LandingPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div style={{ fontFamily: 'var(--font-sans)', background: 'var(--bg)', minHeight: '100vh' }}>
+
+      {/* ── Navigation ── */}
+      <nav
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 50,
+          height: 64,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 48px',
+          background: 'rgba(248, 251, 255, 0.9)',
+          backdropFilter: 'blur(16px)',
+          borderBottom: '1px solid var(--border)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ width: 34, height: 34, borderRadius: 9, background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <BrainCircuit size={17} color="#fff" />
+          </div>
+          <span style={{ fontWeight: 800, fontSize: 17, color: 'var(--text)', letterSpacing: '-0.2px' }}>Career R&amp;I</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button
+            onClick={() => navigate('/login')}
+            className="btn btn-ghost btn-sm"
+          >
+            Sign In
+          </button>
+          <button
+            onClick={() => navigate('/register')}
+            className="btn btn-primary btn-sm"
+          >
+            Get Started <ArrowRight size={14} />
+          </button>
+        </div>
+      </nav>
 
       {/* ── Hero ── */}
-      <section className="flex-1 flex items-center justify-center px-6 py-20">
-        <div className="max-w-5xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-glow border border-accent/20 text-accent-light text-sm mb-8"
-          >
-            <Sparkles size={16} />
-            <span>Career Solutions</span>
-          </motion.div>
+      <section
+        className="ambient-bg"
+        style={{
+          padding: '96px 48px 80px',
+          textAlign: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        {/* Pill badge */}
+        <motion.div
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            padding: '6px 16px',
+            borderRadius: 100,
+            background: 'var(--primary-soft)',
+            color: 'var(--primary-text)',
+            fontSize: 13,
+            fontWeight: 600,
+            marginBottom: 28,
+          }}
+        >
+          <Sparkles size={14} />
+          AI-Powered Career Platform
+        </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-5xl md:text-7xl font-bold tracking-tight mb-6"
-          >
-            <span className="text-text-primary">Your AI-Powered</span>
-            <br />
-            <span className="gradient-text">Career Co-Pilot</span>
-          </motion.h1>
+        {/* Headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          style={{
+            fontSize: 'clamp(36px, 6vw, 68px)',
+            fontWeight: 800,
+            letterSpacing: '-1px',
+            lineHeight: 1.15,
+            marginBottom: 20,
+            maxWidth: 720,
+          }}
+        >
+          Your AI-Powered{' '}
+          <span className="gradient-text">Career Co-Pilot</span>
+        </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-xl text-text-secondary max-w-2xl mx-auto mb-10"
-          >
-            Build a personalized career roadmap, track your learning, and practice with an AI interviewer — all in one place.
-          </motion.p>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          style={{
+            fontSize: 18,
+            color: 'var(--text-muted)',
+            maxWidth: 540,
+            lineHeight: 1.7,
+            marginBottom: 40,
+          }}
+        >
+          Build a personalized career roadmap, track your learning, and practice with an AI interviewer — all in one place.
+        </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}
+        >
+          <button
+            onClick={() => navigate('/roadmap/start')}
+            className="btn btn-primary btn-lg"
           >
-            <Button
-              size="lg"
-              onClick={() => navigate('/roadmap/start')}
-              rightIcon={<ArrowRight size={20} />}
-            >
-              <Map size={18} />
-              Build My Roadmap
-            </Button>
-            <Button
-              size="lg"
-              variant="ghost"
-              onClick={() => navigate('/setup')}
-              rightIcon={<ArrowRight size={18} />}
-            >
-              Start Mock Interview
-            </Button>
-          </motion.div>
-        </div>
+            <Map size={18} /> Build My Roadmap
+          </button>
+          <button
+            onClick={() => navigate('/setup')}
+            className="btn btn-ghost btn-lg"
+          >
+            Start Mock Interview <ArrowRight size={16} />
+          </button>
+        </motion.div>
+
+        {/* Social proof */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          style={{ fontSize: 13, color: 'var(--text-light)', marginTop: 24 }}
+        >
+          Free to use · No credit card required
+        </motion.p>
       </section>
 
-      {/* ── Career Roadmap Section ── */}
-      <section className="px-6 py-20 border-t border-border" style={{ background: 'rgba(99,102,241,0.03)' }}>
-        <div className="max-w-6xl mx-auto">
+      {/* ── Roadmap features ── */}
+      <section style={{ padding: '80px 48px', borderTop: '1px solid var(--border)', background: 'var(--surface-solid)' }}>
+        <div style={{ maxWidth: 1120, margin: '0 auto' }}>
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
+            style={{ textAlign: 'center', marginBottom: 48 }}
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-glow border border-accent/20 text-accent-light text-xs font-semibold uppercase tracking-wide mb-4">
-              <Map size={13} /> Career Roadmap
-            </div>
-            <h2 className="text-3xl font-bold text-text-primary">Your Personalized Learning Path</h2>
-            <p className="text-text-secondary mt-3 max-w-xl mx-auto">
+            <span className="badge badge-primary" style={{ marginBottom: 12, display: 'inline-flex' }}>
+              <Map size={12} /> Career Roadmap
+            </span>
+            <h2 style={{ fontSize: 34, fontWeight: 800, color: 'var(--text)', marginBottom: 12, letterSpacing: '-0.4px' }}>
+              Your Personalized Learning Path
+            </h2>
+            <p style={{ fontSize: 15, color: 'var(--text-muted)', maxWidth: 480, margin: '0 auto', lineHeight: 1.7 }}>
               Tell us about yourself and we'll generate a week-by-week plan to land your dream role.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            {roadmapFeatures.map((feature, index) => (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <Card variant="glass" hoverEffect className="p-6 h-full flex flex-col group">
-                  <div className="w-12 h-12 rounded-xl bg-accent-glow flex items-center justify-center mb-4 group-hover:animate-pulse-glow transition-all duration-300">
-                    <feature.icon size={24} className="text-accent-light" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-text-primary mb-2">{feature.title}</h3>
-                  <p className="text-sm text-text-secondary leading-relaxed flex-1">{feature.description}</p>
-                </Card>
-              </motion.div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 18, marginBottom: 40 }}>
+            {ROADMAP_FEATURES.map((f, i) => (
+              <FeatureCard key={f.title} icon={f.icon} title={f.title} desc={f.desc} delay={i * 0.08} />
             ))}
           </div>
 
-          <div className="text-center">
-            <Button size="lg" onClick={() => navigate('/roadmap/start')} rightIcon={<ArrowRight size={18} />}>
-              <Map size={18} /> Get My Roadmap
-            </Button>
+          <div style={{ textAlign: 'center' }}>
+            <button onClick={() => navigate('/roadmap/start')} className="btn btn-primary btn-lg">
+              <Map size={17} /> Get My Roadmap
+            </button>
           </div>
         </div>
       </section>
 
-      {/* ── Mock Interview Section ── */}
-      <section className="px-6 py-20 border-t border-border">
-        <div className="max-w-6xl mx-auto">
+      {/* ── Interview features ── */}
+      <section
+        style={{
+          padding: '80px 48px',
+          borderTop: '1px solid var(--border)',
+          background: 'linear-gradient(160deg, var(--ink-soft) 0%, #232538 100%)',
+          color: '#fff',
+        }}
+      >
+        <div style={{ maxWidth: 1120, margin: '0 auto' }}>
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
+            style={{ textAlign: 'center', marginBottom: 48 }}
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-glow border border-accent/20 text-accent-light text-xs font-semibold uppercase tracking-wide mb-4">
-              <Mic size={13} /> Mock Interview
-            </div>
-            <h2 className="text-3xl font-bold text-text-primary">Practice Makes Perfect</h2>
-            <p className="text-text-secondary mt-3 max-w-xl mx-auto">
+            <span className="badge badge-coral" style={{ marginBottom: 12, display: 'inline-flex' }}>
+              <Mic size={12} /> Mock Interview
+            </span>
+            <h2 style={{ fontSize: 34, fontWeight: 800, color: '#fff', marginBottom: 12, letterSpacing: '-0.4px' }}>
+              Practice Makes Perfect
+            </h2>
+            <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', maxWidth: 480, margin: '0 auto', lineHeight: 1.7 }}>
               Practice technical interviews with an AI that speaks, listens, and gives you real-time feedback.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {interviewFeatures.map((feature, index) => (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 18, marginBottom: 40 }}>
+            {INTERVIEW_FEATURES.map((f, i) => (
               <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 30 }}
+                key={f.title}
+                initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.4, delay: i * 0.08 }}
+                style={{
+                  padding: 24,
+                  borderRadius: 'var(--radius-card)',
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                }}
               >
-                <Card variant="glass" hoverEffect className="p-6 h-full flex flex-col group">
-                  <div className="w-12 h-12 rounded-xl bg-accent-glow flex items-center justify-center mb-4 group-hover:animate-pulse-glow transition-all duration-300">
-                    <feature.icon size={24} className="text-accent-light" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-text-primary mb-2">{feature.title}</h3>
-                  <p className="text-sm text-text-secondary leading-relaxed flex-1">{feature.description}</p>
-                </Card>
+                <div style={{ width: 48, height: 48, borderRadius: 14, background: 'var(--coral-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--coral)', marginBottom: 16 }}>
+                  <f.icon size={22} />
+                </div>
+                <h3 style={{ fontSize: 15, fontWeight: 700, color: '#fff', marginBottom: 8 }}>{f.title}</h3>
+                <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', lineHeight: 1.65 }}>{f.desc}</p>
               </motion.div>
             ))}
+          </div>
+
+          <div style={{ textAlign: 'center' }}>
+            <button onClick={() => navigate('/setup')} className="btn btn-coral btn-lg">
+              <Mic size={17} /> Start Practicing
+            </button>
           </div>
         </div>
       </section>
 
-      <footer className="px-6 py-8 border-t border-border text-center text-text-secondary text-sm">
-        <p>Career R&I — Project</p>
+      {/* ── Footer ── */}
+      <footer style={{ padding: '28px 48px', borderTop: '1px solid var(--border)', background: 'var(--surface-solid)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ width: 28, height: 28, borderRadius: 7, background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <BrainCircuit size={14} color="#fff" />
+          </div>
+          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>Career R&amp;I</span>
+        </div>
+        <p style={{ fontSize: 12, color: 'var(--text-light)' }}>© 2025 Career R&amp;I · AI-powered career platform</p>
       </footer>
     </div>
   );

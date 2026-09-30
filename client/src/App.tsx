@@ -12,40 +12,93 @@ import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
 import AdminDashboardPage from './pages/dashboard/AdminDashboardPage';
-import { Header } from './components/layout/Header';
-import { PageTransition } from './components/layout/PageTransition';
+import { AppShell } from './components/layout/AppShell';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
 
-function AnimatedRoutes() {
-  const location = useLocation();
-  const isAuthPage = ['/login', '/register'].includes(location.pathname);
-  
-  return (
-    <>
-      {!isAuthPage && <Header />}
-      <Routes location={location} key={location.pathname}>
-      <Route path="/" element={<PageTransition><LandingPage /></PageTransition>} />
-      
-      {/* Auth routes */}
-      <Route path="/login" element={<PageTransition><LoginPage /></PageTransition>} />
-      <Route path="/register" element={<PageTransition><RegisterPage /></PageTransition>} />
+/** Wrap a page in AppShell (authenticated layout) */
+function ShellPage({ children, title }: { children: React.ReactNode; title?: string }) {
+  return <AppShell pageTitle={title}>{children}</AppShell>;
+}
 
-      {/* Protected routes */}
-      <Route path="/dashboard" element={<ProtectedRoute><PageTransition><DashboardPage /></PageTransition></ProtectedRoute>} />
-      <Route path="/admin" element={<ProtectedRoute adminOnly><PageTransition><AdminDashboardPage /></PageTransition></ProtectedRoute>} />
-      
-      {/* Interview routes */}
-      <Route path="/setup" element={<ProtectedRoute><PageTransition><SetupPage /></PageTransition></ProtectedRoute>} />
-      <Route path="/warmup" element={<ProtectedRoute><PageTransition><WarmupPage /></PageTransition></ProtectedRoute>} />
-      <Route path="/interview" element={<ProtectedRoute><PageTransition><InterviewPage /></PageTransition></ProtectedRoute>} />
-      <Route path="/report/:sessionId" element={<ProtectedRoute><PageTransition><ReportPage /></PageTransition></ProtectedRoute>} />
-      
-      {/* Career Roadmap routes */}
-      <Route path="/roadmap/start" element={<ProtectedRoute><PageTransition><RoadmapOnboardingPage /></PageTransition></ProtectedRoute>} />
-      <Route path="/roadmap/:profileId" element={<ProtectedRoute><PageTransition><RoadmapViewPage /></PageTransition></ProtectedRoute>} />
-      </Routes>
-    </>
+function AppRoutes() {
+  return (
+    <Routes>
+      {/* ── Public ── */}
+      <Route path="/"         element={<LandingPage />} />
+      <Route path="/login"    element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+
+      {/* ── Authenticated with Shell ── */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <ShellPage title="Overview"><DashboardPage /></ShellPage>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute adminOnly>
+            <ShellPage title="Admin Panel"><AdminDashboardPage /></ShellPage>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Interview routes — shell-wrapped */}
+      <Route
+        path="/setup"
+        element={
+          <ProtectedRoute>
+            <ShellPage title="Mock Interviews"><SetupPage /></ShellPage>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/warmup"
+        element={
+          <ProtectedRoute>
+            <ShellPage title="Interview Warmup"><WarmupPage /></ShellPage>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/interview"
+        element={
+          <ProtectedRoute>
+            <ShellPage title="Live Interview"><InterviewPage /></ShellPage>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/report/:sessionId"
+        element={
+          <ProtectedRoute>
+            <ShellPage title="Interview Report"><ReportPage /></ShellPage>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Roadmap routes */}
+      <Route
+        path="/roadmap/start"
+        element={
+          <ProtectedRoute>
+            <ShellPage title="My Roadmap"><RoadmapOnboardingPage /></ShellPage>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/roadmap/:profileId"
+        element={
+          <ProtectedRoute>
+            <ShellPage title="My Roadmap"><RoadmapViewPage /></ShellPage>
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
   );
 }
 
@@ -53,16 +106,12 @@ export default function App() {
   return (
     <AuthProvider>
       <InterviewProvider>
-      <RoadmapProvider>
-        <BrowserRouter>
-          <div className="flex flex-col min-h-screen">
-            <main className="flex-1 flex flex-col relative">
-               <AnimatedRoutes />
-            </main>
-          </div>
-        </BrowserRouter>
-      </RoadmapProvider>
-    </InterviewProvider>
+        <RoadmapProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </RoadmapProvider>
+      </InterviewProvider>
     </AuthProvider>
   );
 }

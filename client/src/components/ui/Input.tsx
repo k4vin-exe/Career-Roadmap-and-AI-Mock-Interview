@@ -1,44 +1,42 @@
-import React, { forwardRef } from 'react';
+/** Input — Light design system version. */
+import React from 'react';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
-  error?: string;
   icon?: React.ReactNode;
-  hint?: string;
+  error?: string;
 }
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, icon, hint, className = '', ...props }, ref) => {
-    return (
-      <div className="w-full">
-        {label && (
-          <label className="block text-sm font-medium text-text-secondary mb-1.5">
-            {label}
-          </label>
+export function Input({ label, icon, error, className = '', style, ...props }: InputProps) {
+  return (
+    <div>
+      {label && <label className="input-label">{label}</label>}
+      <div style={{ position: 'relative' }}>
+        {icon && (
+          <div
+            style={{
+              position: 'absolute',
+              left: 14,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: 'var(--text-light)',
+              pointerEvents: 'none',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            {icon}
+          </div>
         )}
-        <div className="relative">
-          {icon && (
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-text-muted">
-              {icon}
-            </div>
-          )}
-          <input
-            ref={ref}
-            className={`w-full ${icon ? 'pl-10' : 'pl-4'} pr-4 py-3 rounded-xl bg-surface-light border ${
-              error ? 'border-error focus:border-error focus:ring-error/30' : 'border-border focus:border-accent focus:ring-accent/30'
-            } text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-1 transition-all duration-200 ${className}`}
-            {...props}
-          />
-        </div>
-        {hint && !error && (
-          <p className="mt-1.5 text-xs text-text-muted">{hint}</p>
-        )}
-        {error && (
-          <p className="mt-1.5 text-xs text-error">{error}</p>
-        )}
+        <input
+          className={`input-field ${className}`}
+          style={{ paddingLeft: icon ? 40 : undefined, ...style }}
+          {...props}
+        />
       </div>
-    );
-  }
-);
-
-Input.displayName = 'Input';
+      {error && (
+        <p style={{ fontSize: 12, color: 'var(--danger-text)', marginTop: 4 }}>{error}</p>
+      )}
+    </div>
+  );
+}

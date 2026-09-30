@@ -37,7 +37,7 @@ export function Header() {
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl transition-colors ${
                   isActive
                     ? 'bg-accent-glow text-accent-light border border-accent/20'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-white/5'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-surface-muted'
                 }`}
               >
                 <Icon size={15} />
@@ -65,3 +65,4 @@ export function Header() {
     </header>
   );
 }
+

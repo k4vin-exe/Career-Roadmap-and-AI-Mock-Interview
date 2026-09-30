@@ -1,8 +1,12 @@
+/**
+ * Card — Updated for the light design system.
+ * Variants map to new CSS card classes.
+ */
 import React from 'react';
 import { motion, type HTMLMotionProps } from 'framer-motion';
 
-interface CardProps extends HTMLMotionProps<"div"> {
-  variant?: 'default' | 'glass' | 'glass-light';
+interface CardProps extends HTMLMotionProps<'div'> {
+  variant?: 'default' | 'glass' | 'glass-light' | 'dark';
   children: React.ReactNode;
   className?: string;
   hoverEffect?: boolean;
@@ -15,19 +19,16 @@ export function Card({
   hoverEffect = false,
   ...props
 }: CardProps) {
-  const variants = {
-    default: 'bg-surface rounded-2xl border border-border',
-    glass: 'glass rounded-2xl',
-    'glass-light': 'glass-light rounded-2xl',
+  const variantMap: Record<string, string> = {
+    default:      'card',
+    glass:        'card-glass',
+    'glass-light':'card-glass',
+    dark:         'card-dark',
   };
-
-  const hoverClass = hoverEffect 
-    ? 'hover:border-accent/30 transition-colors duration-300' 
-    : '';
 
   return (
     <motion.div
-      className={`${variants[variant]} ${hoverClass} ${className}`}
+      className={`${variantMap[variant] ?? 'card'} ${className}`}
       {...props}
     >
       {children}

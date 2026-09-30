@@ -13,7 +13,7 @@ export function ProtectedRoute({ children, adminOnly = false }: ProtectedRoutePr
 
   if (isLoading) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-[#0a0a0f]">
+      <div className="flex-1 flex items-center justify-center bg-background">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
@@ -34,3 +34,4 @@ export function ProtectedRoute({ children, adminOnly = false }: ProtectedRoutePr
 
   return children;
 }
+

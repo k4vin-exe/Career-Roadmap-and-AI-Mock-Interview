@@ -47,7 +47,7 @@ export default function TranscriptDisplay({
   const hasContent = transcript.trim().length > 0;
 
   return (
-    <div className="glass rounded-2xl p-6">
+    <div className="card shadow-sm rounded-2xl p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider">
           Your Answer
@@ -60,8 +60,7 @@ export default function TranscriptDisplay({
                   id="transcript-save-btn"
                   whileTap={{ scale: 0.95 }}
                   onClick={handleSaveEdit}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white"
-                  style={{ background: 'linear-gradient(135deg, #7c3aed, #4f46e5)' }}
+                  className="btn btn-primary btn-sm flex items-center gap-1.5"
                 >
                   <Check size={13} /> Save
                 </motion.button>
@@ -69,7 +68,7 @@ export default function TranscriptDisplay({
                   id="transcript-reset-btn"
                   whileTap={{ scale: 0.95 }}
                   onClick={handleReset}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-text-secondary hover:text-text-primary border border-white/10 hover:border-white/20 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-text-secondary hover:text-text-primary border border-border hover:border-primary/20 transition-colors"
                 >
                   <RotateCcw size={13} /> Reset
                 </motion.button>
@@ -79,7 +78,7 @@ export default function TranscriptDisplay({
                 id="transcript-edit-btn"
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsEditing(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-text-secondary hover:text-text-primary border border-white/10 hover:border-white/20 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-text-secondary hover:text-text-primary border border-border hover:border-primary/20 transition-colors"
               >
                 <Edit3 size={13} /> Edit
               </motion.button>
@@ -95,7 +94,7 @@ export default function TranscriptDisplay({
             id="transcript-textarea"
             value={editedText}
             onChange={(e) => setEditedText(e.target.value)}
-            className="w-full h-32 bg-white/5 border border-white/10 rounded-xl p-3 text-text-primary text-base resize-none focus:outline-none focus:border-accent-primary/50 transition-colors"
+            className="w-full h-32 bg-surface-muted border border-border rounded-xl p-3 text-text-primary text-base resize-none focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10 transition-colors"
             placeholder="Edit your answer here..."
             autoFocus
           />
@@ -121,7 +120,7 @@ export default function TranscriptDisplay({
             {/* Blinking cursor when listening */}
             {isListening && (
               <motion.span
-                className="inline-block w-0.5 h-5 bg-accent-primary ml-1 align-middle"
+                className="inline-block w-0.5 h-5 bg-primary ml-1 align-middle"
                 animate={{ opacity: [1, 0, 1] }}
                 transition={{ duration: 0.8, repeat: Infinity }}
               />
@@ -135,7 +134,7 @@ export default function TranscriptDisplay({
                 </p>
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border border-white/10 hover:border-white/20 hover:bg-white/5 transition-colors text-text-secondary hover:text-text-primary"
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border border-border hover:border-primary/20 hover:bg-surface-muted transition-colors text-text-secondary hover:text-text-primary"
                 >
                   <Edit3 size={14} />
                   Or type your answer manually
@@ -153,7 +152,7 @@ export default function TranscriptDisplay({
 
       {/* Word count */}
       {hasContent && (
-        <div className="mt-3 pt-3 border-t border-white/5 flex justify-end">
+        <div className="mt-3 pt-3 border-t border-border flex justify-end">
           <span className="text-xs text-text-muted">
             {transcript.trim().split(/\s+/).filter(Boolean).length} words
           </span>
@@ -162,3 +161,4 @@ export default function TranscriptDisplay({
     </div>
   );
 }
+

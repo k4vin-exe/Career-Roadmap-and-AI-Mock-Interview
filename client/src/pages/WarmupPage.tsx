@@ -36,7 +36,7 @@ function ScoreBar({ label, score, delay = 0 }: { label: string; score: number; d
   return (
     <div className="flex items-center gap-3">
       <span className="text-xs text-text-secondary w-40 flex-shrink-0">{label}</span>
-      <div className="flex-1 h-1.5 rounded-full bg-white/5 overflow-hidden">
+      <div className="flex-1 h-1.5 rounded-full bg-surface-muted overflow-hidden">
         <motion.div
           className="h-full rounded-full"
           style={{ background: color }}
@@ -162,7 +162,7 @@ export default function WarmupPage() {
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="flex-1 w-full flex flex-col items-center justify-start py-10 px-4 md:px-6 relative"
-      style={{ background: '#0a0a0f' }}>
+      style={{ background: 'var(--bg)' }}>
       
       {/* ── Start Overlay ── */}
       <AnimatePresence>
@@ -171,10 +171,10 @@ export default function WarmupPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="absolute inset-0 z-50 flex items-center justify-center bg-[#0a0a0f]/90 backdrop-blur-md"
+            className="absolute inset-0 z-50 flex items-center justify-center bg-background/90 backdrop-blur-md"
           >
             <div className="text-center space-y-6 max-w-sm px-6">
-              <div className="w-16 h-16 mx-auto rounded-2xl bg-accent-glow flex items-center justify-center">
+              <div className="w-16 h-16 mx-auto rounded-2xl bg-primary-soft flex items-center justify-center">
                 <User size={28} className="text-accent-light" />
               </div>
               <div>
@@ -187,8 +187,7 @@ export default function WarmupPage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleStartWarmup}
-                className="w-full flex justify-center items-center gap-2 px-6 py-3.5 rounded-xl text-base font-bold text-white shadow-lg cursor-pointer"
-                style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}
+                className="w-full btn btn-primary btn-lg justify-center"
               >
                 Start Warmup
                 <ChevronRight size={18} />
@@ -212,7 +211,7 @@ export default function WarmupPage() {
           </div>
           <button
             onClick={() => { setVoiceEnabled(v => !v); if (isSpeaking) stopSpeaking(); }}
-            className="p-2 rounded-xl glass hover:border-white/20 transition-colors cursor-pointer"
+            className="p-2 rounded-xl bg-surface-solid border border-border shadow-sm hover:border-primary/20 transition-colors cursor-pointer"
             title={voiceEnabled ? 'Mute AI voice' : 'Enable AI voice'}
           >
             {voiceEnabled
@@ -226,7 +225,7 @@ export default function WarmupPage() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="glass rounded-2xl p-6"
+          className="card shadow-sm rounded-2xl p-6"
         >
           <div className="flex items-start gap-4">
             {/* AI Avatar */}
@@ -234,8 +233,7 @@ export default function WarmupPage() {
               <motion.div
                 animate={isSpeaking ? { scale: [1, 1.08, 1] } : { scale: 1 }}
                 transition={{ duration: 0.6, repeat: isSpeaking ? Infinity : 0 }}
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold text-accent-light"
-                style={{ background: 'rgba(99,102,241,0.2)' }}
+                className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold text-primary-text bg-primary-soft"
               >
                 AI
               </motion.div>
@@ -258,7 +256,7 @@ export default function WarmupPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
               transition={{ delay: 0.2 }}
-              className="glass rounded-2xl p-5"
+              className="card shadow-sm rounded-2xl p-5"
             >
               <p className="text-[11px] text-text-muted uppercase tracking-wide mb-3 font-semibold">Your Answer</p>
 
@@ -327,8 +325,7 @@ export default function WarmupPage() {
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={handleSubmit}
-                  className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold text-white cursor-pointer"
-                  style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}
+                  className="btn btn-primary flex items-center gap-2"
                 >
                   <Send size={15} />
                   Submit Answer
@@ -361,7 +358,7 @@ export default function WarmupPage() {
               className="space-y-4"
             >
               {/* Scores */}
-              <div className="glass rounded-2xl p-6">
+              <div className="card shadow-sm rounded-2xl p-6">
                 <p className="text-xs text-text-muted uppercase tracking-wide font-semibold mb-4">Introduction Analysis</p>
                 <div className="space-y-3">
                   <ScoreBar label="Communication Clarity"   score={warmupResult.communicationClarity}   delay={0} />
@@ -377,7 +374,7 @@ export default function WarmupPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="glass rounded-2xl p-5"
+                  className="card shadow-sm rounded-2xl p-5"
                 >
                   <div className="flex items-center gap-2 mb-3">
                     <CheckCircle2 size={15} className="text-success" />
@@ -400,7 +397,7 @@ export default function WarmupPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
-                  className="glass rounded-2xl p-5"
+                  className="card shadow-sm rounded-2xl p-5"
                 >
                   <div className="flex items-center gap-2 mb-3">
                     <Lightbulb size={15} className="text-warning" />
@@ -422,7 +419,7 @@ export default function WarmupPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="glass rounded-2xl p-5"
+                className="card shadow-sm rounded-2xl p-5"
               >
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold text-accent-light"
@@ -446,8 +443,7 @@ export default function WarmupPage() {
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={handleStartInterview}
-                  className="flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold text-white shadow-lg cursor-pointer"
-                  style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}
+                  className="btn btn-primary btn-lg flex items-center gap-2"
                 >
                   Let's Start the Interview
                   <ChevronRight size={16} />
@@ -498,3 +494,5 @@ export default function WarmupPage() {
     </div>
   );
 }
+
+

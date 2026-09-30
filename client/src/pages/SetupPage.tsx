@@ -1,47 +1,82 @@
+/**
+ * SetupPage — Redesigned interview setup in the light design system.
+ * ALL business logic (startInterview, navigate, TTS unlock) preserved.
+ */
+
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Briefcase, TrendingUp, ArrowRight, ArrowLeft, Map } from 'lucide-react';
+import {
+  User, Briefcase, TrendingUp, ArrowRight, ArrowLeft,
+  Map, BrainCircuit, CheckCircle, Clock, Mic,
+} from 'lucide-react';
 import { useInterview } from '../context/InterviewContext';
 import { startInterview } from '../services/api';
 import { JOB_ROLES, EXPERIENCE_LEVELS } from '../utils/types';
 import type { JobRole, ExperienceLevel } from '../utils/types';
-import { Button, Card, Input, Select } from '../components';
+
+const PREP_TIPS = [
+  { icon: Clock,       text: '~15 minutes per session' },
+  { icon: Mic,         text: 'Voice or typed answers' },
+  { icon: CheckCircle, text: '5 role-specific questions' },
+  { icon: BrainCircuit,text: 'AI feedback on every answer' },
+];
+
+function FormField({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label className="input-label">{label}</label>
+      {children}
+    </div>
+  );
+}
+
+function StyledSelect({ value, onChange, options, placeholder }: {
+  value: string;
+  onChange: (v: string) => void;
+  options: readonly string[];
+  placeholder: string;
+}) {
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="input-field"
+      style={{ cursor: 'pointer' }}
+    >
+      <option value="">{placeholder}</option>
+      {options.map((o) => <option key={o} value={o}>{o}</option>)}
+    </select>
+  );
+}
 
 export default function SetupPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { dispatch } = useInterview();
 
-  // Pre-fill from roadmap query params
   const prefilledRole = searchParams.get('role') || '';
-  const fromRoadmap = searchParams.get('from') === 'roadmap';
+  const fromRoadmap   = searchParams.get('from') === 'roadmap';
 
-  const [name, setName] = useState('');
-  const [role, setRole] = useState<JobRole | ''>(JOB_ROLES.includes(prefilledRole as JobRole) ? prefilledRole as JobRole : '');
+  const [name,       setName]       = useState('');
+  const [role,       setRole]       = useState<JobRole | ''>(JOB_ROLES.includes(prefilledRole as JobRole) ? prefilledRole as JobRole : '');
   const [experience, setExperience] = useState<ExperienceLevel | ''>('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [isLoading,  setIsLoading]  = useState(false);
+  const [error,      setError]      = useState('');
 
   const isValid = name.trim().length >= 2 && role !== '' && experience !== '';
 
   const handleStart = async () => {
     if (!isValid) return;
-
     setIsLoading(true);
     setError('');
 
-    // CRITICAL FIX FOR CHROME TTS:
-    // The startInterview API call takes 3-5 seconds. By the time it finishes and we navigate
-    // to /warmup, Chrome considers the "user gesture" (the click) to be expired and blocks TTS.
-    // By firing a silent utterance immediately on click, we unlock the TTS engine for the session.
+    // Unlock browser TTS on the user gesture (must happen synchronously)
     try {
       const unlock = new SpeechSynthesisUtterance('');
       unlock.volume = 0;
       window.speechSynthesis.speak(unlock);
-    } catch (e) {
-      // Ignore errors if TTS isn't supported
-    }
+    } catch { /* ignored */ }
 
     try {
       const session = await startInterview(name.trim(), role, experience);
@@ -55,84 +90,167 @@ export default function SetupPage() {
   };
 
   return (
-    <div className="flex-1 flex items-center justify-center px-6 py-12">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-lg"
+    <div style={{ maxWidth: 960, margin: '0 auto' }}>
+      {/* Back button */}
+      <button
+        onClick={() => navigate(fromRoadmap ? (-1 as any) : '/dashboard')}
+        className="btn btn-ghost btn-sm"
+        style={{ marginBottom: 24, display: 'flex', alignItems: 'center', gap: 6 }}
       >
-        <Button 
-          variant="ghost" 
-          leftIcon={<ArrowLeft size={18} />} 
-          onClick={() => navigate(fromRoadmap ? -1 as any : '/')}
-          className="mb-6"
+        <ArrowLeft size={16} /> {fromRoadmap ? 'Back to Roadmap' : 'Back to Dashboard'}
+      </button>
+
+      {fromRoadmap && prefilledRole && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            padding: '12px 16px',
+            borderRadius: 12,
+            background: 'var(--primary-soft)',
+            border: '1px solid rgba(128,103,232,0.2)',
+            marginBottom: 20,
+            fontSize: 13,
+            color: 'var(--primary-text)',
+            fontWeight: 600,
+          }}
         >
-          {fromRoadmap ? 'Back to Roadmap' : 'Back'}
-        </Button>
+          <Map size={15} />
+          Practising for <strong style={{ marginLeft: 4 }}>{prefilledRole}</strong> — from your roadmap
+        </motion.div>
+      )}
 
-        {fromRoadmap && prefilledRole && (
-          <div className="flex items-center gap-2 mb-6 px-4 py-3 rounded-xl bg-accent-glow border border-accent/20">
-            <Map size={15} className="text-accent-light flex-shrink-0" />
-            <p className="text-sm text-accent-light">
-              Practising for <strong>{prefilledRole}</strong> — from your roadmap
-            </p>
-          </div>
-        )}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 24, alignItems: 'start' }}>
 
-        <Card variant="glass" className="p-8">
-          <h1 className="text-3xl font-bold mb-3 text-text-primary">Setup Your Interview</h1>
-          <p className="text-text-secondary mb-10">Fill in the details to begin your AI mock interview.</p>
+        {/* ── Setup form card ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="card"
+          style={{ padding: 32 }}
+        >
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text)', marginBottom: 6, letterSpacing: '-0.3px' }}>
+            Setup Your Interview
+          </h1>
+          <p style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 28 }}>
+            Fill in the details below to begin your AI-powered mock interview session.
+          </p>
 
-          <div className="space-y-8 mb-8">
-            <Input
-              label="Your Name"
-              icon={<User size={18} />}
-              placeholder="Enter your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              maxLength={50}
-            />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <FormField label="Your Name">
+              <div style={{ position: 'relative' }}>
+                <User size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)', pointerEvents: 'none' }} />
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter your name"
+                  maxLength={50}
+                  className="input-field"
+                  style={{ paddingLeft: 40 }}
+                />
+              </div>
+            </FormField>
 
-            <Select
-              label="Job Role"
-              icon={Briefcase}
-              options={JOB_ROLES}
-              value={role}
-              onChange={(val) => setRole(val as JobRole)}
-            />
+            <FormField label="Target Job Role">
+              <div style={{ position: 'relative' }}>
+                <Briefcase size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)', pointerEvents: 'none', zIndex: 1 }} />
+                <StyledSelect
+                  value={role}
+                  onChange={(v) => setRole(v as JobRole)}
+                  options={JOB_ROLES}
+                  placeholder="Select a role"
+                />
+              </div>
+            </FormField>
 
-            <Select
-              label="Experience Level"
-              icon={TrendingUp}
-              options={EXPERIENCE_LEVELS}
-              value={experience}
-              onChange={(val) => setExperience(val as ExperienceLevel)}
-            />
+            <FormField label="Experience Level">
+              <div style={{ position: 'relative' }}>
+                <TrendingUp size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)', pointerEvents: 'none', zIndex: 1 }} />
+                <StyledSelect
+                  value={experience}
+                  onChange={(v) => setExperience(v as ExperienceLevel)}
+                  options={EXPERIENCE_LEVELS}
+                  placeholder="Select experience level"
+                />
+              </div>
+            </FormField>
           </div>
 
           {error && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-error text-sm mb-4 text-center bg-error/10 border border-error/20 rounded-lg p-3"
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              style={{ marginTop: 16, padding: '10px 14px', borderRadius: 10, background: 'var(--danger-soft)', border: '1px solid rgba(217,87,87,0.2)', color: 'var(--danger-text)', fontSize: 13 }}
             >
               {error}
-            </motion.p>
+            </motion.div>
           )}
 
-          <Button
-            className="w-full"
-            size="lg"
-            disabled={!isValid}
-            isLoading={isLoading}
+          <button
             onClick={handleStart}
-            rightIcon={<ArrowRight size={20} />}
+            disabled={!isValid || isLoading}
+            className="btn btn-coral btn-lg"
+            style={{ width: '100%', marginTop: 28, justifyContent: 'center' }}
           >
-            {isLoading ? 'Starting Interview...' : 'Start Interview'}
-          </Button>
-        </Card>
-      </motion.div>
+            {isLoading ? (
+              <>
+                <svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeOpacity="0.3" />
+                  <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                </svg>
+                Starting Interview...
+              </>
+            ) : (
+              <>Start Interview <ArrowRight size={17} /></>
+            )}
+          </button>
+        </motion.div>
+
+        {/* ── Preparation summary sidebar ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+          style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
+        >
+          {/* What to expect */}
+          <div className="card" style={{ padding: 24 }}>
+            <h3 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 16 }}>What to expect</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {PREP_TIPS.map(({ icon: Icon, text }) => (
+                <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--primary-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', flexShrink: 0 }}>
+                    <Icon size={14} />
+                  </div>
+                  <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Tips card */}
+          <div
+            style={{
+              padding: 20,
+              borderRadius: 'var(--radius-card)',
+              background: 'var(--coral-soft)',
+              border: '1px solid rgba(233,119,63,0.2)',
+            }}
+          >
+            <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--coral-text)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
+              Pro tip
+            </p>
+            <p style={{ fontSize: 13, color: 'var(--coral-text)', lineHeight: 1.6 }}>
+              Speak clearly and at a comfortable pace. The AI uses Groq Whisper to transcribe your answers accurately — no need to rush.
+            </p>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }
