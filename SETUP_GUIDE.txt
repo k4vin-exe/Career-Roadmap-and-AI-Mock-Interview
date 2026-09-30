@@ -1,0 +1,135 @@
+================================================================================
+          CAREER R&I (CAREER ROADMAP & AI MOCK INTERVIEW)
+                   COMPLETE STEP-BY-STEP SETUP GUIDE
+================================================================================
+
+This guide provides step-by-step instructions to set up and run the Career R&I 
+application on any operating system (Windows, macOS, Linux).
+
+--------------------------------------------------------------------------------
+1. PREREQUISITES
+--------------------------------------------------------------------------------
+Before starting, ensure you have the following installed on your machine:
+
+1. Node.js (Version 18.x or higher recommended)
+   - Download from: https://nodejs.org/
+   - Verify installation: node -v
+
+2. npm (Node Package Manager - comes bundled with Node.js)
+   - Verify installation: npm -v
+
+3. MongoDB (Database)
+   - Option A: Local MongoDB Community Edition (https://www.mongodb.com/try/download/community)
+   - Option B: MongoDB Atlas Cloud Account (Free tier cluster: https://www.mongodb.com/cloud/atlas)
+
+4. Git (Version control system)
+   - Verify installation: git -v
+
+5. AI API Key (At least one of the following):
+   - Google Gemini API Key: https://aistudio.google.com/
+   - Groq API Key: https://console.groq.com/
+
+--------------------------------------------------------------------------------
+2. CLONE THE REPOSITORY
+--------------------------------------------------------------------------------
+Open your command terminal (Command Prompt, PowerShell, or Terminal) and run:
+
+  git clone https://github.com/k4vin-exe/Career-Roadmap-and-AI-Mock-Interview.git
+  cd Career-Roadmap-and-AI-Mock-Interview
+
+--------------------------------------------------------------------------------
+3. BACKEND (SERVER) SETUP
+--------------------------------------------------------------------------------
+1. Navigate to the server folder:
+     cd server
+
+2. Install backend dependencies:
+     npm install
+
+3. Create the environment configuration file (.env):
+   Create a file named `.env` in the `server` directory with the following content:
+
+------------------------------------ COPY BELOW ------------------------------------
+PORT=5000
+NODE_ENV=development
+MONGODB_URI=mongodb://localhost:27017/ai-mock-interview
+CLIENT_URL=http://localhost:5173
+JWT_SECRET=super_secret_jwt_key_change_me_in_production
+GEMINI_API_KEY=your_gemini_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
+------------------------------------ COPY ABOVE ------------------------------------
+
+   *Note: Replace `your_gemini_api_key_here` or `your_groq_api_key_here` with your actual key.
+   *Note: If using MongoDB Atlas, replace `MONGODB_URI` with your connection string.
+
+4. (Optional) Seed initial data or admin accounts:
+     npm run seed
+
+5. Start the backend development server:
+     npm run dev
+
+   You should see:
+   🚀 Server running on http://localhost:5000
+   📋 Health check: http://localhost:5000/api/health
+
+--------------------------------------------------------------------------------
+4. FRONTEND (CLIENT) SETUP
+--------------------------------------------------------------------------------
+1. Open a SECOND terminal window/tab and navigate to the `client` directory:
+     cd Career-Roadmap-and-AI-Mock-Interview/client
+
+2. Install frontend dependencies:
+     npm install
+
+3. Start the Vite development server:
+     npm run dev
+
+   You should see:
+   VITE v6.x.x  ready in XXX ms
+   ➜  Local:   http://localhost:5173/
+
+--------------------------------------------------------------------------------
+5. VERIFY & USE THE APPLICATION
+--------------------------------------------------------------------------------
+1. Open your web browser (Chrome, Edge, Brave, Safari, Firefox).
+2. Go to: http://localhost:5173
+3. Register a new account or log in.
+4. Explore AI Roadmaps and Voice-Enabled Mock Interviews!
+
+--------------------------------------------------------------------------------
+6. RUNNING ON MOBILE / ANOTHER DEVICE ON THE SAME WI-FI NETWORK
+--------------------------------------------------------------------------------
+If you want to access the app from your mobile phone or another device on your local network:
+
+1. Find your host computer's Local IP Address:
+   - Windows: Run `ipconfig` in CMD (e.g., 192.168.1.15)
+   - macOS / Linux: Run `ifconfig` or `ip a`
+
+2. Update `server/.env`:
+   Set `CLIENT_URL=http://192.168.1.15:5173` (replace with your IP)
+
+3. Start the client host server:
+   cd client
+   npm run dev -- --host 0.0.0.0
+
+4. On your mobile phone/tablet browser, navigate to:
+   http://192.168.1.15:5173
+
+--------------------------------------------------------------------------------
+7. COMMON TROUBLESHOOTING
+--------------------------------------------------------------------------------
+Q1: "MongooseServerSelectionError: connect ECONNREFUSED 127.0.0.1:27017"
+--> MongoDB service is not running locally. Start MongoDB service:
+    - Windows: Open Services app -> Start "MongoDB Server", or run `net start MongoDB`
+    - macOS: `brew services start mongodb-community`
+    - Linux: `sudo systemctl start mongod`
+
+Q2: "Missing both GEMINI_API_KEY and GROQ_API_KEY"
+--> Ensure you created `server/.env` and supplied a valid API key from Google Gemini or Groq.
+
+Q3: "Port 5000 is already in use"
+--> Change `PORT=5001` in `server/.env` and update API base URL in client settings if applicable.
+
+================================================================================
+                        HAPPY CODING & INTERVIEWING!
+================================================================================
