@@ -115,11 +115,22 @@ export function useSpeechRecognition(
     recognition.onerror = (event: any) => {
       if (event.error === 'no-speech' || event.error === 'aborted') return;
 
+      if (event.error === 'network') {
+        // Chromium Web Speech API drops connection when Google speech servers lag or in private/restricted browsers.
+        // Prevent crashing the user's flow; preserve transcript and allow user to resume or type.
+        console.warn('⚠️ Web Speech network dropped. Preserving transcript.');
+        setIsListening(false);
+        shouldListenRef.current = false;
+        if (!accumulatedRef.current.trim()) {
+          setError('Voice connection interrupted. Click to speak again or type your response directly.');
+        }
+        return;
+      }
+
       const errorMap: Record<string, string> = {
-        'not-allowed': 'Microphone access was denied. Please allow microphone access in your browser.',
-        'audio-capture': 'No microphone found. Please connect a microphone and try again.',
-        'network': 'Network error. Please check your internet connection.',
-        'service-not-allowed': 'Speech recognition service is not available. Please try again later.',
+        'not-allowed': 'Microphone access was denied. Please allow microphone access in your browser settings.',
+        'audio-capture': 'No microphone detected. Please plug in a microphone or type your response.',
+        'service-not-allowed': 'Speech recognition service is temporarily unavailable. You can type your answer directly.',
       };
 
       setError(errorMap[event.error] || `Speech recognition error: ${event.error}`);

@@ -21,6 +21,7 @@ import {
   Activity,
   FileText,
   Target,
+  AlertCircle,
 } from 'lucide-react';
 import { segmentTranscriptFillers } from '../../utils/speechMetrics';
 import { useSpeechSynthesis } from '../../hooks/useSpeechSynthesis';
@@ -59,8 +60,9 @@ interface EvaluationCardProps {
   isLastQuestion: boolean;
 }
 
-function normalizeScore(score: number): number {
-  if (score <= 10) return Math.round(score * 10);
+function toPercent(score?: number): number {
+  if (typeof score !== 'number' || isNaN(score) || score <= 0) return 0;
+  if (score <= 10) return Math.min(100, Math.round(score * 10));
   return Math.min(100, Math.round(score));
 }
 
@@ -75,13 +77,13 @@ function ScoreCard({
   score: number;
   delay?: number;
 }) {
-  const norm = normalizeScore(score);
+  const norm = Math.max(0, Math.min(100, Math.round(score || 0)));
   const color =
-    norm >= 80 ? '#45a66b' : norm >= 60 ? '#d99a32' : '#d95757';
+    norm >= 70 ? '#45a66b' : norm >= 40 ? '#d99a32' : '#d95757';
   const softBg =
-    norm >= 80
+    norm >= 70
       ? 'rgba(69, 166, 107, 0.08)'
-      : norm >= 60
+      : norm >= 40
       ? 'rgba(217, 154, 50, 0.08)'
       : 'rgba(217, 87, 87, 0.08)';
 
@@ -90,12 +92,12 @@ function ScoreCard({
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay }}
-      className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col justify-between gap-3"
+      className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col justify-between gap-3.5"
     >
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center"
+            className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
             style={{ background: softBg, color }}
           >
             <Icon size={16} />
@@ -103,7 +105,7 @@ function ScoreCard({
           <span className="text-xs font-bold text-slate-700">{label}</span>
         </div>
         <span
-          className="text-xs font-black px-2 py-0.5 rounded-md"
+          className="text-xs font-black px-2.5 py-1 rounded-md flex-shrink-0"
           style={{ background: softBg, color }}
         >
           {norm}%
@@ -132,24 +134,31 @@ export default function EvaluationCard({
   const [copied, setCopied] = useState(false);
   const { speak, stop: stopSpeaking, isSpeaking } = useSpeechSynthesis({ rate: 0.9, pitch: 0.95 });
 
-  const techNorm = normalizeScore(evaluation.technicalAccuracy || 7.5);
-  const commNorm = normalizeScore(evaluation.communication || 8);
-  const compNorm = normalizeScore(evaluation.completeness || 7);
-  const probNorm = normalizeScore(evaluation.problemSolving || 8);
+  const techNorm = toPercent(evaluation.technicalAccuracy);
+  const commNorm = toPercent(evaluation.communication);
+  const compNorm = toPercent(evaluation.completeness);
+  const probNorm = toPercent(evaluation.problemSolving);
   const avgScore = Math.round((techNorm + commNorm + compNorm + probNorm) / 4);
 
   const durationSec = evaluation.questionDuration || 0;
   const durationFormatted = `${Math.floor(durationSec / 60)}m ${(durationSec % 60).toString().padStart(2, '0')}s`;
   const wpm = evaluation.wordsPerMinute || (durationSec > 5 && evaluation.totalWords ? Math.round((evaluation.totalWords / durationSec) * 60) : 0);
-  const fluency = evaluation.fluencyScore ?? 85;
+  
+  const hasSpoken = Boolean(evaluation.transcript?.trim() && (evaluation.totalWords ?? 0) > 0);
+  const fluency = hasSpoken ? (evaluation.fluencyScore ?? 75) : 0;
   const fillerCount = evaluation.fillerWordCount ?? evaluation.fillerWords?.length ?? 0;
 
   // Segment candidate transcript to highlight filler words
   const transcriptSegments = segmentTranscriptFillers(evaluation.transcript || '');
 
-  const strengthsList = evaluation.strengths && evaluation.strengths.length > 0
-    ? evaluation.strengths
-    : evaluation.expectedPoints || ['Clear communication', 'Good foundational knowledge'];
+  const rawStrengths = evaluation.strengths && evaluation.strengths.length > 0
+    ? evaluation.strengths.filter((s) => s && !s.toLowerCase().includes('did not answer'))
+    : [];
+  const strengthsList = rawStrengths.length > 0
+    ? rawStrengths
+    : evaluation.expectedPoints && evaluation.expectedPoints.length > 0
+    ? evaluation.expectedPoints
+    : [];
 
   const handleCopyIdeal = () => {
     if (!evaluation.idealAnswer) return;
@@ -173,26 +182,26 @@ export default function EvaluationCard({
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (avgScore / 100) * circumference;
   const gaugeColor =
-    avgScore >= 80 ? '#45a66b' : avgScore >= 60 ? '#8067e8' : '#d99a32';
+    avgScore >= 70 ? '#45a66b' : avgScore >= 40 ? '#d99a32' : '#d95757';
+  const gaugeSoftBg =
+    avgScore >= 70
+      ? 'rgba(69, 166, 107, 0.12)'
+      : avgScore >= 40
+      ? 'rgba(217, 154, 50, 0.12)'
+      : 'rgba(217, 87, 87, 0.12)';
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="flex flex-col gap-5 w-full max-w-4xl mx-auto"
+      className="flex flex-col gap-6 w-full"
     >
       {/* ── Hero Performance Verdict Card ── */}
       <div className="rounded-2xl p-6 md:p-8 bg-white border border-slate-200/90 shadow-sm relative overflow-hidden">
-        {/* Ambient background blur */}
-        <div
-          className="absolute -right-10 -bottom-10 w-64 h-64 rounded-full pointer-events-none opacity-40 blur-3xl"
-          style={{ background: gaugeColor }}
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
           {/* Radial Circular Score Gauge */}
-          <div className="md:col-span-4 flex flex-col items-center justify-center p-4 bg-slate-50/80 rounded-2xl border border-slate-100">
+          <div className="md:col-span-4 flex flex-col items-center justify-center p-5 bg-slate-50/90 rounded-2xl border border-slate-100">
             <div className="relative" style={{ width: circleSize, height: circleSize }}>
               <svg width={circleSize} height={circleSize} className="rotate-[-90deg]">
                 {/* Background Track */}
@@ -232,28 +241,25 @@ export default function EvaluationCard({
             </div>
 
             <span
-              className="mt-3 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider"
+              className="mt-4 text-xs font-black px-3.5 py-1.5 rounded-full uppercase tracking-wider text-center"
               style={{
-                background:
-                  avgScore >= 80
-                    ? 'rgba(69, 166, 107, 0.12)'
-                    : avgScore >= 60
-                    ? 'rgba(128, 103, 232, 0.12)'
-                    : 'rgba(217, 154, 50, 0.12)',
+                background: gaugeSoftBg,
                 color: gaugeColor,
               }}
             >
-              {avgScore >= 85
+              {avgScore >= 80
                 ? 'Strong Hire Rating'
                 : avgScore >= 70
                 ? 'Solid Answer'
-                : 'Needs Refinement'}
+                : avgScore >= 40
+                ? 'Needs Refinement'
+                : 'Needs Work / Inaccurate'}
             </span>
           </div>
 
           {/* Executive Evaluator Verdict */}
-          <div className="md:col-span-8 flex flex-col justify-center">
-            <div className="flex items-center gap-2 mb-2">
+          <div className="md:col-span-8 flex flex-col justify-center gap-2">
+            <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
                 <Bot size={16} />
               </div>
@@ -262,17 +268,19 @@ export default function EvaluationCard({
               </span>
             </div>
 
-            <h3 className="text-lg md:text-xl font-extrabold text-slate-800 mb-2">
+            <h3 className="text-lg md:text-xl font-extrabold text-slate-800">
               {avgScore >= 80
                 ? 'High-Impact Articulation with Solid Engineering Principles'
                 : avgScore >= 65
                 ? 'Good Foundational Knowledge with Actionable Expansion Areas'
-                : 'Foundational Answer — Needs Stronger Architecture & Examples'}
+                : avgScore >= 40
+                ? 'Foundational Answer — Needs Stronger Architecture & Examples'
+                : 'Inaccurate or Incomplete Answer — Core Technical Gaps Identified'}
             </h3>
 
-            <p className="text-sm text-slate-600 leading-relaxed bg-slate-50 p-4 rounded-2xl border border-slate-100">
+            <div className="p-4.5 rounded-2xl bg-slate-50 border border-slate-200/70 text-sm text-slate-700 leading-relaxed italic">
               "{evaluation.encouragingFeedback || evaluation.feedback || 'Good effort structuring your thoughts for this interview question.'}"
-            </p>
+            </div>
           </div>
         </div>
       </div>
@@ -302,7 +310,7 @@ export default function EvaluationCard({
 
           {evaluation.deliveryScore !== undefined && (
             <span className="text-xs font-bold px-3 py-1 rounded-full bg-cyan-soft text-cyan-text border border-cyan/20">
-              Delivery Score: {normalizeScore(evaluation.deliveryScore)}%
+              Delivery Score: {toPercent(evaluation.deliveryScore)}%
             </span>
           )}
         </div>
@@ -331,14 +339,26 @@ export default function EvaluationCard({
           {/* Fluency Score */}
           <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center">
             <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium mb-1">
-              <Sparkles size={14} className="text-success" />
+              <Sparkles
+                size={14}
+                style={{ color: fluency >= 70 ? '#45a66b' : fluency >= 40 ? '#d99a32' : '#d95757' }}
+              />
               <span>Fluency Rating</span>
             </div>
             <div className="text-xl font-black text-slate-800">
               {fluency}%
             </div>
-            <span className="text-[11px] font-bold text-success mt-0.5">
-              {fluency >= 85 ? 'High Speech Fluency' : fluency >= 70 ? 'Moderate Pauses' : 'Hesitant Delivery'}
+            <span
+              className="text-[11px] font-bold mt-0.5"
+              style={{ color: fluency >= 70 ? '#45a66b' : fluency >= 40 ? '#d99a32' : '#d95757' }}
+            >
+              {fluency >= 70
+                ? 'High Speech Fluency'
+                : fluency >= 40
+                ? 'Moderate Pauses'
+                : hasSpoken
+                ? 'Hesitant Delivery'
+                : 'No Spoken Input'}
             </span>
           </div>
 
@@ -392,13 +412,13 @@ export default function EvaluationCard({
       </div>
 
       {/* ── Interactive 3-Tab Assessment Suite ── */}
-      <div className="flex items-center gap-2 border-b border-slate-200/80 pb-2">
+      <div className="flex items-center gap-2 border-b border-slate-200/80 pb-2 overflow-x-auto no-scrollbar">
         <button
           onClick={() => setActiveTab('feedback')}
-          className={`px-4 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
+          className={`px-4 py-2.5 min-h-[44px] text-xs font-bold rounded-xl transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
             activeTab === 'feedback'
-              ? 'bg-primary text-white shadow-xs scale-102'
-              : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'
+              ? 'bg-primary text-white shadow-xs'
+              : 'text-slate-600 bg-slate-100/70 hover:bg-slate-200/60'
           }`}
         >
           <Award size={15} /> Strengths & Gaps
@@ -406,10 +426,10 @@ export default function EvaluationCard({
 
         <button
           onClick={() => setActiveTab('speech')}
-          className={`px-4 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
+          className={`px-4 py-2.5 min-h-[44px] text-xs font-bold rounded-xl transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
             activeTab === 'speech'
-              ? 'bg-primary text-white shadow-xs scale-102'
-              : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'
+              ? 'bg-primary text-white shadow-xs'
+              : 'text-slate-600 bg-slate-100/70 hover:bg-slate-200/60'
           }`}
         >
           <FileText size={15} /> Spoken Transcript & Fillers
@@ -417,10 +437,10 @@ export default function EvaluationCard({
 
         <button
           onClick={() => setActiveTab('ideal')}
-          className={`px-4 py-2 text-xs font-bold rounded-xl transition-all flex items-center gap-2 cursor-pointer ${
+          className={`px-4 py-2.5 min-h-[44px] text-xs font-bold rounded-xl transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
             activeTab === 'ideal'
-              ? 'bg-primary text-white shadow-xs scale-102'
-              : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'
+              ? 'bg-primary text-white shadow-xs'
+              : 'text-slate-600 bg-slate-100/70 hover:bg-slate-200/60'
           }`}
         >
           <BookOpen size={15} /> Principal Engineer Model Answer
@@ -441,7 +461,7 @@ export default function EvaluationCard({
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Strengths */}
-              <div className="card-elevated rounded-3xl p-6 bg-white border border-success/30 shadow-xs">
+              <div className="card-elevated rounded-3xl p-6 bg-white border border-success/30 shadow-xs flex flex-col justify-start">
                 <div className="flex items-center gap-2 mb-3.5">
                   <div className="w-8 h-8 rounded-xl bg-success-soft flex items-center justify-center text-success">
                     <CheckCircle2 size={18} />
@@ -454,14 +474,24 @@ export default function EvaluationCard({
                   </div>
                 </div>
 
-                <ul className="space-y-2.5 text-xs text-slate-700">
-                  {strengthsList.map((strength, idx) => (
-                    <li key={idx} className="flex items-start gap-2.5 p-2 rounded-xl bg-success-soft/20 border border-success/15">
-                      <CheckCircle2 size={15} className="text-success flex-shrink-0 mt-0.5" />
-                      <span className="leading-relaxed font-medium">{strength}</span>
-                    </li>
-                  ))}
-                </ul>
+                {strengthsList.length > 0 ? (
+                  <ul className="space-y-2.5 text-xs text-slate-700">
+                    {strengthsList.map((strength, idx) => (
+                      <li key={idx} className="flex items-start gap-2.5 p-2 rounded-xl bg-success-soft/20 border border-success/15">
+                        <CheckCircle2 size={15} className="text-success flex-shrink-0 mt-0.5" />
+                        <span className="leading-relaxed font-medium">{strength}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-3 text-slate-500">
+                    <AlertCircle size={18} className="text-slate-400 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs font-bold text-slate-600">No strengths identified for this answer</p>
+                      <p className="text-[11px] text-slate-400">Provide a more detailed technical explanation to earn positive scoring markers.</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Missing Concepts & Edge Cases */}

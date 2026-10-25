@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import api from '../services/api';
 
 interface User {
   id: string;
@@ -30,12 +31,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
       try {
-        const res = await fetch('/api/auth/me', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await res.json();
-        if (data.success) {
-          setUser(data.data);
+        const res = await api.get('/auth/me');
+        if (res.data.success) {
+          setUser(res.data.data);
         } else {
           // Invalid token
           setToken(null);

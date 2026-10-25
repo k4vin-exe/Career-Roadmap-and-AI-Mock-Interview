@@ -1,0 +1,13 @@
+{
+  "name": "ai-mock-interview-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI Mock Interview & Career Roadmap Platform",
+  "scripts": {
+    "install:all": "npm install --prefix client && npm install --prefix server",
+    "build:client": "npm run build --prefix client",
+    "build:server": "npm run build --prefix server",
+    "build": "npm run install:all && npm run build:client && npm run build:server",
+    "start": "npm run start --prefix server"
+  }
+}

@@ -7,7 +7,7 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LogIn, Mail, Lock, Eye, EyeOff, BrainCircuit, Map, Mic, BarChart3, Sparkles } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import axios from 'axios';
+import api from '../../services/api';
 
 const FEATURES = [
   { icon: Map,      text: 'Personalized week-by-week career roadmaps' },
@@ -31,7 +31,7 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      const res = await axios.post('/api/auth/login', { email, password });
+      const res = await api.post('/auth/login', { email, password });
       if (res.data.success) {
         login(res.data.token, res.data.data);
         const from = (location.state as any)?.from?.pathname || '/dashboard';

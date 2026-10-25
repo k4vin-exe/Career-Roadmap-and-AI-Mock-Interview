@@ -1,6 +1,7 @@
 import { User, InterviewSession, Question, Response, Report } from '../models/index.js';
 import type { JobRole, ExperienceLevel, IEvaluation } from '../models/index.js';
 import GroqService from './groqService.js';
+import GeminiService from './geminiService.js';
 import { generateQuestionPrompt } from '../prompts/questionGeneration.js';
 import { generateAnswerEvaluationPrompt } from '../prompts/answerEvaluation.js';
 import { generateWarmupEvaluationPrompt } from '../prompts/warmupEvaluation.js';
@@ -42,17 +43,25 @@ class InterviewService {
   private groq = GroqService.getInstance();
 
   /**
-   * Uses Groq as the sole AI provider.
-   * Falls back to a predefined mock object if Groq fails.
+   * Primary route: Groq Cloud LPU.
+   * Secondary route: Google Gemini 2.0 Flash.
+   * Tertiary route: Deterministic mock fallback.
    */
   private async callAI<T>(prompt: string, fallbackMock: T): Promise<T> {
     try {
       console.log('🤖 Routing AI request to Groq...');
       return await this.groq.generateJSON<T>(prompt);
-    } catch (error: any) {
-      console.warn('⚠️  Groq request failed:', error.message);
-      console.warn('Falling back to mock data...');
-      return fallbackMock;
+    } catch (groqError: any) {
+      console.warn('⚠️  Groq request failed:', groqError.message);
+      try {
+        console.log('🤖 Routing fallback request to Gemini...');
+        const gemini = GeminiService.getInstance();
+        return await gemini.generateJSON<T>(prompt);
+      } catch (geminiError: any) {
+        console.warn('⚠️  Gemini fallback also failed:', geminiError.message);
+        console.warn('Falling back to deterministic mock data...');
+        return fallbackMock;
+      }
     }
   }
 
@@ -215,27 +224,74 @@ class InterviewService {
         wpm,
       }
     );
+    const rawAnswer = (input.editedTranscript || input.transcript || '').trim();
+    const isExplicitNonAnswer =
+      rawAnswer.length < 12 ||
+      /^(i don'?t know|no idea|not sure|dont know|i have no idea|idk|pass|skip|\.|\s*)$/i.test(rawAnswer);
 
-    const mockEvaluation: IEvaluation = {
-      technicalAccuracy: 7.5,
-      communication: 8.0,
-      completeness: 7.0,
-      problemSolving: 8.0,
-      deliveryScore: 8.0,
-      pacingFeedback: wpm > 0 ? `Delivered at ~${wpm} WPM. Steady and easy to follow.` : 'Good pacing overall.',
-      fillerFeedback: input.fillerWordCount > 0 
-        ? `Used ${input.fillerWordCount} filler words (${input.fillerWords.slice(0, 3).join(', ')}). Try pausing silently instead of filling silences.`
-        : 'Crisp verbal delivery with virtually zero filler words!',
-      structureFeedback: 'Solid logical progression. Consider summarizing your main takeaway at the very end.',
-      strengths: ["Clear technical explanation of core principles", "Good domain vocabulary and foundational knowledge"],
-      weaknesses: ["Could provide more concrete production examples", "Could explicitly discuss scalability and error handling"],
-      missingConcepts: ["Scalability trade-offs", "Edge case validation", "Production monitoring"],
-      idealAnswer: `When approaching this problem, I look at three critical dimensions: reliability, performance, and maintainability. In production, I would prioritize a modular design with proper error boundaries and telemetry.`,
-      suggestions: ["Structure answers using Problem -> Architecture -> Trade-offs", "Quantify results with real-world metrics where possible"],
-      encouragingFeedback: "Strong answer with solid engineering intuition! With a bit more emphasis on production trade-offs, this will stand out to interviewers.",
-    };
+    let evaluation: IEvaluation;
 
-    const evaluation = await this.callAI<IEvaluation>(prompt, mockEvaluation);
+    if (isExplicitNonAnswer) {
+      console.log('⚠️ Candidate provided an explicit non-answer or "I don\'t know". Assigning strict failing evaluation.');
+      evaluation = {
+        technicalAccuracy: 1.0,
+        communication: 2.0,
+        completeness: 1.0,
+        problemSolving: 1.0,
+        deliveryScore: 2.0,
+        pacingFeedback: 'The response was too short to establish conversational cadence.',
+        fillerFeedback: 'Very little speech was recorded.',
+        structureFeedback: 'No structured technical response was provided for this question.',
+        strengths: ['Direct and transparent acknowledgment of knowledge boundary'],
+        weaknesses: [
+          'Did not answer the technical question',
+          'Missed the opportunity to reason through related concepts or first principles',
+        ],
+        missingConcepts: [
+          'Core technical definition',
+          'Standard implementation mechanics',
+          'Production architectural trade-offs',
+        ],
+        idealAnswer: `For this question, an effective answer should define the core mechanism, provide a concrete implementation or use-case example, and discuss trade-offs such as scalability, error handling, and reliability.`,
+        suggestions: [
+          'When unsure of the exact answer, communicate what you know about related systems and how you would investigate the problem',
+          'Review this fundamental topic before your technical rounds',
+        ],
+        encouragingFeedback: 'Do not be discouraged! It is completely normal to encounter unfamiliar concepts in technical interviews. Review the ideal approach and practice formulating structured responses.',
+      };
+    } else {
+      const wordCount = input.totalWords || rawAnswer.split(/\s+/).length;
+      const isBrief = wordCount < 25;
+
+      const mockEvaluation: IEvaluation = {
+        technicalAccuracy: isBrief ? 3.5 : 7.0,
+        communication: isBrief ? 4.0 : 7.5,
+        completeness: isBrief ? 3.0 : 6.5,
+        problemSolving: isBrief ? 3.5 : 7.0,
+        deliveryScore: isBrief ? 4.0 : 7.0,
+        pacingFeedback: wpm > 0 ? `Delivered at ~${wpm} WPM.` : 'Pacing was measured.',
+        fillerFeedback: input.fillerWordCount > 0 
+          ? `Used ${input.fillerWordCount} filler words (${input.fillerWords.slice(0, 3).join(', ')}). Try pausing silently instead of filling silences.`
+          : 'Crisp verbal delivery with virtually zero filler words!',
+        structureFeedback: isBrief
+          ? 'Response was brief. Aim for a 3-part structure: Definition -> Mechanism -> Trade-offs.'
+          : 'Solid logical progression through the problem.',
+        strengths: isBrief
+          ? ["Attempted to outline the core concept"]
+          : ["Clear technical explanation of core principles", "Good domain vocabulary"],
+        weaknesses: isBrief
+          ? ["Answer lacks depth and production detail", "Key operational trade-offs were omitted"]
+          : ["Could provide more concrete production examples", "Could explicitly discuss scalability and error handling"],
+        missingConcepts: ["Scalability trade-offs", "Edge case validation", "Production monitoring"],
+        idealAnswer: `When approaching this question, prioritize three critical dimensions: reliability, performance, and maintainability. In production, structure the response by defining the problem, outlining the architectural mechanics, and concluding with trade-offs.`,
+        suggestions: ["Structure answers using Problem -> Architecture -> Trade-offs", "Quantify results with real-world metrics where possible"],
+        encouragingFeedback: isBrief
+          ? "Good start. Expand your answer with more concrete implementation details and edge-case handling."
+          : "Strong answer with solid engineering intuition! With a bit more emphasis on production trade-offs, this will stand out.",
+      };
+
+      evaluation = await this.callAI<IEvaluation>(prompt, mockEvaluation);
+    }
 
     // Store response
     const response = await Response.create({

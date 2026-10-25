@@ -7,7 +7,7 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { UserPlus, Mail, Lock, User, BrainCircuit, Eye, EyeOff, CheckCircle2, Sparkles } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import axios from 'axios';
+import api from '../../services/api';
 
 const BENEFITS = [
   'Personalized AI career roadmaps',
@@ -37,7 +37,7 @@ export default function RegisterPage() {
     }
     setLoading(true);
     try {
-      const res = await axios.post('/api/auth/register', { name, email, password });
+      const res = await api.post('/auth/register', { name, email, password });
       if (res.data.success) {
         login(res.data.token, res.data.data);
         const from = (location.state as any)?.from?.pathname || '/dashboard';

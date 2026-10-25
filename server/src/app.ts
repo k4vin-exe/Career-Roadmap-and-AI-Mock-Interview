@@ -1,3 +1,5 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -11,6 +13,9 @@ import roadmapRoutes from './routes/roadmapRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // Validate environment variables
 validateEnv();
 
@@ -18,8 +23,13 @@ const app = express();
 
 // ────────────────────────────── Middleware ──────────────────────────────
 
-// Security headers
-app.use(helmet());
+// Security headers (relaxed CSP so Vite bundle, fonts, and speech audio load smoothly)
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+  })
+);
 
 // CORS
 app.use(
@@ -61,6 +71,20 @@ app.use('/api/user', userRoutes);
 
 // Roadmap routes
 app.use('/api/roadmap', roadmapRoutes);
+
+// ────────────────────────────── Static Frontend (Production) ────────────────
+if (config.nodeEnv === 'production') {
+  const clientDist = path.resolve(__dirname, '../../client/dist');
+  app.use(express.static(clientDist));
+
+  // SPA fallback for non-API client routes (e.g. /setup, /interview, /dashboard)
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    res.sendFile(path.join(clientDist, 'index.html'));
+  });
+}
 
 // ────────────────────────────── Error Handling ──────────────────────────────
 

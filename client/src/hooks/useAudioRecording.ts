@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 
 interface UseAudioRecordingReturn {
   transcript: string;
@@ -61,14 +61,7 @@ export function useAudioRecording(): UseAudioRecordingReturn {
           // Backend multer expects 'file'
           formData.append('file', audioBlob, 'recording.webm');
 
-          const token = localStorage.getItem('token');
-          // Use Vite proxy path '/api' — no need for VITE_API_URL
-          const response = await axios.post('/api/interview/transcribe', formData, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              // Do NOT set Content-Type manually — axios sets multipart boundary automatically
-            },
-          });
+          const response = await api.post('/interview/transcribe', formData);
 
           if (response.data.success) {
             setTranscript(response.data.text);

@@ -28,15 +28,26 @@ import {
 
 import { useInterview } from '../context/InterviewContext';
 import { startInterview } from '../services/api';
-import { JOB_ROLES, EXPERIENCE_LEVELS } from '../utils/types';
+import { JOB_ROLES } from '../utils/types';
 import type { ExperienceLevel } from '../utils/types';
 
-const EXPERIENCE_DESCRIPTIONS: Record<string, string> = {
-  Junior: '0–2 years · Core fundamentals & clean implementation',
-  Mid: '3–5 years · System design, trade-offs & production workflows',
-  Senior: '5–8 years · Scalability, architecture & team technical leadership',
-  Lead: '8+ years · Enterprise strategy, high-scale resilience & mentoring',
-};
+const SENIORITY_TIERS: { key: ExperienceLevel; label: string; desc: string }[] = [
+  {
+    key: 'Beginner',
+    label: 'Junior',
+    desc: '0–2 years · Fundamentals, syntax & core data structures',
+  },
+  {
+    key: 'Intermediate',
+    label: 'Mid-Level',
+    desc: '3–5 years · Architecture, system trade-offs & clean code',
+  },
+  {
+    key: 'Experienced',
+    label: 'Senior+',
+    desc: '5+ years · Distributed systems, scale & technical leadership',
+  },
+];
 
 const SESSION_HIGHLIGHTS = [
   {
@@ -117,19 +128,19 @@ export default function SetupPage() {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto py-2 flex flex-col gap-6">
+    <div className="page-wrapper-setup py-6 flex flex-col gap-6">
       {/* ── Top Navigation Bar & Roadmap Synergy Badge ── */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <button
           onClick={() => navigate(fromRoadmap ? (-1 as any) : '/dashboard')}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200/90 text-xs font-bold text-slate-600 hover:text-slate-900 hover:border-slate-300 shadow-2xs transition-all cursor-pointer"
+          className="inline-flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-xl bg-white border border-slate-200/90 text-xs font-bold text-slate-700 hover:text-slate-900 hover:border-slate-300 shadow-2xs transition-all cursor-pointer"
         >
-          <ArrowLeft size={15} />
+          <ArrowLeft size={16} />
           <span>{fromRoadmap ? 'Back to Career Roadmap' : 'Back to Dashboard'}</span>
         </button>
 
         {fromRoadmap && prefilledRole && (
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary-soft/80 border border-primary/25 text-xs font-bold text-primary shadow-2xs">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-soft/80 border border-primary/25 text-xs font-bold text-primary shadow-2xs">
             <Map size={14} />
             <span>Targeting {prefilledRole} from your roadmap</span>
           </div>
@@ -142,19 +153,17 @@ export default function SetupPage() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35 }}
-          className="lg:col-span-7 bg-white rounded-3xl border border-slate-200/90 shadow-sm p-7 sm:p-9 flex flex-col gap-7 relative overflow-hidden"
+          className="lg:col-span-7 bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-8 flex flex-col gap-6 relative overflow-hidden"
         >
           {/* Form Header */}
-          <div className="flex items-start gap-4">
+          <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-primary-soft/70 border border-primary/25 flex items-center justify-center text-primary flex-shrink-0 shadow-xs">
               <BrainCircuit size={24} />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-primary">
-                  Interactive AI Simulation
-                </span>
-              </div>
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-primary">
+                Interactive AI Simulation
+              </span>
               <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight leading-snug">
                 Configure Your Interview
               </h1>
@@ -182,7 +191,7 @@ export default function SetupPage() {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="E.g. Sarah Connor"
                   maxLength={50}
-                  className="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-semibold text-slate-800 outline-none focus:bg-white focus:border-primary focus:ring-3 focus:ring-primary/10 transition-all placeholder:text-slate-400"
+                  className="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3 min-h-[48px] text-sm font-semibold text-slate-800 outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-400"
                 />
               </div>
               <p className="text-[11px] text-slate-400 font-medium pl-1">
@@ -205,7 +214,7 @@ export default function SetupPage() {
                     setRole(e.target.value);
                     if (e.target.value !== 'Other') setCustomRole('');
                   }}
-                  className="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3.5 pr-10 text-sm font-semibold text-slate-800 outline-none focus:bg-white focus:border-primary focus:ring-3 focus:ring-primary/10 transition-all cursor-pointer appearance-none"
+                  className="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3 min-h-[48px] pr-10 text-sm font-semibold text-slate-800 outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer appearance-none"
                 >
                   <option value="" disabled>
                     Select your target engineering or tech role...
@@ -239,7 +248,7 @@ export default function SetupPage() {
                       placeholder="Specify role title (e.g. MLOps Specialist, Site Reliability Engineer)..."
                       maxLength={60}
                       autoFocus
-                      className="w-full bg-white border-2 border-primary/40 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 outline-none focus:border-primary focus:ring-3 focus:ring-primary/10 transition-all shadow-xs"
+                      className="w-full bg-white border-2 border-primary/40 rounded-xl px-4 py-3 min-h-[48px] text-sm font-semibold text-slate-800 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all shadow-xs"
                     />
                   </motion.div>
                 )}
@@ -254,32 +263,36 @@ export default function SetupPage() {
                 <span className="text-danger">*</span>
               </label>
 
-              <div className="grid grid-cols-2 gap-2.5">
-                {EXPERIENCE_LEVELS.map((lvl) => {
-                  const isSelected = experience === lvl;
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {SENIORITY_TIERS.map(({ key, label, desc }) => {
+                  const isSelected = experience === key;
                   return (
                     <button
-                      key={lvl}
+                      key={key}
                       type="button"
-                      onClick={() => setExperience(lvl)}
-                      className={`p-3.5 rounded-2xl border text-left flex flex-col gap-1 transition-all cursor-pointer ${
+                      onClick={() => setExperience(key)}
+                      className={`p-4 rounded-2xl border text-left flex flex-col justify-between gap-3 transition-all cursor-pointer ${
                         isSelected
-                          ? 'border-primary bg-primary-soft/40 shadow-xs ring-2 ring-primary/20'
+                          ? 'border-primary bg-primary-soft/40 shadow-xs ring-2 ring-primary/25'
                           : 'border-slate-200 bg-slate-50/70 hover:bg-slate-100/70 hover:border-slate-300'
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-extrabold text-slate-800">
-                          {lvl} Level
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-sm font-extrabold text-slate-800">
+                          {label}
                         </span>
-                        {isSelected && (
-                          <div className="w-4 h-4 rounded-full bg-primary text-white flex items-center justify-center">
-                            <Check size={11} strokeWidth={3} />
-                          </div>
-                        )}
+                        <div
+                          className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${
+                            isSelected
+                              ? 'bg-primary text-white'
+                              : 'border border-slate-300 bg-white'
+                          }`}
+                        >
+                          {isSelected && <Check size={12} strokeWidth={3} />}
+                        </div>
                       </div>
-                      <p className="text-[10px] text-slate-500 font-medium leading-tight">
-                        {EXPERIENCE_DESCRIPTIONS[lvl] || `${lvl} engineering interview track`}
+                      <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                        {desc}
                       </p>
                     </button>
                   );
@@ -306,17 +319,17 @@ export default function SetupPage() {
           </AnimatePresence>
 
           {/* Primary Submit CTA */}
-          <div className="pt-2">
+          <div className="pt-2 flex flex-col">
             <motion.button
               type="button"
               onClick={handleStart}
               disabled={!isValid || isLoading}
               whileHover={isValid && !isLoading ? { scale: 1.02, y: -1 } : {}}
               whileTap={isValid && !isLoading ? { scale: 0.98 } : {}}
-              className={`w-full py-4 rounded-2xl text-sm font-extrabold text-white flex items-center justify-center gap-2.5 transition-all shadow-md ${
+              className={`w-full min-h-[48px] py-3.5 px-6 rounded-2xl text-base font-extrabold flex items-center justify-center gap-2.5 transition-all shadow-md ${
                 !isValid || isLoading
-                  ? 'bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-300/60 shadow-none'
-                  : 'cursor-pointer hover:shadow-lg hover:shadow-primary/25'
+                  ? 'bg-slate-200 text-slate-600 border border-slate-300/80 cursor-not-allowed shadow-none'
+                  : 'text-white cursor-pointer hover:shadow-lg hover:shadow-primary/25'
               }`}
               style={
                 isValid && !isLoading
@@ -339,6 +352,11 @@ export default function SetupPage() {
                 </>
               )}
             </motion.button>
+            {!isValid && (
+              <p className="text-[11px] text-slate-500 text-center mt-2 font-medium">
+                Please enter your name, select a target role, and choose a seniority level to begin.
+              </p>
+            )}
           </div>
         </motion.div>
 
@@ -347,7 +365,7 @@ export default function SetupPage() {
           initial={{ opacity: 0, x: 14 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="lg:col-span-5 flex flex-col gap-5"
+          className="lg:col-span-5 flex flex-col gap-6"
         >
           {/* Session Expectations Card */}
           <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-7 flex flex-col gap-5">
@@ -382,7 +400,7 @@ export default function SetupPage() {
           </div>
 
           {/* AI Evaluator Persona Preview */}
-          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 flex flex-col gap-4">
+          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-7 flex flex-col gap-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-primary-soft/80 border border-primary/20 text-primary flex items-center justify-center flex-shrink-0 shadow-2xs font-black text-sm">
                 EV
@@ -398,13 +416,13 @@ export default function SetupPage() {
               </div>
             </div>
 
-            <p className="text-xs text-slate-600 leading-relaxed font-medium bg-slate-50 p-3.5 rounded-2xl border border-slate-100 italic">
+            <p className="text-xs text-slate-600 leading-relaxed font-medium bg-slate-50 p-4 rounded-2xl border border-slate-100 italic">
               "We will begin with an optional 60-second warmup self-introduction to verify your audio levels, then proceed through 5 structured questions with instant feedback."
             </p>
 
-            <div className="flex items-center justify-between text-[11px] text-slate-400 font-medium pt-1">
-              <span className="flex items-center gap-1">
-                <ShieldCheck size={13} className="text-success" />
+            <div className="flex items-center justify-between text-[11px] text-slate-500 font-medium pt-3 border-t border-slate-100 px-1">
+              <span className="flex items-center gap-1.5">
+                <ShieldCheck size={14} className="text-success" />
                 Private & confidential
               </span>
               <span>Groq Llama-3 + Whisper</span>

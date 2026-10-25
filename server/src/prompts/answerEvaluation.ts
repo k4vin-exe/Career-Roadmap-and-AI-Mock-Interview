@@ -47,23 +47,32 @@ Candidate's Speech Delivery Metrics:
 - Fluency Score: ${metrics.fluencyScore}/100
 
 Instructions for Evaluation:
-1. TECHNICAL ACCURACY (0-10): Evaluate architectural correctness, precision of technical terms, handling of real-world edge cases, and engineering trade-offs appropriate for a ${experience.toLowerCase()} ${role}.
-2. COMMUNICATION (0-10): Assess clarity, executive presence, articulation, and conciseness. Penalize vague hand-waving or disjointed thoughts.
-3. COMPLETENESS (0-10): Did the candidate answer the exact question directly, or did they miss core facets?
-4. PROBLEM SOLVING (0-10): Ability to break down the problem methodically, reason from first principles, and propose practical solutions.
-5. DELIVERY SCORE (0-10): Spoken delivery quality based on the speech metrics (fluency, lack of hesitation/fillers, pacing).
-6. PACING FEEDBACK: 1-2 constructive sentences on their speaking speed and rhythm.
-7. FILLER FEEDBACK: 1-2 sentences on how their verbal filler habits impacted confidence, and advice on pausing silently instead.
-8. STRUCTURE FEEDBACK: Comment on how they structured the answer (e.g. STAR method for behavioral/scenario questions, or Definition -> Mechanism -> Trade-offs for technical questions).
-9. STRENGTHS: 2-3 specific points the candidate stated accurately or articulated well.
-10. WEAKNESSES: 2-3 specific technical gaps, omissions, or structural flaws.
-11. MISSING CONCEPTS: 2-4 crucial industry terms, tools, design patterns, or considerations that a high-performing ${role} should have mentioned.
-12. IDEAL ANSWER: A comprehensive, polished, conversational model answer (2-3 paragraphs) demonstrating how a senior candidate would speak this answer aloud naturally and authoritatively.
-13. SUGGESTIONS: 2-3 actionable, high-impact tips for their next interview.
-14. ENCOURAGING FEEDBACK: An uplifting, motivating closing remark recognizing their effort.
+1. STRICT ACCURACY & SCORING:
+   - Evaluate the factual correctness of the answer against standard industry engineering practices for a ${experience.toLowerCase()} ${role}.
+   - IF THE ANSWER IS WRONG, INCORRECT, OR FACTUALLY FLAWED: Assign a failing score! technicalAccuracy MUST be between 0 and 3 out of 10. Do NOT give passing scores (6-10) to incorrect answers.
+   - IF THE CANDIDATE ANSWERS "I don't know", "no idea", "not sure", "pass", "skip", OR GIVES A VAGUE/NONSENSICAL NON-ANSWER: technicalAccuracy MUST be 0 or 1, completeness MUST be 0 or 1, and problemSolving MUST be 0 or 1.
+   - 0-3: Poor / Factually incorrect / Fundamental misunderstandings / "I don't know"
+   - 4-5: Below Average / Vague, superficial, or partially flawed
+   - 6-7: Good / Solid competence and mostly accurate
+   - 8-9: Very Good / Clear hire with deep accurate understanding
+   - 10: Exceptional / Staff level benchmark with zero inaccuracies
+2. TECHNICAL ACCURACY (0-10): Rate architectural correctness, precision of technical terms, handling of real-world edge cases, and engineering trade-offs.
+3. COMMUNICATION (0-10): Assess clarity, executive presence, articulation, and conciseness. Penalize rambling or disjointed thoughts.
+4. COMPLETENESS (0-10): Did the candidate answer the exact question directly, or did they miss core facets?
+5. PROBLEM SOLVING (0-10): Ability to break down the problem methodically, reason from first principles, and propose practical solutions.
+6. DELIVERY SCORE (0-10): Spoken delivery quality based on the speech metrics (fluency, lack of hesitation/fillers, pacing).
+7. PACING FEEDBACK: 1-2 constructive sentences on their speaking speed and rhythm.
+8. FILLER FEEDBACK: 1-2 sentences on how their verbal filler habits impacted confidence, and advice on pausing silently instead.
+9. STRUCTURE FEEDBACK: Comment on how they structured the answer (e.g. STAR method for behavioral/scenario questions, or Definition -> Mechanism -> Trade-offs for technical questions).
+10. STRENGTHS: 2-3 specific points the candidate stated accurately or articulated well. If incorrect, point out what small part was attempted.
+11. WEAKNESSES: 2-3 specific technical gaps, inaccuracies, omissions, or structural flaws.
+12. MISSING CONCEPTS: 2-4 crucial industry terms, tools, design patterns, or considerations that a high-performing ${role} should have mentioned.
+13. IDEAL ANSWER: A comprehensive, polished, conversational model answer (2-3 paragraphs) demonstrating how a senior candidate would speak this answer aloud naturally and authoritatively.
+14. SUGGESTIONS: 2-3 actionable, high-impact tips for their next interview.
+15. ENCOURAGING FEEDBACK: An uplifting, motivating closing remark recognizing their effort.
 
 Scoring Scale:
-- 0-3: Poor / Fundamental misunderstandings
+- 0-3: Poor / Wrong / Fundamental misunderstandings / "I don't know"
 - 4-5: Below Average / Vague or superficial
 - 6-7: Good / Solid competence
 - 8-9: Very Good / Clear hire

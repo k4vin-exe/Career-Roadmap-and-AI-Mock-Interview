@@ -10,8 +10,14 @@ import path from 'path';
 class GroqService {
   private groq: Groq | null = null;
   private static instance: GroqService;
-  private defaultModel = 'llama-3.3-70b-versatile';
-  private fallbackModels = ['openai/gpt-oss-20b', 'qwen/qwen3.6-27b'];
+  private defaultModel = 'llama-3.1-8b-instant';
+  private fallbackModels = [
+    'llama-3.3-70b-versatile',
+    'llama-3.1-70b-versatile',
+    'llama3-70b-8192',
+    'llama3-8b-8192',
+    'gemma2-9b-it',
+  ];
 
   private constructor() {
     if (config.groqApiKey) {
@@ -57,7 +63,7 @@ class GroqService {
               },
             ],
             response_format: { type: 'json_object' },
-            temperature: 0.7,
+            temperature: 0.5,
             max_tokens: 4000,
           });
 
@@ -71,12 +77,11 @@ class GroqService {
           return JSON.parse(cleaned) as T;
         } catch (error: any) {
           lastError = error as Error;
+          console.warn(`⚠️ Groq model ${model} attempt ${attempt} error:`, error?.status, error?.message);
           // If model doesn't exist, stop retrying this model immediately
           if (error?.status === 404 || error?.error?.code === 'model_not_found') {
-            console.warn(`⚠️  Groq: model ${model} not found, trying next...`);
             break;
           }
-          console.error(`Groq attempt ${attempt}/${maxRetries} with ${model} failed:`, lastError.message);
           if (attempt < maxRetries) {
             await this.delay(Math.pow(2, attempt - 1) * 1000);
           }

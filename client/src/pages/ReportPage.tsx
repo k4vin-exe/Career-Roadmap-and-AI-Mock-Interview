@@ -29,23 +29,23 @@ import type { InterviewReport, Question } from '../utils/types';
 // ─── Helper: score → colour ──────────────────────────────────────────────────
 
 function scoreColor(score: number): string {
-  if (score >= 80) return '#22c55e';
-  if (score >= 60) return '#f59e0b';
-  return '#ef4444';
+  if (score >= 70) return '#45a66b';
+  if (score >= 40) return '#d99a32';
+  return '#d95757';
 }
 
 function scoreLabel(score: number): string {
   if (score >= 85) return 'Excellent';
   if (score >= 70) return 'Good';
-  if (score >= 55) return 'Fair';
-  return 'Needs Work';
+  if (score >= 40) return 'Needs Refinement';
+  return 'Critical Work Needed';
 }
 
 function readinessColor(readiness: string): string {
   const r = readiness?.toLowerCase() ?? '';
-  if (r.includes('ready') || r.includes('excellent')) return '#22c55e';
-  if (r.includes('almost') || r.includes('good')) return '#f59e0b';
-  return '#ef4444';
+  if (r.includes('ready') || r.includes('excellent') || r.includes('high')) return '#45a66b';
+  if (r.includes('almost') || r.includes('good') || r.includes('moderate')) return '#d99a32';
+  return '#d95757';
 }
 
 // ─── Animated Circular Progress ───────────────────────────────────────────────
@@ -115,7 +115,7 @@ function CircularScore({ score, size = 110, label, sublabel, delay = 0 }: Circul
 // ─── Mini bar ─────────────────────────────────────────────────────────────────
 
 function ScoreBar({ label, score, delay = 0 }: { label: string; score: number; delay?: number }) {
-  const norm = score <= 10 ? Math.round(score * 10) : Math.round(score);
+  const norm = Math.max(0, Math.min(100, Math.round(score || 0)));
   const color = scoreColor(norm);
   return (
     <div className="flex items-center gap-3">
@@ -145,10 +145,15 @@ interface QuestionCardProps {
 
 function QuestionCard({ q, qs, resp, index }: QuestionCardProps) {
   const [open, setOpen] = useState(false);
-  const normTech = qs.technicalAccuracy <= 10 ? qs.technicalAccuracy * 10 : qs.technicalAccuracy;
-  const normComm = qs.communication <= 10 ? qs.communication * 10 : qs.communication;
-  const normComp = qs.completeness <= 10 ? qs.completeness * 10 : qs.completeness;
-  const normProb = qs.problemSolving <= 10 ? qs.problemSolving * 10 : qs.problemSolving;
+  // Backend questionScores stores values on 0-100 scale (e.g. 10 for failing, 70 for good).
+  // If a value is fractional (e.g. 3.5), multiply by 10. Otherwise, clamp to 0-100.
+  const toScale = (v: number) =>
+    v <= 10 && v > 0 && v % 1 !== 0 ? Math.round(v * 10) : Math.max(0, Math.min(100, Math.round(v || 0)));
+
+  const normTech = toScale(qs.technicalAccuracy);
+  const normComm = toScale(qs.communication);
+  const normComp = toScale(qs.completeness);
+  const normProb = toScale(qs.problemSolving);
   const avg = Math.round((normTech + normComm + normComp + normProb) / 4);
   const color = scoreColor(avg);
 
@@ -354,14 +359,14 @@ export default function ReportPage() {
   const rColor = readinessColor(report.interviewReadiness);
 
   return (
-    <div className="w-full max-w-4xl mx-auto py-1 flex flex-col gap-5">
+    <div className="page-wrapper-interview py-8 flex flex-col gap-6">
       {/* ── Back ── */}
       <motion.button
         initial={{ opacity: 0, x: -10 }}
         animate={{ opacity: 1, x: 0 }}
         whileHover={{ x: -4 }}
         onClick={() => navigate('/dashboard')}
-        className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors cursor-pointer w-fit"
+        className="flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-xl bg-surface-muted hover:bg-surface-muted/80 text-text-secondary hover:text-text-primary transition-colors cursor-pointer w-fit"
       >
         <ArrowLeft size={16} />
         <span className="text-sm font-semibold">Back to Dashboard</span>

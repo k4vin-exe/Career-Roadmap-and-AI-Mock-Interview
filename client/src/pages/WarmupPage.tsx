@@ -223,17 +223,22 @@ export default function WarmupPage() {
     }
   }, [voiceEnabled, speak, greetingText]);
 
+  useEffect(() => {
+    if (!session) {
+      navigate('/setup');
+    }
+  }, [session, navigate]);
+
   if (!session) {
-    navigate('/setup');
     return null;
   }
 
   const wordCount = editedTranscript.trim() ? editedTranscript.trim().split(/\s+/).length : 0;
 
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col gap-6 py-2">
+    <div className="page-wrapper-interview py-6 flex flex-col gap-6">
       {/* ── 1. Top Session Header Card ── */}
-      <div className="w-full bg-white rounded-2xl border border-slate-200/90 shadow-xs px-6 py-4 flex items-center justify-between gap-4 flex-wrap">
+      <div className="w-full bg-white rounded-2xl border border-slate-200/90 shadow-xs px-6 py-4.5 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3.5">
           <div className="w-11 h-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 shadow-2xs">
             <Briefcase size={20} />
@@ -253,13 +258,13 @@ export default function WarmupPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 ml-auto">
+        <div className="flex items-center gap-3 ml-auto">
           <button
             onClick={() => {
               setVoiceEnabled((v) => !v);
               if (isSpeaking) stopSpeaking();
             }}
-            className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center gap-1.5 text-xs font-bold ${
+            className={`px-4 py-2 min-h-[44px] rounded-xl border transition-all cursor-pointer flex items-center gap-2 text-xs font-bold ${
               voiceEnabled
                 ? 'border-primary/30 bg-primary-soft/60 text-primary hover:bg-primary-soft'
                 : 'border-slate-200 bg-white text-slate-400 hover:text-slate-600'
@@ -267,7 +272,7 @@ export default function WarmupPage() {
             title={voiceEnabled ? 'Disable AI audio narration' : 'Enable AI audio narration'}
           >
             {voiceEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
-            <span className="hidden sm:inline">{voiceEnabled ? 'Voice On' : 'Muted'}</span>
+            <span>{voiceEnabled ? 'Voice On' : 'Muted'}</span>
           </button>
 
           <button
@@ -275,7 +280,7 @@ export default function WarmupPage() {
               stopSpeaking();
               navigate('/interview');
             }}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 hover:border-primary/40 text-xs font-bold text-slate-600 hover:text-primary transition-all cursor-pointer bg-white shadow-2xs hover:shadow-xs"
+            className="flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-xl border border-slate-200 hover:border-primary/40 text-xs font-bold text-slate-700 hover:text-primary transition-all cursor-pointer bg-white shadow-2xs hover:shadow-xs"
             title="Skip warmup and jump directly to technical questions"
           >
             <span>Skip to Questions</span>
@@ -290,7 +295,7 @@ export default function WarmupPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-8 sm:p-12 text-center flex flex-col items-center gap-7 relative overflow-hidden"
+          className="bg-white rounded-3xl border border-slate-200/90 shadow-sm py-12 sm:py-16 px-6 sm:px-12 text-center flex flex-col items-center gap-8 relative overflow-hidden"
         >
           {/* Subtle Ambient Radial Glow */}
           <div
@@ -301,9 +306,9 @@ export default function WarmupPage() {
           />
 
           {/* Centered Avatar Badge with Pulse Ring */}
-          <div className="relative flex items-center justify-center pt-2">
+          <div className="relative flex items-center justify-center my-2">
             <div className="w-20 h-20 rounded-3xl bg-primary-soft/70 border border-primary/25 flex items-center justify-center text-primary shadow-lg shadow-primary/15">
-              <Bot size={36} strokeWidth={2.2} />
+              <Bot size={38} strokeWidth={2.2} />
             </div>
             <span className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-success text-white border-2 border-white flex items-center justify-center text-[10px] font-bold shadow-xs">
               <Check size={12} strokeWidth={3} />
@@ -311,13 +316,13 @@ export default function WarmupPage() {
           </div>
 
           {/* Headline & Guidance */}
-          <div className="max-w-xl flex flex-col gap-2.5">
-            <div className="inline-flex items-center justify-center gap-2 self-center px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-[11px] font-bold text-slate-600">
+          <div className="max-w-xl flex flex-col gap-3">
+            <div className="inline-flex items-center justify-center gap-2 self-center px-3.5 py-1.5 rounded-full bg-slate-50 border border-slate-200/80 text-[11px] font-bold text-slate-600">
               <Sparkles size={13} className="text-primary" />
               <span>Pressure-Free Warmup Stage • 60 Seconds</span>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight leading-tight mt-1">
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight leading-tight">
               Welcome to Your Warmup
             </h2>
 
@@ -328,46 +333,46 @@ export default function WarmupPage() {
             </p>
           </div>
 
-          {/* 3 Value Pillars Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 w-full max-w-2xl text-left">
-            <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/70 flex flex-col gap-1.5">
-              <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                <Headphones size={16} />
+          {/* 3 Value Pillars Grid: equal height, padded, icon above text, stack on mobile */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl text-left">
+            <div className="p-5 rounded-2xl bg-slate-50/90 border border-slate-200/70 flex flex-col items-start gap-2 h-full">
+              <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-1">
+                <Headphones size={18} />
               </div>
               <h4 className="text-xs font-bold text-slate-800">Voice Calibration</h4>
-              <p className="text-[11px] text-slate-500 leading-normal">
+              <p className="text-[11px] text-slate-500 leading-relaxed">
                 Verifies your mic levels, frequency response, and speech clarity.
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/70 flex flex-col gap-1.5">
-              <div className="w-8 h-8 rounded-xl bg-cyan/10 text-cyan flex items-center justify-center">
-                <Sliders size={16} />
+            <div className="p-5 rounded-2xl bg-slate-50/90 border border-slate-200/70 flex flex-col items-start gap-2 h-full">
+              <div className="w-9 h-9 rounded-xl bg-cyan/10 text-cyan flex items-center justify-center mb-1">
+                <Sliders size={18} />
               </div>
               <h4 className="text-xs font-bold text-slate-800">Instant Telemetry</h4>
-              <p className="text-[11px] text-slate-500 leading-normal">
+              <p className="text-[11px] text-slate-500 leading-relaxed">
                 Real-time feedback on pacing, confidence, and narrative structure.
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/70 flex flex-col gap-1.5">
-              <div className="w-8 h-8 rounded-xl bg-success/10 text-success flex items-center justify-center">
-                <ShieldCheck size={16} />
+            <div className="p-5 rounded-2xl bg-slate-50/90 border border-slate-200/70 flex flex-col items-start gap-2 h-full">
+              <div className="w-9 h-9 rounded-xl bg-success/10 text-success flex items-center justify-center mb-1">
+                <ShieldCheck size={18} />
               </div>
               <h4 className="text-xs font-bold text-slate-800">Zero Score Penalty</h4>
-              <p className="text-[11px] text-slate-500 leading-normal">
+              <p className="text-[11px] text-slate-500 leading-relaxed">
                 A relaxed sandbox to get into your flow state without test pressure.
               </p>
             </div>
           </div>
 
-          {/* Start CTA Button — Explicit Margin, Guaranteed 0 Clipping */}
-          <div className="pt-2 pb-1">
+          {/* Start CTA Button with breathing room */}
+          <div className="my-2">
             <motion.button
               whileHover={{ scale: 1.03, y: -1 }}
               whileTap={{ scale: 0.97 }}
               onClick={handleStartWarmup}
-              className="px-8 py-4 rounded-2xl text-sm sm:text-base font-extrabold text-white flex items-center gap-2.5 cursor-pointer transition-all shadow-lg"
+              className="px-8 py-3.5 min-h-[48px] rounded-2xl text-base font-extrabold text-white flex items-center gap-2.5 cursor-pointer transition-all shadow-lg"
               style={{
                 background: 'linear-gradient(135deg, #8067e8 0%, #5d45c7 100%)',
                 boxShadow: '0 8px 24px rgba(128, 103, 232, 0.35)',
@@ -384,10 +389,10 @@ export default function WarmupPage() {
       {hasStarted && (
         <div className="flex flex-col gap-6">
           {/* Chamber A: Dr. Elena Vance AI Interviewer Greeting Card */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 flex flex-col gap-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3 flex-wrap gap-2">
-              <div className="flex items-center gap-3">
-                <div className="relative flex items-center justify-center">
+          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-7 flex flex-col gap-5">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4 flex-wrap gap-3">
+              <div className="flex items-center gap-3.5">
+                <div className="relative flex items-center justify-center flex-shrink-0">
                   {isSpeaking && (
                     <motion.div
                       className="absolute inset-[-4px] rounded-2xl border-2 border-primary/40 pointer-events-none"
@@ -396,7 +401,7 @@ export default function WarmupPage() {
                     />
                   )}
                   <div
-                    className={`w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-black transition-all ${
+                    className={`w-11 h-11 rounded-2xl flex items-center justify-center text-sm font-black transition-all ${
                       isSpeaking
                         ? 'bg-gradient-to-br from-primary to-primary-dark text-white shadow-md shadow-primary/30'
                         : 'bg-primary-soft/80 text-primary border border-primary/20'
@@ -407,13 +412,13 @@ export default function WarmupPage() {
                 </div>
 
                 <div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-extrabold text-slate-800">Dr. Elena Vance</span>
-                    <span className="text-[10px] text-slate-400 font-semibold">• AI Warmup Facilitator</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-extrabold text-slate-800">Dr. Elena Vance</span>
+                    <span className="text-[11px] text-slate-400 font-semibold">• AI Warmup Facilitator</span>
                   </div>
-                  <p className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
+                  <p className="text-xs text-slate-400 font-medium flex items-center gap-1.5 mt-0.5">
                     <span
-                      className={`w-1.5 h-1.5 rounded-full ${
+                      className={`w-2 h-2 rounded-full ${
                         isSpeaking ? 'bg-primary animate-ping' : 'bg-success'
                       }`}
                     />
@@ -432,7 +437,7 @@ export default function WarmupPage() {
                     speak(greetingText);
                   }
                 }}
-                className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
+                className={`inline-flex items-center gap-1.5 text-xs font-bold px-4 py-2 min-h-[40px] rounded-xl border transition-all cursor-pointer ${
                   isSpeaking
                     ? 'bg-danger-soft border-danger/30 text-danger hover:bg-danger-soft/80'
                     : 'bg-white border-slate-200 hover:border-primary/40 hover:bg-primary-soft/20 text-slate-700 shadow-2xs'
@@ -440,31 +445,31 @@ export default function WarmupPage() {
               >
                 {isSpeaking ? (
                   <>
-                    <VolumeX size={13} /> Stop Audio
+                    <VolumeX size={14} /> Stop Audio
                   </>
                 ) : (
                   <>
-                    <Volume2 size={13} className="text-primary" /> Hear Greeting Again
+                    <Volume2 size={14} className="text-primary" /> Hear Greeting Again
                   </>
                 )}
               </button>
             </div>
 
             {/* Greeting Script */}
-            <p className="text-sm md:text-base text-slate-800 font-medium leading-relaxed">
+            <div className="p-4.5 rounded-2xl bg-slate-50 border border-slate-100 text-sm md:text-base text-slate-800 font-medium leading-relaxed italic">
               "{greetingText}"
-            </p>
+            </div>
 
             {/* Recommended Discussion Prompts */}
-            <div className="flex items-center gap-2 flex-wrap pt-1">
-              <span className="text-[11px] font-bold text-slate-400">Suggested Topics:</span>
-              <span className="text-[11px] font-semibold text-slate-600 bg-slate-50 border border-slate-200/80 px-2.5 py-1 rounded-lg">
-                Brief background & years of experience
+            <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-slate-100">
+              <span className="text-xs font-bold text-slate-500">Suggested Topics:</span>
+              <span className="text-xs font-medium text-slate-700 bg-slate-50 border border-slate-200/80 px-3 py-1.5 rounded-xl">
+                Brief background & experience
               </span>
-              <span className="text-[11px] font-semibold text-slate-600 bg-slate-50 border border-slate-200/80 px-2.5 py-1 rounded-lg">
+              <span className="text-xs font-medium text-slate-700 bg-slate-50 border border-slate-200/80 px-3 py-1.5 rounded-xl">
                 Notable high-impact project
               </span>
-              <span className="text-[11px] font-semibold text-slate-600 bg-slate-50 border border-slate-200/80 px-2.5 py-1 rounded-lg">
+              <span className="text-xs font-medium text-slate-700 bg-slate-50 border border-slate-200/80 px-3 py-1.5 rounded-xl">
                 What excites you about {role}
               </span>
             </div>
@@ -475,38 +480,38 @@ export default function WarmupPage() {
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 flex flex-col gap-5"
+              className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-7 flex flex-col gap-5"
             >
-              {/* Studio Telemetry Status Strip */}
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3 flex-wrap gap-2">
-                <div className="flex items-center gap-2">
-                  <span
+              {/* Studio Telemetry Status Bar */}
+              <div className="flex items-center justify-between p-3.5 sm:p-4 rounded-xl bg-slate-50 border border-slate-200/80 flex-wrap gap-3">
+                <div className="flex items-center gap-2.5">
+                  <div
                     className={`w-2.5 h-2.5 rounded-full ${
                       isListening
                         ? 'bg-danger animate-ping'
                         : wordCount > 0
                         ? 'bg-success'
-                        : 'bg-slate-300'
+                        : 'bg-primary'
                     }`}
                   />
                   <span className="text-xs font-extrabold uppercase tracking-wider text-slate-800">
                     {isListening
-                      ? 'Recording Spoken Introduction'
+                      ? 'Recording Spoken Introduction...'
                       : wordCount > 0
                       ? 'Introduction Captured'
-                      : 'Candidate Voice Studio'}
+                      : 'Studio Microphone Ready'}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 flex-wrap">
                   {wordCount > 0 && (
-                    <span className="text-xs font-bold text-slate-600 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200/70 flex items-center gap-1">
-                      <FileText size={12} className="text-slate-400" />
+                    <span className="text-xs font-bold text-slate-700 bg-white px-3 py-1 rounded-lg border border-slate-200 shadow-2xs flex items-center gap-1.5">
+                      <FileText size={13} className="text-primary" />
                       {wordCount} {wordCount === 1 ? 'word' : 'words'}
                     </span>
                   )}
-                  <span className="text-xs text-slate-400 font-medium">
-                    ⏱️ Target: <strong className="text-slate-700">45 - 60s</strong> · 60 - 120 words
+                  <span className="text-xs text-slate-500 font-medium bg-white px-3 py-1 rounded-lg border border-slate-200 shadow-2xs">
+                    Target: <strong className="text-slate-700 font-bold">45–60s</strong> · 60–120 words
                   </span>
                 </div>
               </div>
@@ -521,7 +526,7 @@ export default function WarmupPage() {
                   onChange={(e) => setEditedTranscript(e.target.value)}
                   placeholder="Click the microphone below and introduce yourself naturally, or type directly here..."
                   rows={4}
-                  className="w-full bg-slate-50/80 border border-slate-200 rounded-xl p-4 text-slate-800 text-sm leading-relaxed outline-none focus:border-primary focus:ring-3 focus:ring-primary/10 transition-all resize-none font-sans font-medium placeholder:text-slate-400"
+                  className="w-full min-h-[140px] bg-slate-50/80 border border-slate-200 rounded-xl p-4 text-slate-800 text-sm leading-relaxed outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-none font-sans font-medium placeholder:text-slate-400"
                 />
 
                 {interimTranscript && (
@@ -533,69 +538,78 @@ export default function WarmupPage() {
               </div>
 
               {micError && (
-                <div className="p-3 bg-danger-soft text-danger text-xs font-semibold rounded-xl border border-danger/20">
+                <div className="p-3.5 bg-danger-soft text-danger text-xs font-semibold rounded-xl border border-danger/20">
                   {micError}
                 </div>
               )}
 
               {/* Broadcast Microphone Studio Controls Toolbar */}
-              <div className="flex items-center justify-between pt-2 border-t border-slate-100 flex-wrap gap-4">
-                {/* Left Action: Clear Transcript */}
-                <div className="w-28">
-                  {editedTranscript.trim().length > 0 && !isListening && (
-                    <button
-                      onClick={() => {
-                        resetTranscript();
-                        setEditedTranscript('');
-                      }}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-500 border border-slate-200 hover:text-danger hover:border-danger/30 transition-all cursor-pointer bg-white"
-                      title="Clear introduction and record again"
+              <div className="flex flex-col gap-3 pt-3 border-t border-slate-100">
+                {/* Aligned Row: Reset, Centered Mic, Submit as secondary */}
+                <div className="flex items-center justify-between gap-4">
+                  {/* Left: Reset */}
+                  <div className="w-32 flex justify-start">
+                    {editedTranscript.trim().length > 0 && !isListening ? (
+                      <button
+                        onClick={() => {
+                          resetTranscript();
+                          setEditedTranscript('');
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-[44px] rounded-xl text-xs font-bold text-slate-600 border border-slate-200 hover:text-danger hover:border-danger/30 transition-all cursor-pointer bg-white shadow-2xs"
+                        title="Clear introduction and record again"
+                      >
+                        <RotateCcw size={14} /> Reset
+                      </button>
+                    ) : (
+                      <div />
+                    )}
+                  </div>
+
+                  {/* Center: Microphone Button */}
+                  <div className="flex justify-center">
+                    {micSupported ? (
+                      <MicrophoneButton
+                        isListening={isListening}
+                        onStart={handleToggleMic}
+                        onStop={handleToggleMic}
+                        size="md"
+                      />
+                    ) : (
+                      <div className="text-xs text-danger font-semibold text-center">
+                        Speech recognition unsupported. Type answer above.
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Right: Submit Button as clear secondary action */}
+                  <div className="w-32 flex justify-end">
+                    <motion.button
+                      whileHover={editedTranscript.trim().length >= 5 && !isListening ? { scale: 1.02 } : {}}
+                      whileTap={editedTranscript.trim().length >= 5 && !isListening ? { scale: 0.98 } : {}}
+                      disabled={editedTranscript.trim().length < 5 || isListening}
+                      onClick={handleSubmit}
+                      className={`min-h-[44px] px-5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
+                        editedTranscript.trim().length >= 5 && !isListening
+                          ? 'bg-slate-800 text-white hover:bg-slate-900 cursor-pointer shadow-xs'
+                          : 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed'
+                      }`}
                     >
-                      <RotateCcw size={12} /> Reset
-                    </button>
-                  )}
+                      <span>Submit</span>
+                      <Send size={13} />
+                    </motion.button>
+                  </div>
                 </div>
 
-                {/* Centerpiece: Studio Condenser Microphone Button */}
-                {micSupported ? (
-                  <div className="flex flex-col items-center gap-1.5">
-                    <MicrophoneButton
-                      isListening={isListening}
-                      onStart={handleToggleMic}
-                      onStop={handleToggleMic}
-                      size="md"
-                    />
-                    <div className="flex items-center gap-1 text-[11px] text-slate-400 font-medium">
-                      <span>Press</span>
-                      <kbd className="px-1.5 py-0.5 text-[10px] font-mono font-bold bg-slate-100 border border-slate-200 rounded text-slate-600">
-                        Space
-                      </kbd>
-                      <span>to {isListening ? 'stop' : 'speak'}</span>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-xs text-danger font-semibold">
-                    Speech recognition is not supported in this browser. Please type your answer above.
+                {/* Below row with spacing: Press Space to speak */}
+                {micSupported && (
+                  <div className="flex items-center justify-center gap-1.5 text-xs text-slate-500 font-medium pt-1">
+                    <span>Press</span>
+                    <kbd className="px-2 py-0.5 text-xs font-mono font-bold bg-slate-100 border border-slate-200 rounded-md text-slate-700 shadow-2xs">
+                      Space
+                    </kbd>
+                    <span>to {isListening ? 'stop recording' : 'speak'}</span>
                   </div>
                 )}
-
-                {/* Right Action: Submit Warmup Answer */}
-                <div className="w-28 flex justify-end">
-                  <motion.button
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.96 }}
-                    disabled={editedTranscript.trim().length < 5 || isListening}
-                    onClick={handleSubmit}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs ${
-                      editedTranscript.trim().length >= 5 && !isListening
-                        ? 'bg-primary text-white cursor-pointer shadow-primary/20 hover:bg-primary-dark'
-                        : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
-                    }`}
-                  >
-                    <span>Submit</span>
-                    <Send size={12} />
-                  </motion.button>
-                </div>
               </div>
             </motion.div>
           )}

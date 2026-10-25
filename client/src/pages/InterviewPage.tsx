@@ -25,7 +25,6 @@ import {
   RotateCcw,
   Gauge,
   FileText,
-  Keyboard,
 } from 'lucide-react';
 
 import { useInterview } from '../context/InterviewContext';
@@ -166,11 +165,11 @@ export default function InterviewPage() {
 
       const evalData = result.evaluation as any;
       setEvaluation({
-        technicalAccuracy: evalData.technicalAccuracy ?? 7.5,
-        communication: evalData.communication ?? 8,
-        completeness: evalData.completeness ?? 7,
-        problemSolving: evalData.problemSolving ?? 8,
-        deliveryScore: evalData.deliveryScore ?? 8,
+        technicalAccuracy: evalData.technicalAccuracy ?? 0,
+        communication: evalData.communication ?? 0,
+        completeness: evalData.completeness ?? 0,
+        problemSolving: evalData.problemSolving ?? 0,
+        deliveryScore: evalData.deliveryScore ?? 0,
         pacingFeedback: evalData.pacingFeedback,
         fillerFeedback: evalData.fillerFeedback,
         structureFeedback: evalData.structureFeedback,
@@ -250,52 +249,60 @@ export default function InterviewPage() {
   const currentWpm = elapsedSeconds > 4 && wordCount > 0 ? Math.round((wordCount / elapsedSeconds) * 60) : 0;
 
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col gap-5 py-1">
+    <div className="page-wrapper-interview flex flex-col gap-6 py-4">
       {/* ── 1. HUD: Session Header & Stepper Bar ── */}
-      <div className="w-full bg-white rounded-2xl border border-slate-200/80 shadow-xs p-4 flex flex-col gap-3">
+      <div className="card shadow-xs flex flex-col gap-4">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           {/* Left: Role Info */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
-              <Briefcase size={17} />
+            <div className="w-10 h-10 rounded-2xl bg-primary-soft/70 border border-primary/20 text-primary flex items-center justify-center flex-shrink-0 shadow-2xs">
+              <Briefcase size={18} />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-extrabold text-slate-800 tracking-tight">
                   {state.session.role}
                 </span>
-                <span className="text-[11px] font-bold text-primary bg-primary-soft/60 px-2 py-0.5 rounded-md border border-primary/20">
+                <span className="badge badge-primary text-[11px] font-bold">
                   {state.session.experience}
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 font-medium">AI Mock Interview Session</p>
+              <p className="text-xs text-slate-400 font-medium mt-0.5">AI Mock Interview Session</p>
             </div>
           </div>
 
-          {/* Center: Minimalist Step Dots/Pills */}
-          <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200/70">
+          {/* Center: Stepper with Connected Lines */}
+          <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-2xl border border-slate-200/80">
             {state.questions.map((_, idx) => {
               const isPast = idx < state.currentQuestionIndex;
               const isCurrent = idx === state.currentQuestionIndex;
               return (
-                <div
-                  key={idx}
-                  className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-black transition-all ${
-                    isCurrent
-                      ? 'bg-primary text-white shadow-xs scale-105'
-                      : isPast
-                      ? 'bg-success-soft text-success border border-success/30'
-                      : 'text-slate-400 bg-white'
-                  }`}
-                  title={`Question ${idx + 1}`}
-                >
-                  {isPast ? <CheckCircle2 size={12} strokeWidth={3} /> : idx + 1}
+                <div key={idx} className="flex items-center">
+                  <div
+                    className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs font-black transition-all ${
+                      isCurrent
+                        ? 'bg-primary text-white shadow-xs scale-105'
+                        : isPast
+                        ? 'bg-success-soft text-success border border-success/30'
+                        : 'text-slate-400 bg-white border border-slate-200/70'
+                    }`}
+                    title={`Question ${idx + 1}`}
+                  >
+                    {isPast ? <CheckCircle2 size={13} strokeWidth={2.8} /> : idx + 1}
+                  </div>
+                  {idx < state.questions.length - 1 && (
+                    <div
+                      className={`w-2.5 sm:w-3.5 h-0.5 mx-0.5 rounded-full transition-colors ${
+                        idx < state.currentQuestionIndex ? 'bg-success/50' : 'bg-slate-200'
+                      }`}
+                    />
+                  )}
                 </div>
               );
             })}
           </div>
 
-          {/* Right: Audio Narration, Chronometer & Question Indicator */}
+          {/* Right: Audio Narration, Chronometer & Single-Line Question Indicator */}
           <div className="flex items-center gap-3 ml-auto">
             {/* Audio Speech Toggle */}
             <button
@@ -304,39 +311,38 @@ export default function InterviewPage() {
                 setVoiceEnabled((v) => !v);
                 if (isSpeaking) stopSpeaking();
               }}
-              className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+              className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${
                 voiceEnabled
                   ? 'border-primary/30 bg-primary-soft/50 text-primary hover:bg-primary-soft'
                   : 'border-slate-200 bg-white text-slate-400 hover:text-slate-600'
               }`}
               title={voiceEnabled ? 'Disable AI voice speech' : 'Enable AI voice speech'}
             >
-              {voiceEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
+              {voiceEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
             </button>
 
             {/* Timer */}
-            <div className="flex items-center gap-1 px-2.5 py-1 bg-slate-50 border border-slate-200/80 rounded-lg">
-              <Clock size={12} className="text-slate-400" />
+            <div className="flex items-center gap-1.5 px-3 py-2 bg-slate-50 border border-slate-200/80 rounded-xl">
+              <Clock size={14} className="text-slate-400" />
               <span className="text-xs font-mono font-bold text-slate-700">
                 {formatTime(elapsedSeconds)}
               </span>
             </div>
 
-            {/* Step Counter */}
-            <div className="text-right pl-1">
-              <p className="text-[9px] text-slate-400 uppercase tracking-widest font-black leading-none">
+            {/* Step Counter: Fully visible on ONE line */}
+            <div className="flex items-center gap-1.5 px-3 py-2 bg-slate-50 border border-slate-200/80 rounded-xl whitespace-nowrap">
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-500">
                 QUESTION
-              </p>
-              <p className="text-xs font-black text-primary leading-tight">
-                {state.currentQuestionIndex + 1}
-                <span className="text-[10px] text-slate-400 font-bold">/{state.questions.length}</span>
-              </p>
+              </span>
+              <span className="text-xs font-black text-primary">
+                {state.currentQuestionIndex + 1}/{state.questions.length}
+              </span>
             </div>
           </div>
         </div>
 
         {/* Progress Line */}
-        <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
+        <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
           <motion.div
             className="h-full rounded-full"
             style={{
@@ -358,10 +364,10 @@ export default function InterviewPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25 }}
-            className="flex flex-col gap-5 w-full"
+            className="flex flex-col gap-6 w-full"
           >
             {/* ── 2. Unified Hero Question Card ── */}
-            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 md:p-7 flex flex-col gap-4 relative overflow-hidden">
+            <div className="card shadow-xs flex flex-col gap-4 relative overflow-hidden">
               {/* Card Top: Interviewer Persona + Category & Difficulty Badges */}
               <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3 flex-wrap">
                 {/* Interviewer Persona */}
@@ -375,23 +381,23 @@ export default function InterviewPage() {
                       />
                     )}
                     <div
-                      className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black transition-all ${
+                      className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-black transition-all ${
                         isSpeaking
                           ? 'bg-gradient-to-br from-primary to-primary-dark text-white shadow-xs'
                           : 'bg-primary-soft/80 text-primary border border-primary/20'
                       }`}
                     >
-                      <Bot size={16} />
+                      <Bot size={17} />
                     </div>
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
                       <span className="text-xs font-extrabold text-slate-800">Dr. Elena Vance</span>
-                      <span className="text-[10px] text-slate-400 font-semibold">• AI Evaluator</span>
+                      <span className="text-[10px] text-slate-400 font-semibold">• Lead AI Evaluator</span>
                     </div>
-                    <p className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
+                    <p className="text-[10px] text-slate-400 font-medium flex items-center gap-1.5">
                       <span
-                        className={`w-1.5 h-1.5 rounded-full ${
+                        className={`w-2 h-2 rounded-full ${
                           isSpeaking ? 'bg-primary animate-ping' : 'bg-success'
                         }`}
                       />
@@ -400,33 +406,31 @@ export default function InterviewPage() {
                   </div>
                 </div>
 
-                {/* Right Badges */}
+                {/* Right Badges in Padded Wrapping Row */}
                 <div className="flex items-center gap-2 flex-wrap">
                   <span
-                    className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border ${
+                    className={`badge uppercase text-[11px] font-extrabold ${
                       currentQuestion.difficulty.toLowerCase() === 'easy'
-                        ? 'bg-success-soft text-success border-success/30'
+                        ? 'badge-success'
                         : currentQuestion.difficulty.toLowerCase() === 'medium'
-                        ? 'bg-warning-soft text-warning border-warning/30'
-                        : 'bg-danger-soft text-danger border-danger/30'
+                        ? 'badge-warning'
+                        : 'badge-danger'
                     }`}
                   >
                     {currentQuestion.difficulty}
                   </span>
-                  <span className="text-slate-300">•</span>
-                  <span className="text-xs font-bold text-slate-600 flex items-center gap-1">
-                    <Layers size={12} className="text-cyan" />
+                  <span className="badge badge-cyan text-[11px] font-bold">
+                    <Layers size={13} />
                     {currentQuestion.category}
                   </span>
-                  <span className="text-slate-300">•</span>
-                  <span className="text-xs font-semibold text-slate-500 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200/60">
+                  <span className="badge badge-muted text-[11px] font-semibold">
                     {currentQuestion.type}
                   </span>
                 </div>
               </div>
 
-              {/* Question Text */}
-              <h2 className="text-xl md:text-2xl font-extrabold text-slate-800 leading-snug tracking-tight">
+              {/* Question Text with Hierarchy */}
+              <h2 className="text-xl md:text-2xl font-extrabold text-slate-800 leading-snug tracking-tight my-1">
                 {currentQuestion.text}
               </h2>
 
@@ -526,48 +530,52 @@ export default function InterviewPage() {
               </div>
             )}
 
-            {/* ── 3. Unified Candidate Answer & Studio Console ── */}
-            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 flex flex-col gap-4">
-              {/* Console Header Bar with Live Telemetry Badges */}
+            {/* ── 3. Candidate Voice Studio & Recording Console ── */}
+            <div className="card shadow-xs flex flex-col gap-4">
+              {/* Studio Header Bar with Single Unified State Indicator */}
               <div className="flex items-center justify-between border-b border-slate-100 pb-3 flex-wrap gap-2">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   <span
-                    className={`w-2 h-2 rounded-full ${
+                    className={`w-2.5 h-2.5 rounded-full ${
                       isSubmitting
                         ? 'bg-primary animate-ping'
-                        : isListening
-                        ? 'bg-danger animate-ping'
                         : isTranscribing
                         ? 'bg-primary animate-pulse'
+                        : isListening
+                        ? 'bg-danger animate-ping'
+                        : isSpeaking
+                        ? 'bg-warning animate-pulse'
                         : wordCount > 0
                         ? 'bg-success'
-                        : 'bg-slate-300'
+                        : 'bg-primary'
                     }`}
                   />
                   <span className="text-xs font-black uppercase tracking-wider text-slate-800">
                     {isSubmitting
-                      ? 'AI Evaluator Scoring...'
-                      : isListening
-                      ? 'Recording Spoken Response'
+                      ? 'Evaluating…'
                       : isTranscribing
-                      ? 'Whisper AI Transcribing...'
+                      ? 'Whisper AI Transcribing…'
+                      : isListening
+                      ? 'Listening…'
+                      : isSpeaking
+                      ? 'Interviewer is speaking…'
                       : wordCount > 0
                       ? 'Response Captured'
-                      : 'Voice Studio Ready'}
+                      : 'Ready, press Space or tap the mic'}
                   </span>
                 </div>
 
                 {/* Telemetry Metrics Strip */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   {wordCount > 0 && (
-                    <span className="text-xs font-bold text-slate-600 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200/70 flex items-center gap-1">
+                    <span className="badge badge-muted text-xs font-bold text-slate-600 flex items-center gap-1">
                       <FileText size={12} className="text-slate-400" />
                       {wordCount} {wordCount === 1 ? 'word' : 'words'}
                     </span>
                   )}
 
                   {currentWpm > 0 && (
-                    <span className="text-xs font-bold text-slate-600 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200/70 flex items-center gap-1">
+                    <span className="badge badge-muted text-xs font-bold text-slate-600 flex items-center gap-1">
                       <Gauge size={12} className="text-primary" />
                       {currentWpm} WPM
                     </span>
@@ -575,10 +583,8 @@ export default function InterviewPage() {
 
                   {wordCount > 0 && (
                     <span
-                      className={`text-xs font-bold px-2.5 py-1 rounded-lg border ${
-                        fillers.length === 0
-                          ? 'bg-success-soft text-success border-success/20'
-                          : 'bg-warning-soft text-warning border-warning/20'
+                      className={`badge text-xs font-bold ${
+                        fillers.length === 0 ? 'badge-success' : 'badge-warning'
                       }`}
                     >
                       {fillers.length === 0 ? '0 fillers' : `${fillers.length} filler${fillers.length > 1 ? 's' : ''}`}
@@ -589,7 +595,7 @@ export default function InterviewPage() {
                   {currentAnswerText.trim().length > 0 && !isListening && !isTranscribing && !isSubmitting && (
                     <button
                       onClick={() => setIsEditingTranscript((e) => !e)}
-                      className="text-xs font-bold px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors flex items-center gap-1 cursor-pointer ml-1"
+                      className="inline-flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors cursor-pointer"
                     >
                       {isEditingTranscript ? (
                         <>
@@ -605,52 +611,51 @@ export default function InterviewPage() {
                 </div>
               </div>
 
-              {/* Real-time Dynamic Spectrum Analyzer (active during recording) */}
+              {/* Dynamic Spectrum Analyzer (active during recording) */}
               {isListening && (
-                <div className="w-full flex flex-col items-center py-1">
+                <div className="w-full flex flex-col items-center py-2">
                   <AudioVisualizer isRecording={isListening} mediaStream={mediaStream} />
                 </div>
               )}
 
               {/* Transcript Viewport */}
-              <div className="min-h-[110px] flex flex-col justify-center">
+              <div className="flex flex-col justify-center">
                 {isSubmitting ? (
-                  <div className="flex flex-col items-center justify-center py-8 gap-3.5 text-center">
+                  <div className="flex flex-col items-center justify-center py-6 gap-3 text-center">
                     <div className="relative flex items-center justify-center">
                       <motion.div
-                        className="w-16 h-16 rounded-full border-2 border-primary/30"
-                        animate={{ scale: [1, 1.35, 1], opacity: [0.8, 0.2, 0.8] }}
+                        className="w-14 h-14 rounded-full border-2 border-primary/30"
+                        animate={{ scale: [1, 1.3, 1], opacity: [0.8, 0.2, 0.8] }}
                         transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
                       />
-                      <div className="absolute w-12 h-12 rounded-2xl bg-primary-soft flex items-center justify-center text-primary shadow-xs">
-                        <Bot size={22} className="animate-pulse" />
+                      <div className="absolute w-10 h-10 rounded-2xl bg-primary-soft flex items-center justify-center text-primary shadow-xs">
+                        <Bot size={20} className="animate-pulse" />
                       </div>
                     </div>
                     <div>
                       <p className="text-sm font-extrabold text-slate-800 tracking-tight">
-                        AI Principal Evaluator Analyzing Response...
+                        Evaluating response…
                       </p>
-                      <p className="text-xs text-slate-400 mt-1 max-w-md">
-                        Evaluating technical accuracy, architectural trade-offs, and communication delivery metrics
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        Assessing engineering depth, architectural trade-offs, and communication
                       </p>
                     </div>
                   </div>
                 ) : isTranscribing ? (
-                  <div className="flex flex-col items-center justify-center py-6 gap-2 text-center">
+                  <div className="flex flex-col items-center justify-center py-5 gap-2 text-center">
                     <Loader2 size={22} className="animate-spin text-primary" />
-                    <p className="text-xs font-bold text-slate-700">Whisper AI is processing your speech...</p>
-                    <p className="text-[11px] text-slate-400">Transcribing technical terminology and formatting</p>
+                    <p className="text-xs font-bold text-slate-700">Whisper AI is transcribing your speech…</p>
                   </div>
                 ) : isEditingTranscript ? (
                   <textarea
                     value={editedTranscript}
                     onChange={(e) => setEditedTranscript(e.target.value)}
                     autoFocus
-                    className="w-full h-28 bg-slate-50 border-2 border-primary/40 rounded-xl p-3 text-slate-800 text-sm leading-relaxed outline-none focus:border-primary focus:ring-3 focus:ring-primary/10 transition-all resize-none font-sans font-medium"
+                    className="w-full h-32 bg-slate-50 border-2 border-primary/40 rounded-xl p-4 text-slate-800 text-sm leading-relaxed outline-none focus:border-primary focus:ring-3 focus:ring-primary/10 transition-all resize-none font-sans font-medium"
                     placeholder="Refine or add to your transcribed answer..."
                   />
                 ) : currentAnswerText.trim().length > 0 ? (
-                  <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/70 text-slate-800 text-sm leading-relaxed font-sans max-h-44 overflow-y-auto">
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-slate-800 text-sm leading-relaxed font-sans max-h-48 overflow-y-auto">
                     <p>{currentAnswerText}</p>
                     {isListening && (
                       <motion.span
@@ -661,21 +666,21 @@ export default function InterviewPage() {
                     )}
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center py-5 text-center">
-                    <p className="text-sm font-bold text-slate-700 mb-0.5">
-                      {isSpeaking ? 'AI Interviewer is speaking...' : 'Click Speak to Record Your Answer'}
+                  <div className="flex flex-col items-center justify-center py-4 text-center">
+                    <p className="text-sm font-bold text-slate-700 mb-1">
+                      {isSpeaking ? 'Interviewer is speaking…' : 'Ready, press Space or tap the mic'}
                     </p>
                     <p className="text-xs text-slate-400 max-w-sm">
-                      Speak naturally and clearly. Click the purple mic below or press <kbd className="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 font-mono text-[10px] text-slate-600">Spacebar</kbd>.
+                      Speak clearly and structure your thoughts logically.
                     </p>
                   </div>
                 )}
               </div>
 
               {/* Studio Bottom Action Deck */}
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100 flex-wrap gap-4">
                 {/* Left: Clear Action */}
-                <div className="w-24 flex justify-start">
+                <div className="w-28 flex justify-start">
                   <AnimatePresence>
                     {currentAnswerText.trim().length > 0 && !isListening && (
                       <motion.button
@@ -688,7 +693,7 @@ export default function InterviewPage() {
                           setEditedTranscript('');
                           setIsEditingTranscript(false);
                         }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-500 border border-slate-200 hover:text-danger hover:border-danger/30 transition-all cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-500 border border-slate-200 hover:text-danger hover:border-danger/30 transition-all cursor-pointer bg-white"
                         title="Discard and restart answer"
                       >
                         <RotateCcw size={12} /> Clear
@@ -697,7 +702,7 @@ export default function InterviewPage() {
                   </AnimatePresence>
                 </div>
 
-                {/* Center: Prominent Microphone Hub with Hotkey Hint */}
+                {/* Center: Prominent Microphone Hub with Single-Line Spacebar Hint */}
                 <div className="flex flex-col items-center gap-1.5">
                   <MicrophoneButton
                     isListening={isListening}
@@ -709,14 +714,18 @@ export default function InterviewPage() {
                     onStop={stopListening}
                     size="md"
                   />
-                  <div className="flex items-center gap-1 text-[10px] font-bold text-slate-400 select-none pb-1">
-                    <Keyboard size={11} />
-                    <span>{isListening ? 'Click or Space to Stop' : 'Click or Press Space'}</span>
+                  {/* Single-line Space key hint with styled key chip */}
+                  <div className="flex items-center justify-center gap-1.5 text-xs text-slate-500 font-medium select-none pt-0.5 whitespace-nowrap">
+                    <span>Press</span>
+                    <kbd className="px-2 py-0.5 text-[11px] font-mono font-bold bg-slate-100 border border-slate-300 rounded shadow-2xs text-slate-700">
+                      Space
+                    </kbd>
+                    <span>to {isListening ? 'stop' : 'speak'}</span>
                   </div>
                 </div>
 
                 {/* Right: Submit Button */}
-                <div className="w-24 flex justify-end">
+                <div className="w-28 flex justify-end">
                   <AnimatePresence>
                     {currentAnswerText.trim().length > 5 && !isListening && (
                       <motion.button
@@ -726,21 +735,17 @@ export default function InterviewPage() {
                         exit={{ opacity: 0, scale: 0.9 }}
                         onClick={handleSubmitAnswer}
                         disabled={isSubmitting}
-                        className="px-4 py-2 rounded-xl font-bold text-xs text-white shadow-md flex items-center gap-1.5 cursor-pointer disabled:opacity-50 transition-all"
-                        style={{
-                          background: 'linear-gradient(135deg, #8067e8 0%, #5d45c7 100%)',
-                          boxShadow: '0 6px 16px rgba(128, 103, 232, 0.35)',
-                        }}
-                        whileHover={!isSubmitting ? { scale: 1.05, y: -1 } : {}}
-                        whileTap={!isSubmitting ? { scale: 0.95 } : {}}
+                        className="btn btn-primary text-xs font-extrabold shadow-md flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                        whileHover={!isSubmitting ? { scale: 1.02, y: -1 } : {}}
+                        whileTap={!isSubmitting ? { scale: 0.98 } : {}}
                       >
                         {isSubmitting ? (
                           <>
-                            <Loader2 size={13} className="animate-spin" /> Evaluating
+                            <Loader2 size={14} className="animate-spin" /> Evaluating
                           </>
                         ) : (
                           <>
-                            Submit <ChevronRight size={13} strokeWidth={2.5} />
+                            Submit <ChevronRight size={14} strokeWidth={2.5} />
                           </>
                         )}
                       </motion.button>
