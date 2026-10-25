@@ -2,6 +2,7 @@
   "name": "ai-mock-interview-server",
   "version": "1.0.0",
   "description": "Backend server for AI Mock Interview Platform",
+  "type": "module",
   "main": "src/app.ts",
   "scripts": {
     "dev": "tsx watch src/app.ts",
