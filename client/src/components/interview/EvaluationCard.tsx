@@ -180,7 +180,7 @@ export default function EvaluationCard({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="flex flex-col gap-6 w-full max-w-6xl mx-auto"
+      className="flex flex-col gap-5 w-full max-w-4xl mx-auto"
     >
       {/* ── Hero Performance Verdict Card ── */}
       <div className="rounded-2xl p-6 md:p-8 bg-white border border-slate-200/90 shadow-sm relative overflow-hidden">
@@ -286,7 +286,7 @@ export default function EvaluationCard({
       </div>
 
       {/* ── Voice & Spoken Delivery Studio Telemetry ── */}
-      <div className="card-elevated rounded-3xl p-6 bg-white border border-slate-200/80 shadow-md shadow-slate-200/30">
+      <div className="rounded-2xl p-6 bg-white border border-slate-200/80 shadow-xs">
         <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3 flex-wrap gap-2">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-cyan-soft flex items-center justify-center text-cyan-text">

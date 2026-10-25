@@ -354,7 +354,7 @@ export default function ReportPage() {
   const rColor = readinessColor(report.interviewReadiness);
 
   return (
-    <div className="w-full max-w-5xl mx-auto py-2 flex flex-col gap-6">
+    <div className="w-full max-w-4xl mx-auto py-1 flex flex-col gap-5">
       {/* ── Back ── */}
       <motion.button
         initial={{ opacity: 0, x: -10 }}
