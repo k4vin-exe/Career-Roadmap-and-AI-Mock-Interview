@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
@@ -74,8 +75,10 @@ app.use('/api/user', userRoutes);
 app.use('/api/roadmap', roadmapRoutes);
 
 // ────────────────────────────── Static Frontend (Production) ────────────────
-if (config.nodeEnv === 'production') {
-  const clientDist = path.resolve(__dirname, '../../client/dist');
+// ────────────────────────────── Static Frontend ──────────────────────────────
+const clientDist = path.resolve(__dirname, '../../client/dist');
+if (fs.existsSync(clientDist)) {
+  console.log(`📦 Serving static client from: ${clientDist}`);
   app.use(express.static(clientDist));
 
   // SPA fallback for non-API client routes (e.g. /setup, /interview, /dashboard)
@@ -85,6 +88,8 @@ if (config.nodeEnv === 'production') {
     }
     res.sendFile(path.join(clientDist, 'index.html'));
   });
+} else {
+  console.log(`ℹ️  client/dist not found at ${clientDist}, frontend static serving skipped.`);
 }
 
 // ────────────────────────────── Error Handling ──────────────────────────────
