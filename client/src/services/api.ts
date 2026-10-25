@@ -38,12 +38,16 @@ api.interceptors.request.use((config) => {
 export async function startInterview(
   name: string,
   role: string,
-  experience: string
+  experience: string,
+  options?: { topics?: string[]; focusArea?: string; week?: number }
 ): Promise<InterviewSession> {
   const response = await api.post<ApiResponse<InterviewSession>>('/interview/start', {
     name,
     role,
     experience,
+    topics: options?.topics,
+    focusArea: options?.focusArea,
+    week: options?.week,
   });
   return response.data.data;
 }

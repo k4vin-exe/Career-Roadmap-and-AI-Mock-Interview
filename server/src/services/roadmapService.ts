@@ -229,13 +229,22 @@ class RoadmapService {
    * stores it in MongoDB, and returns the full roadmap.
    */
   async generateRoadmap(userId: string, profileInput: UserProfileInput) {
-    const roadmapsPath = path.resolve(__dirname, '../data/roadmaps.json');
+    const candidatePaths = [
+      path.resolve(__dirname, '../data/roadmaps.json'),
+      path.resolve(__dirname, '../../src/data/roadmaps.json'),
+      path.resolve(__dirname, '../../dist/data/roadmaps.json'),
+      path.resolve(process.cwd(), 'server/src/data/roadmaps.json'),
+      path.resolve(process.cwd(), 'src/data/roadmaps.json'),
+    ];
     let localData: any = {};
-    if (fs.existsSync(roadmapsPath)) {
-      try {
-        localData = JSON.parse(fs.readFileSync(roadmapsPath, 'utf-8'));
-      } catch (err) {
-        console.error('Failed to parse roadmaps.json:', err);
+    for (const roadmapsPath of candidatePaths) {
+      if (fs.existsSync(roadmapsPath)) {
+        try {
+          localData = JSON.parse(fs.readFileSync(roadmapsPath, 'utf-8'));
+          break;
+        } catch (err) {
+          console.error('Failed to parse roadmaps.json:', err);
+        }
       }
     }
 

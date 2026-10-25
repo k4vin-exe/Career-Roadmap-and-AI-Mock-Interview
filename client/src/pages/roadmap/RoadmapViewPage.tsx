@@ -920,7 +920,12 @@ export default function RoadmapViewPage() {
         }
 
         const userName = roadmap.profile?.name || 'Candidate';
-        const session = await startInterview(userName, roadmap.targetRole, mappedExp);
+        const currentWeekPlan = roadmap.weeklyPlan?.find((w: WeeklyPlan) => w.week === week);
+        const session = await startInterview(userName, roadmap.targetRole, mappedExp, {
+          topics: currentWeekPlan?.topics,
+          focusArea: currentWeekPlan?.theme,
+          week,
+        });
         interviewDispatch({ type: 'START_SESSION', payload: session });
         navigate('/warmup');
       } catch (err: any) {

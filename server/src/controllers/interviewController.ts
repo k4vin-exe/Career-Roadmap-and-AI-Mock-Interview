@@ -61,8 +61,16 @@ export class InterviewController {
         return;
       }
 
-      const { name, role, experience } = req.body;
-      const result = await interviewService.startInterview({ userId: (req as any).user.id, name, role, experience });
+      const { name, role, experience, topics, focusArea, week } = req.body;
+      const result = await interviewService.startInterview({
+        userId: (req as any).user.id,
+        name,
+        role,
+        experience,
+        topics: Array.isArray(topics) ? topics : undefined,
+        focusArea: typeof focusArea === 'string' ? focusArea : undefined,
+        week: typeof week === 'number' ? week : undefined,
+      });
 
       res.status(201).json({
         success: true,

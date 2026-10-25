@@ -6,11 +6,16 @@ import { generateQuestionPrompt } from '../prompts/questionGeneration.js';
 import { generateAnswerEvaluationPrompt } from '../prompts/answerEvaluation.js';
 import { generateWarmupEvaluationPrompt } from '../prompts/warmupEvaluation.js';
 
+import { getCurriculumTopics, getCuratedTechnicalQuestions, resolveRoleKey } from '../utils/roadmapTopics.js';
+
 interface StartInterviewInput {
   userId: string;
   name: string;
   role: JobRole;
   experience: ExperienceLevel;
+  topics?: string[];
+  focusArea?: string;
+  week?: number;
 }
 
 interface SubmitAnswerInput {
@@ -30,7 +35,7 @@ interface SubmitAnswerInput {
 interface QuestionData {
   index: number;
   text: string;
-  difficulty: string;
+  difficulty: 'Easy' | 'Easy-Medium' | 'Medium' | 'Scenario Based' | 'Behavioral';
   type: string;
   category: string;
 }
@@ -68,9 +73,10 @@ class InterviewService {
   /**
    * Starts a new interview session:
    * 1. Creates/finds the user
-   * 2. Creates the interview session
-   * 3. Generates questions via Groq
-   * 4. Stores questions in the database
+   * 2. Resolves technical curriculum topics
+   * 3. Creates the interview session with learning context
+   * 4. Generates deep technical questions via Groq / Gemini
+   * 5. Stores questions in the database
    */
   async startInterview(input: StartInterviewInput) {
     // Find user by ID (auth middleware guarantees this exists, but good to be safe)
@@ -79,25 +85,32 @@ class InterviewService {
       throw new Error('User not found');
     }
 
-    // Create interview session
+    // Resolve technical curriculum topics from learning roadmaps
+    const resolvedRole = resolveRoleKey(input.role);
+    const curriculum = getCurriculumTopics(resolvedRole, input.experience, input.week);
+    const activeTopics = (input.topics && input.topics.length > 0) ? input.topics : curriculum.topics;
+    const activeFocus = input.focusArea || curriculum.theme;
+
+    // Create interview session with learning metadata
     const session = await InterviewSession.create({
       userId: user._id,
       role: input.role,
       experience: input.experience,
       status: 'in-progress',
+      topics: activeTopics,
+      focusArea: activeFocus,
       startedAt: new Date(),
     });
 
-    // Generate questions via Gemini
-    const prompt = generateQuestionPrompt(input.role, input.experience);
+    // Generate technical questions grounded in the learning curriculum
+    const prompt = generateQuestionPrompt(input.role, input.experience, {
+      topics: activeTopics,
+      focusArea: activeFocus,
+      week: input.week,
+    });
+
     const mockQuestions = {
-      questions: [
-        { index: 1, text: `Can you explain your experience as a ${input.experience} ${input.role}?`, difficulty: 'Easy' as const, type: 'Behavioral', category: 'General' },
-        { index: 2, text: "What is the most challenging technical problem you've solved recently?", difficulty: 'Medium' as const, type: 'Technical', category: 'Problem Solving' },
-        { index: 3, text: "How do you ensure your code is maintainable and scalable?", difficulty: 'Medium' as const, type: 'Technical', category: 'Architecture' },
-        { index: 4, text: "Can you describe a time you disagreed with a team member on a technical decision?", difficulty: 'Scenario Based' as const, type: 'Behavioral', category: 'Teamwork' },
-        { index: 5, text: "Where do you see your technical skills growing in the next year?", difficulty: 'Easy' as const, type: 'Behavioral', category: 'Career Growth' }
-      ]
+      questions: getCuratedTechnicalQuestions(input.role, input.experience, activeFocus),
     };
 
     const result = await this.callAI<{ questions: QuestionData[] }>(prompt, mockQuestions);

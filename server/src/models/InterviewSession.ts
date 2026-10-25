@@ -11,6 +11,8 @@ export interface IInterviewSession extends Document {
   role: JobRole;
   experience: ExperienceLevel;
   status: SessionStatus;
+  topics?: string[];
+  focusArea?: string;
   startedAt: Date;
   completedAt?: Date;
   duration?: number; // Total duration in seconds
@@ -36,6 +38,14 @@ const interviewSessionSchema = new Schema<IInterviewSession>(
       type: String,
       default: 'in-progress',
       enum: ['in-progress', 'completed', 'abandoned'],
+    },
+    topics: {
+      type: [String],
+      default: [],
+    },
+    focusArea: {
+      type: String,
+      default: '',
     },
     startedAt: {
       type: Date,

@@ -18,6 +18,18 @@ export const validateStartInterview = [
     .withMessage('Experience level is required')
     .isIn(['Beginner', 'Intermediate', 'Experienced'])
     .withMessage('Invalid experience level'),
+  body('topics')
+    .optional()
+    .isArray()
+    .withMessage('Topics must be an array of strings'),
+  body('focusArea')
+    .optional()
+    .isString()
+    .trim(),
+  body('week')
+    .optional()
+    .isInt({ min: 1, max: 52 })
+    .withMessage('Week must be a valid number between 1 and 52'),
 ];
 
 export const validateSubmitAnswer = [

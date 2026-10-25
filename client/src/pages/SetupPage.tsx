@@ -24,12 +24,60 @@ import {
   AlertCircle,
   Sliders,
   Loader2,
+  BookOpen,
+  Layers,
 } from 'lucide-react';
 
 import { useInterview } from '../context/InterviewContext';
 import { startInterview } from '../services/api';
 import { JOB_ROLES } from '../utils/types';
 import type { ExperienceLevel } from '../utils/types';
+
+const ROLE_FOCUS_MAP: Record<string, string[]> = {
+  'Frontend Developer': [
+    'Comprehensive Curriculum',
+    'Browser Architecture & DOM Lifecycle',
+    'React 19, Hooks & State Management',
+    'CSS Grid, Flexbox & Responsive Layouts',
+    'Web Performance, SSR & Core Web Vitals',
+  ],
+  'Backend Developer': [
+    'Comprehensive Curriculum',
+    'Async I/O, Node & Concurrency',
+    'Database Indexing & Query Plans',
+    'REST, GraphQL & Microservices',
+    'Distributed Locking, Caching & Idempotency',
+  ],
+  'Full Stack Developer': [
+    'Comprehensive Curriculum',
+    'End-to-End System Architecture',
+    'API Security, JWT & Auth Flows',
+    'Relational vs NoSQL Schema Modeling',
+    'Fullstack Performance & CI/CD Pipelines',
+  ],
+  'DevOps Engineer': [
+    'Comprehensive Curriculum',
+    'Linux Kernel, Namespaces & Docker',
+    'Kubernetes Architecture & Control Plane',
+    'CI/CD Automated Deployments & Canaries',
+    'Prometheus Monitoring & Service Mesh',
+  ],
+  'Data Scientist': [
+    'Comprehensive Curriculum',
+    'Deep Learning Foundations & Backprop',
+    'Transformers, Attention & Embeddings',
+    'MLOps, Model Drift & Serving',
+    'RAG & Vector Search Optimization',
+  ],
+};
+
+const DEFAULT_FOCUS = [
+  'Comprehensive Curriculum',
+  'Core Architecture & Runtime Fundamentals',
+  'Code Construction & Implementation Patterns',
+  'Performance Optimization & Bottlenecks',
+  'Production Scenario & Debugging Incident',
+];
 
 const SENIORITY_TIERS: { key: ExperienceLevel; label: string; desc: string }[] = [
   {
@@ -96,6 +144,8 @@ export default function SetupPage() {
     !JOB_ROLES.includes(prefilledRole as any) && prefilledRole ? prefilledRole : ''
   );
   const [experience, setExperience] = useState<ExperienceLevel | ''>('');
+  const [focusArea, setFocusArea] = useState<string>('Comprehensive Curriculum');
+  const [customTopics, setCustomTopics] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -117,7 +167,16 @@ export default function SetupPage() {
     }
 
     try {
-      const session = await startInterview(name.trim(), effectiveRole, experience);
+      const topicsList = customTopics.trim()
+        ? customTopics.split(',').map((s) => s.trim()).filter(Boolean)
+        : focusArea !== 'Comprehensive Curriculum'
+        ? [focusArea]
+        : undefined;
+
+      const session = await startInterview(name.trim(), effectiveRole, experience, {
+        topics: topicsList,
+        focusArea: focusArea !== 'Comprehensive Curriculum' ? focusArea : undefined,
+      });
       dispatch({ type: 'START_SESSION', payload: session });
       navigate('/warmup');
     } catch (err: any) {
@@ -298,6 +357,56 @@ export default function SetupPage() {
                   );
                 })}
               </div>
+            </div>
+
+            {/* Field 4: Technical Learning Focus & Topics */}
+            <div className="flex flex-col gap-2.5">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                  <BookOpen size={14} className="text-primary" />
+                  <span>Technical Learning Focus</span>
+                  <span className="text-[10px] font-bold text-slate-400 normal-case ml-1">(Curriculum concepts)</span>
+                </label>
+              </div>
+
+              {/* Dynamic Focus Area Pills */}
+              <div className="flex flex-wrap gap-2">
+                {(ROLE_FOCUS_MAP[effectiveRole] || DEFAULT_FOCUS).map((item) => {
+                  const isCurFocus = focusArea === item && !customTopics.trim();
+                  return (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => {
+                        setFocusArea(item);
+                        setCustomTopics('');
+                      }}
+                      className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                        isCurFocus
+                          ? 'bg-primary text-white shadow-xs'
+                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/60'
+                      }`}
+                    >
+                      <Layers size={13} className={isCurFocus ? 'text-white' : 'text-slate-400'} />
+                      <span>{item}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Optional Custom Topic Sub-input */}
+              <div className="relative pt-1">
+                <input
+                  type="text"
+                  value={customTopics}
+                  onChange={(e) => setCustomTopics(e.target.value)}
+                  placeholder="Or enter custom technical topics you studied (e.g. React Fiber, Closures, Redis Caching)..."
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-semibold text-slate-800 outline-none focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-slate-400"
+                />
+              </div>
+              <p className="text-[11px] text-slate-400 font-medium pl-1">
+                The AI interviewer uses these technical learning topics to ask rigorous, practical questions instead of generic HR questions.
+              </p>
             </div>
           </div>
 
