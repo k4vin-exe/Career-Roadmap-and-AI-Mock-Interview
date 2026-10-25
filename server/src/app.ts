@@ -4,7 +4,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import config, { validateEnv } from './config/index.js';
-import { connectDatabase } from './config/database.js';
+import { connectDatabase, isDatabaseConnected } from './config/database.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import interviewRoutes from './routes/interviewRoutes.js';
@@ -54,6 +54,7 @@ app.get('/api/health', (_req, res) => {
     success: true,
     message: 'AI Mock Interview Server is running',
     timestamp: new Date().toISOString(),
+    database: isDatabaseConnected() ? 'connected' : 'disconnected',
   });
 });
 
@@ -94,18 +95,23 @@ app.use(errorHandler);
 // ────────────────────────────── Start Server ──────────────────────────────
 
 async function startServer(): Promise<void> {
-  try {
-    await connectDatabase();
+  const host = '0.0.0.0';
+  const port = config.port;
 
-    app.listen(config.port, () => {
-      console.log(`\n🚀 Server running on http://localhost:${config.port}`);
-      console.log(`📋 Health check: http://localhost:${config.port}/api/health`);
-      console.log(`🌍 Environment: ${config.nodeEnv}\n`);
-    });
-  } catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
-  }
+  const server = app.listen(port, host, () => {
+    console.log(`\n🚀 Server listening on http://${host}:${port}`);
+    console.log(`📋 Health check: http://${host}:${port}/api/health`);
+    console.log(`🌍 Environment: ${config.nodeEnv}\n`);
+  });
+
+  server.on('error', (err) => {
+    console.error(`❌ HTTP Server failed to listen on ${host}:${port}:`, err);
+  });
+
+  // Connect to database in background without blocking port binding
+  connectDatabase().catch((err) => {
+    console.error('❌ Database connection error on startup:', err);
+  });
 }
 
 startServer();
