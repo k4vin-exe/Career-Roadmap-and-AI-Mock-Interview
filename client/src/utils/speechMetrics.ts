@@ -7,9 +7,10 @@
 
 // ──────────────────────────── Filler Words ────────────────────────────
 
-const FILLER_WORDS = [
-  'um', 'uh', 'actually', 'basically', 'like',
-  'you know', 'hmm', 'well', 'sort of', 'kind of',
+export const FILLER_WORDS = [
+  'um', 'uh', 'er', 'ah', 'actually', 'basically', 'like',
+  'you know', 'hmm', 'well', 'sort of', 'kind of', 'i mean',
+  'honestly', 'literally', 'right',
 ];
 
 /**
@@ -30,6 +31,32 @@ export function detectFillerWords(transcript: string): string[] {
   }
 
   return detected;
+}
+
+/**
+ * Breaks a transcript down into segments with isFiller flags for visual highlighting.
+ */
+export function segmentTranscriptFillers(transcript: string): Array<{ text: string; isFiller: boolean }> {
+  if (!transcript) return [];
+  // Build a master regex matching any of the filler words/phrases
+  const pattern = new RegExp(`\\b(${FILLER_WORDS.join('|')})\\b`, 'gi');
+  const segments: Array<{ text: string; isFiller: boolean }> = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = pattern.exec(transcript)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({ text: transcript.substring(lastIndex, match.index), isFiller: false });
+    }
+    segments.push({ text: match[0], isFiller: true });
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < transcript.length) {
+    segments.push({ text: transcript.substring(lastIndex), isFiller: false });
+  }
+
+  return segments;
 }
 
 // ──────────────────────────── Repeated Words ────────────────────────────
@@ -60,17 +87,36 @@ export function detectRepeatedWords(transcript: string): string[] {
  * Clamped between 0 and 100.
  */
 export function calculateFluencyScore(fillerCount: number, repeatedCount: number): number {
-  const score = 100 - (fillerCount * 5) - (repeatedCount * 3);
+  const score = 100 - (fillerCount * 4) - (repeatedCount * 3);
   return Math.max(0, Math.min(100, score));
 }
 
-// ──────────────────────────── Word Count ────────────────────────────
+// ──────────────────────────── Word Count & Pacing ────────────────────────────
 
 /**
  * Counts total words in the transcript.
  */
 export function countWords(transcript: string): number {
   return transcript.trim().split(/\s+/).filter(Boolean).length;
+}
+
+/**
+ * Calculates Words Per Minute and conversational pacing rating.
+ */
+export function calculatePacing(totalWords: number, durationSeconds: number): {
+  wpm: number;
+  pacingRating: 'Too Slow' | 'Optimal' | 'A Bit Fast' | 'Too Fast';
+} {
+  if (durationSeconds <= 5 || totalWords === 0) {
+    return { wpm: 0, pacingRating: 'Optimal' };
+  }
+
+  const wpm = Math.round((totalWords / durationSeconds) * 60);
+
+  if (wpm < 105) return { wpm, pacingRating: 'Too Slow' };
+  if (wpm <= 165) return { wpm, pacingRating: 'Optimal' };
+  if (wpm <= 190) return { wpm, pacingRating: 'A Bit Fast' };
+  return { wpm, pacingRating: 'Too Fast' };
 }
 
 // ──────────────────────────── All Metrics ────────────────────────────
@@ -82,17 +128,20 @@ export interface SpeechMetricsResult {
   repeatedWords: string[];
   repeatedWordCount: number;
   fluencyScore: number;
+  wordsPerMinute?: number;
+  pacingRating?: string;
 }
 
 /**
  * Computes all speech metrics for a given transcript.
  * Single entry point for the complete analysis.
  */
-export function computeSpeechMetrics(transcript: string): SpeechMetricsResult {
+export function computeSpeechMetrics(transcript: string, durationSeconds: number = 0): SpeechMetricsResult {
   const totalWords = countWords(transcript);
   const fillerWords = detectFillerWords(transcript);
   const repeatedWords = detectRepeatedWords(transcript);
   const fluencyScore = calculateFluencyScore(fillerWords.length, repeatedWords.length);
+  const { wpm, pacingRating } = calculatePacing(totalWords, durationSeconds);
 
   return {
     totalWords,
@@ -101,5 +150,7 @@ export function computeSpeechMetrics(transcript: string): SpeechMetricsResult {
     repeatedWords,
     repeatedWordCount: repeatedWords.length,
     fluencyScore,
+    wordsPerMinute: wpm,
+    pacingRating,
   };
 }

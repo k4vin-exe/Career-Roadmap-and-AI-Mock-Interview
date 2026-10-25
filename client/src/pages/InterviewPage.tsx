@@ -16,16 +16,8 @@ import { submitAnswer, generateReport } from '../services/api';
 
 import MicrophoneButton from '../components/interview/MicrophoneButton';
 import TranscriptDisplay from '../components/interview/TranscriptDisplay';
-import EvaluationCard from '../components/interview/EvaluationCard';
-
-interface EvaluationData {
-  technicalAccuracy: number;
-  communication: number;
-  completeness: number;
-  problemSolving: number;
-  feedback: string;
-  expectedPoints: string[];
-}
+import EvaluationCard, { type ExtendedEvaluationData } from '../components/interview/EvaluationCard';
+import AudioVisualizer from '../components/interview/AudioVisualizer';
 
 function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -41,6 +33,7 @@ export default function InterviewPage() {
     transcript,
     isRecording: isListening,
     isTranscribing,
+    mediaStream,
     error: micError,
     startRecording: startListening,
     stopRecording: stopListening,
@@ -53,7 +46,7 @@ export default function InterviewPage() {
   const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [evaluation, setEvaluation] = useState<EvaluationData | null>(null);
+  const [evaluation, setEvaluation] = useState<ExtendedEvaluationData | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [hasSpokenQuestion, setHasSpokenQuestion] = useState(false);
@@ -108,7 +101,7 @@ export default function InterviewPage() {
     stopSpeaking();
 
     const questionDuration = Math.round((Date.now() - questionStartTime) / 1000);
-    const metrics = computeSpeechMetrics(editedTranscript);
+    const metrics = computeSpeechMetrics(editedTranscript, questionDuration);
 
     try {
       const result = await submitAnswer(state.session.sessionId, {
@@ -126,12 +119,31 @@ export default function InterviewPage() {
 
       const evalData = result.evaluation as any;
       setEvaluation({
-        technicalAccuracy: evalData.technicalAccuracy ?? 75,
-        communication: evalData.communication ?? 80,
-        completeness: evalData.completeness ?? 70,
-        problemSolving: evalData.problemSolving ?? 75,
+        technicalAccuracy: evalData.technicalAccuracy ?? 7.5,
+        communication: evalData.communication ?? 8,
+        completeness: evalData.completeness ?? 7,
+        problemSolving: evalData.problemSolving ?? 8,
+        deliveryScore: evalData.deliveryScore ?? 8,
+        pacingFeedback: evalData.pacingFeedback,
+        fillerFeedback: evalData.fillerFeedback,
+        structureFeedback: evalData.structureFeedback,
+        strengths: evalData.strengths || [],
+        weaknesses: evalData.weaknesses || [],
+        missingConcepts: evalData.missingConcepts || [],
+        idealAnswer: evalData.idealAnswer || '',
+        suggestions: evalData.suggestions || [],
+        encouragingFeedback: evalData.encouragingFeedback || evalData.feedback || '',
         feedback: evalData.encouragingFeedback || evalData.feedback || 'Good effort on this answer.',
         expectedPoints: evalData.strengths ?? evalData.expectedPoints ?? [],
+        // Spoken delivery analytics
+        transcript: editedTranscript || transcript,
+        totalWords: metrics.totalWords,
+        fillerWords: metrics.fillerWords,
+        fillerWordCount: metrics.fillerWordCount,
+        fluencyScore: metrics.fluencyScore,
+        questionDuration,
+        wordsPerMinute: metrics.wordsPerMinute,
+        pacingRating: metrics.pacingRating,
       });
 
       dispatch({
@@ -244,34 +256,72 @@ export default function InterviewPage() {
               className="flex flex-col gap-4 w-full"
             >
               {/* Question Card */}
-              <div className="card shadow-sm rounded-2xl p-6">
+              <div className="card shadow-sm rounded-2xl p-6 bg-surface-solid border border-border">
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 mt-0.5">
                     {isSpeaking ? (
                       <motion.div
-                        className="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold text-primary-text bg-primary-soft"
+                        className="w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold text-primary-text bg-primary-soft"
                         animate={{ boxShadow: ['0 0 0px var(--primary-soft)', '0 0 16px var(--primary)', '0 0 0px var(--primary-soft)'] }}
                         transition={{ duration: 1.4, repeat: Infinity }}
                       >
                         AI
                       </motion.div>
                     ) : (
-                      <div className="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold text-primary-text bg-primary-soft">
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold text-primary-text bg-primary-soft">
                         AI
                       </div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs font-semibold text-accent-light uppercase tracking-wider">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <span className="text-xs font-bold text-accent-light uppercase tracking-wider">
                         {currentQuestion.difficulty}
                       </span>
                       <span className="text-xs text-text-muted">·</span>
-                      <span className="text-xs text-text-muted">{currentQuestion.category}</span>
+                      <span className="text-xs font-medium text-text-muted">{currentQuestion.category}</span>
+                      <span className="text-xs text-text-muted">·</span>
+                      <span className="text-xs font-medium text-text-secondary bg-surface-muted px-2 py-0.5 rounded-md">
+                        {currentQuestion.type}
+                      </span>
                     </div>
-                    <p className="text-base md:text-[17px] text-text-primary leading-relaxed">
+                    <p className="text-base md:text-[17px] text-text-primary leading-relaxed font-medium">
                       {currentQuestion.text}
                     </p>
+
+                    {/* Question Replay and Pacing Cue */}
+                    <div className="flex items-center justify-between gap-3 mt-4 pt-3 border-t border-border/60 flex-wrap">
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          id="replay-question-btn"
+                          onClick={() => {
+                            if (isSpeaking) {
+                              stopSpeaking();
+                            } else {
+                              speak(currentQuestion.text);
+                            }
+                          }}
+                          className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl border border-border bg-surface-solid hover:bg-surface-muted hover:border-primary/40 text-text-secondary transition-all cursor-pointer shadow-2xs"
+                        >
+                          {isSpeaking ? (
+                            <><VolumeX size={14} className="text-danger" /> Stop Reading</>
+                          ) : (
+                            <><Volume2 size={14} className="text-primary" /> Hear Question Again</>
+                          )}
+                        </button>
+                        {isSpeaking && (
+                          <span className="text-xs font-medium text-accent-light animate-pulse flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-accent inline-block" />
+                            AI Interviewer speaking...
+                          </span>
+                        )}
+                      </div>
+
+                      <span className="text-xs text-text-muted font-medium">
+                        Target: 60 - 90s · 100 - 200 words
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -298,22 +348,25 @@ export default function InterviewPage() {
                 </div>
               )}
 
-              {/* Mic controls — fixed bottom-ish panel */}
-              <div className="card shadow-sm rounded-2xl p-6">
-                <div className="flex flex-col items-center gap-4">
+              {/* Mic controls & Real-Time Audio Visualizer */}
+              <div className="card shadow-sm rounded-2xl p-6 bg-surface-solid border border-border">
+                <div className="flex flex-col items-center gap-3">
 
                   {/* Status text */}
-                  <p className="text-sm text-text-secondary text-center">
+                  <p className="text-sm font-medium text-text-secondary text-center">
                     {isSpeaking
                       ? '🔊 AI is reading the question aloud...'
                       : isListening
-                      ? '🎙️ Recording — speak clearly, then click Stop'
+                      ? '🎙️ Recording voice — speak clearly at your normal pace'
                       : isTranscribing
-                      ? '⏳ Sending audio to AI for transcription...'
+                      ? '⏳ Transcribing speech using AI Whisper...'
                       : editedTranscript.trim().length > 5
-                      ? '✅ Answer captured — review then submit'
-                      : '🎤 Click the microphone to start answering'}
+                      ? '✅ Spoken answer captured — review or edit below, then submit'
+                      : '🎤 Click the microphone when you are ready to answer'}
                   </p>
+
+                  {/* Real-time Dynamic Audio Visualizer */}
+                  <AudioVisualizer isRecording={isListening} mediaStream={mediaStream} />
 
                   {/* Mic button row */}
                   <div className="flex items-center gap-8">

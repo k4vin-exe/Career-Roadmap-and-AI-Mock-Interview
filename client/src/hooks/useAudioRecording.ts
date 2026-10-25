@@ -5,6 +5,7 @@ interface UseAudioRecordingReturn {
   transcript: string;
   isRecording: boolean;
   isTranscribing: boolean;
+  mediaStream: MediaStream | null;
   error: string | null;
   startRecording: () => void;
   stopRecording: () => void;
@@ -16,6 +17,7 @@ export function useAudioRecording(): UseAudioRecordingReturn {
   const [transcript, setTranscript] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
+  const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -30,6 +32,7 @@ export function useAudioRecording(): UseAudioRecordingReturn {
 
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
+      setMediaStream(stream);
 
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
@@ -48,6 +51,7 @@ export function useAudioRecording(): UseAudioRecordingReturn {
           streamRef.current.getTracks().forEach(track => track.stop());
           streamRef.current = null;
         }
+        setMediaStream(null);
 
         setIsRecording(false);
         setIsTranscribing(true);
@@ -116,6 +120,7 @@ export function useAudioRecording(): UseAudioRecordingReturn {
     transcript,
     isRecording,
     isTranscribing,
+    mediaStream,
     error,
     startRecording,
     stopRecording,

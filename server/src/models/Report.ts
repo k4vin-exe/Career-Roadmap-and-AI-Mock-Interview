@@ -26,10 +26,10 @@ export interface IReport extends Document {
 const questionScoreSchema = new Schema<IQuestionScore>(
   {
     questionIndex: { type: Number, required: true },
-    technicalAccuracy: { type: Number, min: 0, max: 10 },
-    communication: { type: Number, min: 0, max: 10 },
-    completeness: { type: Number, min: 0, max: 10 },
-    problemSolving: { type: Number, min: 0, max: 10 },
+    technicalAccuracy: { type: Number, min: 0, max: 100 },
+    communication: { type: Number, min: 0, max: 100 },
+    completeness: { type: Number, min: 0, max: 100 },
+    problemSolving: { type: Number, min: 0, max: 100 },
     fluencyScore: { type: Number, min: 0, max: 100 },
   },
   { _id: false }

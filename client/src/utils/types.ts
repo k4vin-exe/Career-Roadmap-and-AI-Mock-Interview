@@ -60,6 +60,10 @@ export interface Evaluation {
   communication: number;
   completeness: number;
   problemSolving: number;
+  deliveryScore?: number;
+  pacingFeedback?: string;
+  fillerFeedback?: string;
+  structureFeedback?: string;
   strengths: string[];
   weaknesses: string[];
   missingConcepts: string[];
@@ -77,6 +81,8 @@ export interface SpeechMetrics {
   repeatedWords: string[];
   repeatedWordCount: number;
   fluencyScore: number;
+  wordsPerMinute?: number;
+  pacingRating?: string;
 }
 
 // ──────────────────────────── Response ────────────────────────────

@@ -6,6 +6,10 @@ export interface IEvaluation {
   communication: number; // 0-10
   completeness: number; // 0-10
   problemSolving: number; // 0-10
+  deliveryScore?: number; // 0-10
+  pacingFeedback?: string;
+  fillerFeedback?: string;
+  structureFeedback?: string;
   strengths: string[];
   weaknesses: string[];
   missingConcepts: string[];
@@ -36,6 +40,10 @@ const evaluationSchema = new Schema<IEvaluation>(
     communication: { type: Number, min: 0, max: 10 },
     completeness: { type: Number, min: 0, max: 10 },
     problemSolving: { type: Number, min: 0, max: 10 },
+    deliveryScore: { type: Number, min: 0, max: 10 },
+    pacingFeedback: String,
+    fillerFeedback: String,
+    structureFeedback: String,
     strengths: [String],
     weaknesses: [String],
     missingConcepts: [String],

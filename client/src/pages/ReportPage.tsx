@@ -115,20 +115,21 @@ function CircularScore({ score, size = 110, label, sublabel, delay = 0 }: Circul
 // ─── Mini bar ─────────────────────────────────────────────────────────────────
 
 function ScoreBar({ label, score, delay = 0 }: { label: string; score: number; delay?: number }) {
-  const color = scoreColor(score);
+  const norm = score <= 10 ? Math.round(score * 10) : Math.round(score);
+  const color = scoreColor(norm);
   return (
     <div className="flex items-center gap-3">
-      <span className="text-xs text-text-secondary w-32 flex-shrink-0">{label}</span>
+      <span className="text-xs text-text-secondary w-36 flex-shrink-0">{label}</span>
       <div className="flex-1 h-2 rounded-full bg-surface-muted overflow-hidden">
         <motion.div
           className="h-full rounded-full"
           style={{ background: color }}
           initial={{ width: 0 }}
-          animate={{ width: `${score}%` }}
+          animate={{ width: `${norm}%` }}
           transition={{ delay, duration: 0.8, ease: 'easeOut' }}
         />
       </div>
-      <span className="text-xs font-semibold w-8 text-right" style={{ color }}>{score}</span>
+      <span className="text-xs font-semibold w-8 text-right" style={{ color }}>{norm}%</span>
     </div>
   );
 }
@@ -138,20 +139,28 @@ function ScoreBar({ label, score, delay = 0 }: { label: string; score: number; d
 interface QuestionCardProps {
   q: Question;
   qs: { technicalAccuracy: number; communication: number; completeness: number; problemSolving: number; fluencyScore: number };
+  resp?: any;
   index: number;
 }
 
-function QuestionCard({ q, qs, index }: QuestionCardProps) {
+function QuestionCard({ q, qs, resp, index }: QuestionCardProps) {
   const [open, setOpen] = useState(false);
-  const avg = Math.round((qs.technicalAccuracy + qs.communication + qs.completeness + qs.problemSolving) / 4);
+  const normTech = qs.technicalAccuracy <= 10 ? qs.technicalAccuracy * 10 : qs.technicalAccuracy;
+  const normComm = qs.communication <= 10 ? qs.communication * 10 : qs.communication;
+  const normComp = qs.completeness <= 10 ? qs.completeness * 10 : qs.completeness;
+  const normProb = qs.problemSolving <= 10 ? qs.problemSolving * 10 : qs.problemSolving;
+  const avg = Math.round((normTech + normComm + normComp + normProb) / 4);
   const color = scoreColor(avg);
+
+  const evalData = resp?.evaluation;
+  const transcriptText = resp?.editedTranscript || resp?.transcript;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.08 }}
-      className="card shadow-sm rounded-xl overflow-hidden"
+      className="card shadow-sm rounded-xl overflow-hidden border border-border bg-surface-solid"
     >
       <button
         onClick={() => setOpen((o) => !o)}
@@ -168,7 +177,7 @@ function QuestionCard({ q, qs, index }: QuestionCardProps) {
           <p className="text-xs text-text-muted">{q.difficulty} · {q.category}</p>
         </div>
         <div className="flex items-center gap-3 flex-shrink-0">
-          <span className="text-sm font-bold" style={{ color }}>{avg}/100</span>
+          <span className="text-sm font-bold" style={{ color }}>{avg}%</span>
           {open ? <ChevronUp size={16} className="text-text-muted" /> : <ChevronDown size={16} className="text-text-muted" />}
         </div>
       </button>
@@ -182,12 +191,73 @@ function QuestionCard({ q, qs, index }: QuestionCardProps) {
             transition={{ duration: 0.25 }}
             className="overflow-hidden"
           >
-            <div className="px-5 pb-5 space-y-2 border-t border-border pt-4">
-              <ScoreBar label="Technical Accuracy" score={qs.technicalAccuracy} delay={0} />
-              <ScoreBar label="Communication"     score={qs.communication}     delay={0.05} />
-              <ScoreBar label="Completeness"      score={qs.completeness}      delay={0.1} />
-              <ScoreBar label="Problem Solving"   score={qs.problemSolving}    delay={0.15} />
-              <ScoreBar label="Fluency"           score={qs.fluencyScore}      delay={0.2} />
+            <div className="px-5 pb-5 space-y-4 border-t border-border pt-4">
+              {/* Score bars */}
+              <div className="space-y-2">
+                <ScoreBar label="Technical Accuracy" score={normTech} delay={0} />
+                <ScoreBar label="Communication"     score={normComm} delay={0.05} />
+                <ScoreBar label="Completeness"      score={normComp} delay={0.1} />
+                <ScoreBar label="Problem Solving"   score={normProb} delay={0.15} />
+                <ScoreBar label="Fluency"           score={qs.fluencyScore} delay={0.2} />
+              </div>
+
+              {/* Candidate Spoken Transcript */}
+              {transcriptText && (
+                <div className="p-3.5 rounded-xl bg-surface-muted/60 border border-border/70 text-xs">
+                  <div className="flex items-center justify-between mb-1.5 font-bold text-text-secondary">
+                    <span>Your Spoken Answer:</span>
+                    {resp.questionDuration ? (
+                      <span className="font-normal text-text-muted">{resp.questionDuration}s · {resp.totalWords || 0} words</span>
+                    ) : null}
+                  </div>
+                  <p className="text-text-primary leading-relaxed italic">"{transcriptText}"</p>
+                  {resp.fillerWordCount > 0 && (
+                    <p className="mt-2 text-[11px] text-warning font-medium">
+                      ⚠️ Used {resp.fillerWordCount} filler words ({resp.fillerWords?.slice(0, 3).join(', ')})
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Strengths & Missing Concepts */}
+              {evalData && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+                  {evalData.strengths && evalData.strengths.length > 0 && (
+                    <div className="p-3 rounded-xl bg-success-soft/20 border border-success/20 text-xs">
+                      <p className="font-bold text-success mb-1.5">What Was Explained Well:</p>
+                      <ul className="space-y-1 text-text-secondary">
+                        {evalData.strengths.map((s: string, idx: number) => (
+                          <li key={idx} className="flex items-start gap-1.5">
+                            <span className="text-success font-bold">•</span>
+                            <span>{s}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {evalData.missingConcepts && evalData.missingConcepts.length > 0 && (
+                    <div className="p-3 rounded-xl bg-warning-soft/20 border border-warning/20 text-xs">
+                      <p className="font-bold text-warning mb-1.5">Key Concepts Missed:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {evalData.missingConcepts.map((c: string, idx: number) => (
+                          <span key={idx} className="px-2 py-0.5 rounded bg-surface-solid border border-warning/30 text-[11px] font-semibold text-warning">
+                            {c}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Ideal Model Answer */}
+              {evalData?.idealAnswer && (
+                <div className="p-3.5 rounded-xl bg-primary-soft/20 border border-primary/20 text-xs">
+                  <p className="font-bold text-primary mb-1">Principal Engineer Ideal Answer:</p>
+                  <p className="text-text-secondary leading-relaxed whitespace-pre-line">{evalData.idealAnswer}</p>
+                </div>
+              )}
             </div>
           </motion.div>
         )}
@@ -204,6 +274,7 @@ export default function ReportPage() {
 
   const [report, setReport] = useState<InterviewReport | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [responses, setResponses] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -217,6 +288,7 @@ export default function ReportPage() {
       const data = await getReport(sessionId);
       setReport(data.report);
       setQuestions(data.questions ?? []);
+      setResponses(data.responses ?? []);
     } catch {
       setError('Could not load your report. Please try again.');
     } finally {
@@ -521,7 +593,8 @@ export default function ReportPage() {
                 type: '—',
                 category: '—',
               };
-              return <QuestionCard key={i} q={q} qs={qs} index={i} />;
+              const resp = responses.find((r) => r.questionIndex === qs.questionIndex) || responses[i];
+              return <QuestionCard key={i} q={q} qs={qs} resp={resp} index={i} />;
             })}
           </motion.div>
         )}

@@ -197,6 +197,8 @@ class InterviewService {
     const session = await InterviewSession.findById(input.sessionId);
     if (!session) throw new Error('Session not found');
 
+    const wpm = input.questionDuration > 5 ? Math.round((input.totalWords / input.questionDuration) * 60) : 0;
+
     // Send to Gemini for evaluation
     const prompt = generateAnswerEvaluationPrompt(
       question.text,
@@ -206,8 +208,11 @@ class InterviewService {
       {
         repeatedWords: input.repeatedWordCount,
         fillerWords: input.fillerWordCount,
+        fillerList: input.fillerWords,
         fluencyScore: input.fluencyScore,
         totalWords: input.totalWords,
+        durationSeconds: input.questionDuration,
+        wpm,
       }
     );
 
@@ -215,13 +220,19 @@ class InterviewService {
       technicalAccuracy: 7.5,
       communication: 8.0,
       completeness: 7.0,
-      problemSolving: 8.5,
-      strengths: ["Clear communication", "Good foundational knowledge"],
-      weaknesses: ["Needs more specific technical examples", "Could structure answers better using STAR method"],
-      missingConcepts: ["Did not mention scalability", "Missed edge cases"],
-      idealAnswer: "An ideal answer would cover X, Y, and Z clearly with examples.",
-      suggestions: ["Try to structure your thoughts before answering", "Provide concrete metrics when describing past projects"],
-      encouragingFeedback: "Good job overall, you're on the right track! Just a few tweaks and it'll be perfect.",
+      problemSolving: 8.0,
+      deliveryScore: 8.0,
+      pacingFeedback: wpm > 0 ? `Delivered at ~${wpm} WPM. Steady and easy to follow.` : 'Good pacing overall.',
+      fillerFeedback: input.fillerWordCount > 0 
+        ? `Used ${input.fillerWordCount} filler words (${input.fillerWords.slice(0, 3).join(', ')}). Try pausing silently instead of filling silences.`
+        : 'Crisp verbal delivery with virtually zero filler words!',
+      structureFeedback: 'Solid logical progression. Consider summarizing your main takeaway at the very end.',
+      strengths: ["Clear technical explanation of core principles", "Good domain vocabulary and foundational knowledge"],
+      weaknesses: ["Could provide more concrete production examples", "Could explicitly discuss scalability and error handling"],
+      missingConcepts: ["Scalability trade-offs", "Edge case validation", "Production monitoring"],
+      idealAnswer: `When approaching this problem, I look at three critical dimensions: reliability, performance, and maintainability. In production, I would prioritize a modular design with proper error boundaries and telemetry.`,
+      suggestions: ["Structure answers using Problem -> Architecture -> Trade-offs", "Quantify results with real-world metrics where possible"],
+      encouragingFeedback: "Strong answer with solid engineering intuition! With a bit more emphasis on production trade-offs, this will stand out to interviewers.",
     };
 
     const evaluation = await this.callAI<IEvaluation>(prompt, mockEvaluation);
@@ -265,15 +276,21 @@ class InterviewService {
 
     if (responses.length === 0) throw new Error('No responses found for this session');
 
-    // Build per-question scores from existing evaluations
-    const questionScores = responses.map((r) => ({
-      questionIndex: r.questionIndex,
-      technicalAccuracy: r.evaluation?.technicalAccuracy || 0,
-      communication: r.evaluation?.communication || 0,
-      completeness: r.evaluation?.completeness || 0,
-      problemSolving: r.evaluation?.problemSolving || 0,
-      fluencyScore: r.fluencyScore,
-    }));
+    // Build per-question scores from existing evaluations (normalized to 0-100)
+    const questionScores = responses.map((r) => {
+      const rawTech = r.evaluation?.technicalAccuracy || 0;
+      const rawComm = r.evaluation?.communication || 0;
+      const rawComp = r.evaluation?.completeness || 0;
+      const rawProb = r.evaluation?.problemSolving || 0;
+      return {
+        questionIndex: r.questionIndex,
+        technicalAccuracy: rawTech <= 10 ? Math.round(rawTech * 10) : rawTech,
+        communication: rawComm <= 10 ? Math.round(rawComm * 10) : rawComm,
+        completeness: rawComp <= 10 ? Math.round(rawComp * 10) : rawComp,
+        problemSolving: rawProb <= 10 ? Math.round(rawProb * 10) : rawProb,
+        fluencyScore: r.fluencyScore,
+      };
+    });
 
     // Calculate average fluency (application logic)
     const averageFluency = Math.round(
@@ -284,9 +301,9 @@ class InterviewService {
     const totalDuration = responses.reduce((sum, r) => sum + r.questionDuration, 0);
 
     // --- LOCAL RULE-BASED ENGINE ---
-    const avgTech = Math.round(questionScores.reduce((sum, q) => sum + q.technicalAccuracy, 0) / questionScores.length * 10);
-    const avgComm = Math.round(questionScores.reduce((sum, q) => sum + q.communication, 0) / questionScores.length * 10);
-    const avgProblem = Math.round(questionScores.reduce((sum, q) => sum + q.problemSolving, 0) / questionScores.length * 10);
+    const avgTech = Math.round(questionScores.reduce((sum, q) => sum + q.technicalAccuracy, 0) / questionScores.length);
+    const avgComm = Math.round(questionScores.reduce((sum, q) => sum + q.communication, 0) / questionScores.length);
+    const avgProblem = Math.round(questionScores.reduce((sum, q) => sum + q.problemSolving, 0) / questionScores.length);
     
     const overallScore = Math.round((avgTech + avgComm + avgProblem + averageFluency) / 4);
     
