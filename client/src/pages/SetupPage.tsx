@@ -135,20 +135,12 @@ export default function SetupPage() {
   };
 
   return (
-    <div style={{ position: 'relative', minHeight: 'calc(100vh - 64px)', padding: '40px 24px', display: 'flex', justifyContent: 'center' }}>
-      
-      {/* Dynamic Background */}
-      <div style={{
-        position: 'absolute', top: '-10%', left: '-10%', width: '120%', height: '120%', zIndex: 0,
-        background: 'radial-gradient(circle at 30% 20%, rgba(128,103,232,0.1) 0%, transparent 40%), radial-gradient(circle at 80% 60%, rgba(233,119,63,0.08) 0%, transparent 40%)',
-        pointerEvents: 'none', filter: 'blur(60px)'
-      }} />
-
-      <div style={{ maxWidth: 960, width: '100%', position: 'relative', zIndex: 1 }}>
+    <div className="w-full max-w-5xl mx-auto py-2 flex flex-col gap-6">
+      <div className="w-full">
         <button
           onClick={() => navigate(fromRoadmap ? (-1 as any) : '/dashboard')}
           className="btn btn-ghost"
-          style={{ marginBottom: 32, display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 100, background: 'var(--surface-solid)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)', fontWeight: 600 }}
+          style={{ marginBottom: 24, display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 100, background: 'var(--surface-solid)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)', fontWeight: 600 }}
         >
           <ArrowLeft size={16} /> {fromRoadmap ? 'Back to Roadmap' : 'Back to Dashboard'}
         </button>
@@ -159,7 +151,7 @@ export default function SetupPage() {
             animate={{ opacity: 1, y: 0 }}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 10, padding: '10px 18px', borderRadius: 100,
-              background: 'rgba(128,103,232,0.1)', border: '1px solid rgba(128,103,232,0.2)', marginBottom: 28,
+              background: 'rgba(128,103,232,0.1)', border: '1px solid rgba(128,103,232,0.2)', marginBottom: 24,
               fontSize: 13, color: 'var(--primary)', fontWeight: 700,
             }}
           >
@@ -167,17 +159,18 @@ export default function SetupPage() {
           </motion.div>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 380px', gap: 32, alignItems: 'start' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
           {/* Main Setup Card */}
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.5, type: 'spring', bounce: 0.4 }}
+            className="lg:col-span-7"
             style={{
               background: 'var(--surface-solid)',
-              borderRadius: 32,
-              padding: '48px',
+              borderRadius: 24,
+              padding: '36px',
               boxShadow: '0 20px 60px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.02)',
               border: '1px solid var(--border)'
             }}
@@ -322,6 +315,7 @@ export default function SetupPage() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2, type: 'spring' }}
+            className="lg:col-span-5"
             style={{ display: 'flex', flexDirection: 'column', gap: 24 }}
           >
             {/* Pro Tip Card */}

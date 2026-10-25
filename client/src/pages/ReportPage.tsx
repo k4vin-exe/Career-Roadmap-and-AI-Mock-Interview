@@ -354,22 +354,20 @@ export default function ReportPage() {
   const rColor = readinessColor(report.interviewReadiness);
 
   return (
-    <div className="flex-1 w-full" style={{ background: 'var(--bg)' }}>
-      <div className="max-w-4xl mx-auto px-4 md:px-6 py-10 space-y-8">
+    <div className="w-full max-w-4xl mx-auto py-2 flex flex-col gap-6">
+      {/* ── Back ── */}
+      <motion.button
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        whileHover={{ x: -4 }}
+        onClick={() => navigate('/dashboard')}
+        className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors cursor-pointer w-fit"
+      >
+        <ArrowLeft size={16} />
+        <span className="text-sm font-semibold">Back to Dashboard</span>
+      </motion.button>
 
-        {/* ── Back ── */}
-        <motion.button
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          whileHover={{ x: -4 }}
-          onClick={() => navigate('/')}
-          className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
-        >
-          <ArrowLeft size={16} />
-          <span className="text-sm">Back to Home</span>
-        </motion.button>
-
-        {/* ── Hero Header ── */}
+      {/* ── Hero Header ── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -634,9 +632,7 @@ export default function ReportPage() {
             </motion.button>
           </div>
         </motion.div>
-
       </div>
-    </div>
   );
 }
 

@@ -177,13 +177,13 @@ export default function EvaluationCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="flex flex-col gap-6 w-full max-w-5xl mx-auto"
+      transition={{ duration: 0.3 }}
+      className="flex flex-col gap-6 w-full max-w-4xl mx-auto"
     >
       {/* ── Hero Performance Verdict Card ── */}
-      <div className="card-elevated rounded-3xl p-6 md:p-8 bg-white border border-slate-200/80 shadow-lg shadow-slate-200/40 relative overflow-hidden">
+      <div className="rounded-2xl p-6 md:p-8 bg-white border border-slate-200/90 shadow-sm relative overflow-hidden">
         {/* Ambient background blur */}
         <div
           className="absolute -right-10 -bottom-10 w-64 h-64 rounded-full pointer-events-none opacity-40 blur-3xl"
