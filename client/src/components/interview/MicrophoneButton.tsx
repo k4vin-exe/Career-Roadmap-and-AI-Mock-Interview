@@ -10,9 +10,9 @@ interface MicrophoneButtonProps {
 }
 
 const sizeMap = {
-  sm: { button: 64, icon: 24 },
-  md: { button: 80, icon: 32 },
-  lg: { button: 100, icon: 40 },
+  sm: { button: 56, icon: 22, ring: 76 },
+  md: { button: 72, icon: 28, ring: 96 },
+  lg: { button: 88, icon: 34, ring: 118 },
 };
 
 export default function MicrophoneButton({
@@ -22,7 +22,7 @@ export default function MicrophoneButton({
   onStop,
   size = 'lg',
 }: MicrophoneButtonProps) {
-  const { button, icon } = sizeMap[size];
+  const { button, icon, ring } = sizeMap[size];
 
   const handleClick = () => {
     if (isDisabled) return;
@@ -34,57 +34,83 @@ export default function MicrophoneButton({
   };
 
   return (
-    <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div className="relative flex flex-col items-center justify-center">
+      {/* Outer Glow Halo Rings when Recording */}
       <AnimatePresence>
         {isListening && (
           <>
             <motion.div
-              style={{ position: 'absolute', inset: -20, borderRadius: '50%', border: '2px solid rgba(239,68,68,0.4)', zIndex: 0 }}
-              initial={{ opacity: 0.8, scale: 1 }}
-              animate={{ opacity: 0, scale: 1.5 }}
+              className="absolute rounded-full pointer-events-none"
+              style={{
+                width: ring + 40,
+                height: ring + 40,
+                background: 'radial-gradient(circle, rgba(239, 68, 68, 0.25) 0%, rgba(239, 68, 68, 0) 70%)',
+              }}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: [1, 1.35, 1], opacity: [0.6, 0.2, 0.6] }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: 'easeOut' }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
             />
             <motion.div
-              style={{ position: 'absolute', inset: -20, borderRadius: '50%', border: '2px solid rgba(239,68,68,0.3)', zIndex: 0 }}
-              initial={{ opacity: 0.6, scale: 1 }}
-              animate={{ opacity: 0, scale: 1.3 }}
+              className="absolute rounded-full border-2 border-danger/40 pointer-events-none"
+              style={{ width: ring, height: ring }}
+              initial={{ scale: 0.9, opacity: 0.9 }}
+              animate={{ scale: [1, 1.4, 1.7], opacity: [0.8, 0.3, 0] }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 1.5, repeat: Infinity, delay: 0.4, ease: 'easeOut' }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
+            />
+            <motion.div
+              className="absolute rounded-full border border-danger/30 pointer-events-none"
+              style={{ width: ring - 10, height: ring - 10 }}
+              initial={{ scale: 0.9, opacity: 0.8 }}
+              animate={{ scale: [1, 1.3, 1.6], opacity: [0.7, 0.2, 0] }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.8, repeat: Infinity, delay: 0.5, ease: 'easeOut' }}
             />
           </>
         )}
       </AnimatePresence>
 
+      {/* Main Button */}
       <motion.button
         id="mic-button"
+        type="button"
         onClick={handleClick}
         disabled={isDisabled}
-        whileHover={!isDisabled ? { scale: 1.05 } : {}}
-        whileTap={!isDisabled ? { scale: 0.95 } : {}}
+        whileHover={!isDisabled ? { scale: 1.06, y: -2 } : {}}
+        whileTap={!isDisabled ? { scale: 0.94 } : {}}
+        className="relative z-10 rounded-full flex items-center justify-center transition-all cursor-pointer select-none"
         style={{
-          position: 'relative', zIndex: 1,
-          width: button, height: button, borderRadius: '50%', border: 'none', cursor: isDisabled ? 'not-allowed' : 'pointer',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          width: button,
+          height: button,
           background: isListening
-            ? 'linear-gradient(135deg, #ef4444, #dc2626)'
+            ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%)'
             : isDisabled
             ? 'var(--surface-muted)'
-            : 'linear-gradient(135deg, #6366f1, #4f46e5)',
+            : 'linear-gradient(135deg, #8067e8 0%, #6d54de 50%, #5d45c7 100%)',
           boxShadow: isListening
-            ? '0 15px 40px rgba(239, 68, 68, 0.4)'
+            ? '0 12px 35px rgba(239, 68, 68, 0.45), 0 0 0 4px rgba(254, 226, 226, 0.8)'
             : isDisabled
             ? 'none'
-            : '0 15px 40px rgba(99,102,241,0.4)',
-          transition: 'background 0.3s, box-shadow 0.3s',
+            : '0 12px 30px rgba(128, 103, 232, 0.38), 0 0 0 4px rgba(227, 220, 255, 0.7)',
+          border: 'none',
         }}
+        title={isListening ? 'Click to stop recording' : 'Click to start speaking'}
       >
         {isListening ? (
-          <motion.div animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 0.6, repeat: Infinity }}>
-            <Square size={icon} color="#fff" fill="#fff" />
+          <motion.div
+            animate={{ scale: [1, 1.15, 1] }}
+            transition={{ duration: 0.7, repeat: Infinity }}
+            className="flex items-center justify-center"
+          >
+            <Square size={icon - 4} className="text-white fill-white rounded-xs" />
           </motion.div>
         ) : (
-          <Mic size={icon} color={isDisabled ? 'var(--text-muted)' : '#fff'} strokeWidth={isDisabled ? 2 : 2.5} />
+          <Mic
+            size={icon}
+            className={isDisabled ? 'text-text-muted opacity-50' : 'text-white'}
+            strokeWidth={isDisabled ? 2 : 2.4}
+          />
         )}
       </motion.button>
     </div>
