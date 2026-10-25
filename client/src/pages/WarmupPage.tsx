@@ -158,7 +158,7 @@ export default function WarmupPage() {
   const wordCount = editedTranscript.trim() ? editedTranscript.trim().split(/\s+/).length : 0;
 
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col gap-6 py-2">
+    <div className="w-full max-w-5xl mx-auto flex flex-col gap-6 py-2">
       {/* ── Top Session Header Card ── */}
       <div className="w-full bg-white rounded-2xl border border-slate-200/90 shadow-sm p-4 md:p-5 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">

@@ -1,3 +1,9 @@
+/**
+ * AudioVisualizer — Next-Gen Soundwave Spectrum Analyzer
+ * Real-time Web Audio API FFT frequency analysis with dynamic gradient bars,
+ * audio level meter, and an ambient undulating wave when idle.
+ */
+
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Activity, Radio } from 'lucide-react';
@@ -11,9 +17,9 @@ interface AudioVisualizerProps {
 export default function AudioVisualizer({
   isRecording,
   mediaStream,
-  barCount = 28,
+  barCount = 32,
 }: AudioVisualizerProps) {
-  const [frequencies, setFrequencies] = useState<number[]>(() => new Array(barCount).fill(12));
+  const [frequencies, setFrequencies] = useState<number[]>(() => new Array(barCount).fill(14));
   const [audioLevel, setAudioLevel] = useState<number>(0);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
@@ -26,7 +32,7 @@ export default function AudioVisualizer({
         audioContextRef.current.close().catch(() => {});
         audioContextRef.current = null;
       }
-      setFrequencies(new Array(barCount).fill(10));
+      setFrequencies(new Array(barCount).fill(12));
       setAudioLevel(0);
       return;
     }
@@ -40,7 +46,7 @@ export default function AudioVisualizer({
 
       const analyser = audioCtx.createAnalyser();
       analyser.fftSize = 64;
-      analyser.smoothingTimeConstant = 0.78;
+      analyser.smoothingTimeConstant = 0.75;
       analyserRef.current = analyser;
 
       const source = audioCtx.createMediaStreamSource(mediaStream);
@@ -60,8 +66,8 @@ export default function AudioVisualizer({
         for (let i = 0; i < barCount; i++) {
           const val = dataArray[i * step] || 0;
           sum += val;
-          // Scale smoothly between 14% and 100%
-          const heightPct = Math.max(14, Math.min(100, Math.round((val / 255) * 100)));
+          // Scale smoothly between 16% and 100%
+          const heightPct = Math.max(16, Math.min(100, Math.round((val / 255) * 100)));
           normalizedBars.push(heightPct);
         }
 
@@ -87,51 +93,66 @@ export default function AudioVisualizer({
   }, [isRecording, mediaStream, barCount]);
 
   return (
-    <div className="w-full flex flex-col items-center gap-2.5">
-      {/* Bars container */}
-      <div className="w-full max-w-lg h-14 flex items-center justify-center gap-1.5 px-5 py-2 rounded-2xl bg-white/80 border border-slate-200/80 shadow-xs backdrop-blur-md">
+    <div className="w-full flex flex-col items-center gap-2">
+      {/* Bars visualizer chamber */}
+      <div className="w-full h-16 flex items-center justify-center gap-1 sm:gap-1.5 px-4 py-2 rounded-2xl bg-gradient-to-b from-slate-50/90 to-white/95 border border-slate-200/90 shadow-inner relative overflow-hidden backdrop-blur-md">
+        {/* Subtle ambient frequency glow */}
+        {isRecording && (
+          <div
+            className="absolute inset-0 pointer-events-none opacity-20 blur-xl transition-all"
+            style={{
+              background: `radial-gradient(circle at 50% 50%, rgba(128,103,232,0.6) 0%, rgba(14,165,201,0.3) 50%, transparent 80%)`,
+            }}
+          />
+        )}
+
         {isRecording ? (
           frequencies.map((height, i) => (
             <motion.div
               key={i}
-              className="w-1.5 md:w-2 rounded-full transition-all duration-75"
+              className="w-1.5 sm:w-2 rounded-full transition-all duration-75 relative z-10"
               style={{
                 height: `${height}%`,
                 background:
-                  height > 60
-                    ? 'linear-gradient(180deg, #45a66b 0%, #8067e8 100%)'
+                  height > 65
+                    ? 'linear-gradient(180deg, #45a66b 0%, #0ea5c9 50%, #8067e8 100%)'
+                    : height > 35
+                    ? 'linear-gradient(180deg, #0ea5c9 0%, #8067e8 100%)'
+                    : 'linear-gradient(180deg, rgba(128,103,232,0.8) 0%, rgba(128,103,232,0.3) 100%)',
+                boxShadow:
+                  height > 50
+                    ? '0 0 10px rgba(14, 165, 201, 0.45)'
                     : height > 30
-                    ? 'linear-gradient(180deg, #8067e8 0%, #a855f7 100%)'
-                    : 'rgba(128, 103, 232, 0.35)',
-                boxShadow: height > 45 ? '0 0 10px rgba(128, 103, 232, 0.4)' : 'none',
+                    ? '0 0 6px rgba(128, 103, 232, 0.3)'
+                    : 'none',
               }}
             />
           ))
         ) : (
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
-            <Radio size={14} className="text-primary animate-pulse" />
-            <span>Studio Voice Ready — Speak clearly into your mic</span>
+          <div className="flex items-center gap-2.5 text-xs font-bold text-slate-500">
+            <Radio size={15} className="text-primary animate-pulse" />
+            <span>Studio Microphone Ready — Click Speak or press [Spacebar]</span>
           </div>
         )}
       </div>
 
-      {/* Live Audio Status */}
+      {/* Real-time Decibel / Audio Level Pill */}
       {isRecording && (
-        <div className="flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 border border-slate-200/80">
+        <div className="flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full bg-white border border-slate-200 shadow-2xs">
           <Activity
             size={13}
             className={audioLevel > 18 ? 'text-success animate-pulse' : 'text-slate-400'}
           />
           <span className={audioLevel > 18 ? 'text-slate-700' : 'text-slate-500'}>
             {audioLevel > 35
-              ? 'Excellent Voice Level'
+              ? '🎙️ Optimal Voice Volume'
               : audioLevel > 10
               ? 'Voice Detected'
               : 'Listening for speech...'}
           </span>
-          <span className="w-1 h-1 rounded-full bg-slate-300 mx-0.5" />
-          <span className="text-[11px] text-slate-400 font-mono">
-            {Math.min(100, audioLevel * 2)}%
+          <span className="w-1 h-1 rounded-full bg-slate-300" />
+          <span className="text-[11px] font-mono font-bold text-primary">
+            {Math.min(100, Math.round(audioLevel * 2.2))}% dB
           </span>
         </div>
       )}

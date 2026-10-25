@@ -180,7 +180,7 @@ export default function EvaluationCard({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="flex flex-col gap-6 w-full max-w-4xl mx-auto"
+      className="flex flex-col gap-6 w-full max-w-6xl mx-auto"
     >
       {/* ── Hero Performance Verdict Card ── */}
       <div className="rounded-2xl p-6 md:p-8 bg-white border border-slate-200/90 shadow-sm relative overflow-hidden">
