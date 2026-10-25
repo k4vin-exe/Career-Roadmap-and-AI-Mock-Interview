@@ -1,87 +1,69 @@
+/**
+ * SetupPage — Interview Mission Launchpad
+ * Tailor the AI mock interview with role selection, seniority level,
+ * candidate identity, and session expectations telemetry.
+ */
+
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  User, Briefcase, TrendingUp, ArrowRight, ArrowLeft,
-  Map, BrainCircuit, CheckCircle, Clock, Mic, Sparkles, ChevronDown
+  User,
+  Briefcase,
+  TrendingUp,
+  ArrowRight,
+  ArrowLeft,
+  Map,
+  BrainCircuit,
+  Clock,
+  Mic,
+  Sparkles,
+  ChevronDown,
+  ShieldCheck,
+  Check,
+  AlertCircle,
+  Sliders,
+  Loader2,
 } from 'lucide-react';
+
 import { useInterview } from '../context/InterviewContext';
 import { startInterview } from '../services/api';
 import { JOB_ROLES, EXPERIENCE_LEVELS } from '../utils/types';
 import type { ExperienceLevel } from '../utils/types';
 
-const PREP_TIPS = [
-  { icon: Clock,       text: '~15 minutes per session', color: '#6366f1' },
-  { icon: Mic,         text: 'Voice or typed answers', color: '#ec4899' },
-  { icon: CheckCircle, text: '5 role-specific questions', color: '#10b981' },
-  { icon: BrainCircuit,text: 'AI feedback on every answer', color: '#8b5cf6' },
+const EXPERIENCE_DESCRIPTIONS: Record<string, string> = {
+  Junior: '0–2 years · Core fundamentals & clean implementation',
+  Mid: '3–5 years · System design, trade-offs & production workflows',
+  Senior: '5–8 years · Scalability, architecture & team technical leadership',
+  Lead: '8+ years · Enterprise strategy, high-scale resilience & mentoring',
+};
+
+const SESSION_HIGHLIGHTS = [
+  {
+    icon: Clock,
+    title: '~15 Minutes',
+    desc: '5 targeted technical & architectural questions',
+    color: '#8067e8',
+  },
+  {
+    icon: Mic,
+    title: 'Voice Studio',
+    desc: 'Speak naturally with real-time Whisper AI transcription',
+    color: '#0ea5c9',
+  },
+  {
+    icon: BrainCircuit,
+    title: 'Instant Groq LLM Scoring',
+    desc: 'Dimensional rubric: depth, communication & problem-solving',
+    color: '#45a66b',
+  },
+  {
+    icon: Sparkles,
+    title: 'Diagnostic Report',
+    desc: 'Actionable speech telemetry & principal engineer ideal answers',
+    color: '#d99a32',
+  },
 ];
-
-function FormField({ label, children, delay = 0 }: { label: string; children: React.ReactNode, delay?: number }) {
-  return (
-    <motion.div 
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay, ease: 'easeOut' }}
-    >
-      <label style={{ 
-        display: 'block', fontSize: 13, fontWeight: 700, color: 'var(--text)', 
-        marginBottom: 8, letterSpacing: '0.02em', textTransform: 'uppercase' 
-      }}>
-        {label}
-      </label>
-      {children}
-    </motion.div>
-  );
-}
-
-function StyledSelect({ value, onChange, options, placeholder, icon: Icon }: {
-  value: string;
-  onChange: (v: string) => void;
-  options: readonly string[];
-  placeholder: string;
-  icon: any;
-}) {
-  const [isFocused, setIsFocused] = useState(false);
-  return (
-    <div style={{ position: 'relative' }}>
-      <Icon size={18} style={{ 
-        position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', 
-        color: isFocused ? 'var(--primary)' : 'var(--text-light)', 
-        pointerEvents: 'none', zIndex: 1, transition: 'color 0.2s' 
-      }} />
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        style={{
-          width: '100%',
-          padding: '16px 48px 16px 44px',
-          borderRadius: 16,
-          background: isFocused ? '#fff' : 'var(--surface-muted)',
-          border: `2px solid ${isFocused ? 'var(--primary)' : 'transparent'}`,
-          fontSize: 15,
-          fontWeight: 600,
-          color: value ? 'var(--text)' : 'var(--text-muted)',
-          cursor: 'pointer',
-          outline: 'none',
-          boxShadow: isFocused ? '0 4px 20px rgba(128,103,232,0.15)' : 'none',
-          transition: 'all 0.2s ease',
-          appearance: 'none',
-          WebkitAppearance: 'none'
-        }}
-      >
-        <option value="" disabled>{placeholder}</option>
-        {options.map((o) => <option key={o} value={o} style={{ color: '#000' }}>{o}</option>)}
-      </select>
-      <ChevronDown size={18} style={{ 
-        position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', 
-        color: 'var(--text-muted)', pointerEvents: 'none' 
-      }} />
-    </div>
-  );
-}
 
 export default function SetupPage() {
   const navigate = useNavigate();
@@ -89,10 +71,10 @@ export default function SetupPage() {
   const { dispatch } = useInterview();
 
   const prefilledRole = searchParams.get('role') || '';
-  const fromRoadmap   = searchParams.get('from') === 'roadmap';
+  const fromRoadmap = searchParams.get('from') === 'roadmap';
 
-  const [name,       setName]       = useState('');
-  const [role,       setRole]       = useState<string>(
+  const [name, setName] = useState('');
+  const [role, setRole] = useState<string>(
     JOB_ROLES.includes(prefilledRole as any)
       ? prefilledRole
       : prefilledRole
@@ -103,10 +85,8 @@ export default function SetupPage() {
     !JOB_ROLES.includes(prefilledRole as any) && prefilledRole ? prefilledRole : ''
   );
   const [experience, setExperience] = useState<ExperienceLevel | ''>('');
-  const [isLoading,  setIsLoading]  = useState(false);
-  const [error,      setError]      = useState('');
-
-  const [isNameFocused, setIsNameFocused] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const effectiveRole = role === 'Other' ? customRole.trim() : role;
   const isValid = name.trim().length >= 2 && effectiveRole.length >= 2 && experience !== '';
@@ -121,14 +101,16 @@ export default function SetupPage() {
       const unlock = new SpeechSynthesisUtterance('');
       unlock.volume = 0;
       window.speechSynthesis.speak(unlock);
-    } catch { /* ignored */ }
+    } catch {
+      /* ignored */
+    }
 
     try {
       const session = await startInterview(name.trim(), effectiveRole, experience);
       dispatch({ type: 'START_SESSION', payload: session });
       navigate('/warmup');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to start interview. Please try again.');
+      setError(err.response?.data?.error || 'Failed to initialize interview session. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -136,244 +118,300 @@ export default function SetupPage() {
 
   return (
     <div className="w-full max-w-5xl mx-auto py-2 flex flex-col gap-6">
-      <div className="w-full">
+      {/* ── Top Navigation Bar & Roadmap Synergy Badge ── */}
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <button
           onClick={() => navigate(fromRoadmap ? (-1 as any) : '/dashboard')}
-          className="btn btn-ghost"
-          style={{ marginBottom: 24, display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 100, background: 'var(--surface-solid)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)', fontWeight: 600 }}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200/90 text-xs font-bold text-slate-600 hover:text-slate-900 hover:border-slate-300 shadow-2xs transition-all cursor-pointer"
         >
-          <ArrowLeft size={16} /> {fromRoadmap ? 'Back to Roadmap' : 'Back to Dashboard'}
+          <ArrowLeft size={15} />
+          <span>{fromRoadmap ? 'Back to Career Roadmap' : 'Back to Dashboard'}</span>
         </button>
 
         {fromRoadmap && prefilledRole && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 10, padding: '10px 18px', borderRadius: 100,
-              background: 'rgba(128,103,232,0.1)', border: '1px solid rgba(128,103,232,0.2)', marginBottom: 24,
-              fontSize: 13, color: 'var(--primary)', fontWeight: 700,
-            }}
-          >
-            <Map size={16} /> Practising for {prefilledRole} — from your roadmap
-          </motion.div>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary-soft/80 border border-primary/25 text-xs font-bold text-primary shadow-2xs">
+            <Map size={14} />
+            <span>Targeting {prefilledRole} from your roadmap</span>
+          </div>
         )}
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-
-          {/* Main Setup Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.5, type: 'spring', bounce: 0.4 }}
-            className="lg:col-span-7"
-            style={{
-              background: 'var(--surface-solid)',
-              borderRadius: 24,
-              padding: '36px',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.02)',
-              border: '1px solid var(--border)'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
-              <div style={{ width: 48, height: 48, borderRadius: 16, background: 'var(--primary-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Sparkles size={24} style={{ color: 'var(--primary)' }} />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* ── Left Column: Main Setup Form Cockpit (7 cols) ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35 }}
+          className="lg:col-span-7 bg-white rounded-3xl border border-slate-200/90 shadow-sm p-7 sm:p-9 flex flex-col gap-7 relative overflow-hidden"
+        >
+          {/* Form Header */}
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-primary-soft/70 border border-primary/25 flex items-center justify-center text-primary flex-shrink-0 shadow-xs">
+              <BrainCircuit size={24} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-primary">
+                  Interactive AI Simulation
+                </span>
               </div>
-              <h1 style={{ fontSize: 32, fontWeight: 900, color: 'var(--text)', letterSpacing: '-0.5px', margin: 0 }}>
-                Setup Interview
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight leading-snug">
+                Configure Your Interview
               </h1>
+              <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-relaxed">
+                Calibrate the AI interviewer to your background. Questions adapt directly to your chosen role and seniority tier.
+              </p>
             </div>
-            <p style={{ fontSize: 16, color: 'var(--text-muted)', marginBottom: 40, lineHeight: 1.6 }}>
-              Tailor the AI to your exact career level. The more accurate, the better the questions will be.
-            </p>
+          </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
-              <FormField label="Candidate Name" delay={0.1}>
-                <div style={{ position: 'relative' }}>
-                  <User size={18} style={{ 
-                    position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', 
-                    color: isNameFocused ? 'var(--primary)' : 'var(--text-light)', 
-                    pointerEvents: 'none', transition: 'color 0.2s' 
-                  }} />
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    onFocus={() => setIsNameFocused(true)}
-                    onBlur={() => setIsNameFocused(false)}
-                    placeholder="E.g. Alex Johnson"
-                    maxLength={50}
-                    style={{
-                      width: '100%', padding: '16px 20px 16px 44px', borderRadius: 16,
-                      background: isNameFocused ? '#fff' : 'var(--surface-muted)',
-                      border: `2px solid ${isNameFocused ? 'var(--primary)' : 'transparent'}`,
-                      fontSize: 15, fontWeight: 600, color: 'var(--text)',
-                      outline: 'none', boxShadow: isNameFocused ? '0 4px 20px rgba(128,103,232,0.15)' : 'none',
-                      transition: 'all 0.2s ease',
-                    }}
-                  />
-                </div>
-              </FormField>
+          <div className="h-px w-full bg-slate-100" />
 
-              <FormField label="Target Job Role" delay={0.2}>
-                <StyledSelect
+          {/* Form Controls */}
+          <div className="flex flex-col gap-6">
+            {/* Field 1: Candidate Full Name */}
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                <User size={14} className="text-primary" />
+                <span>Candidate Name</span>
+                <span className="text-danger">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="E.g. Sarah Connor"
+                  maxLength={50}
+                  className="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-semibold text-slate-800 outline-none focus:bg-white focus:border-primary focus:ring-3 focus:ring-primary/10 transition-all placeholder:text-slate-400"
+                />
+              </div>
+              <p className="text-[11px] text-slate-400 font-medium pl-1">
+                Used by the AI interviewer to greet you naturally during the session.
+              </p>
+            </div>
+
+            {/* Field 2: Target Job Role Selection */}
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                <Briefcase size={14} className="text-cyan" />
+                <span>Target Engineering Role</span>
+                <span className="text-danger">*</span>
+              </label>
+
+              <div className="relative">
+                <select
                   value={role}
-                  onChange={(v) => {
-                    setRole(v);
-                    if (v !== 'Other') setCustomRole('');
+                  onChange={(e) => {
+                    setRole(e.target.value);
+                    if (e.target.value !== 'Other') setCustomRole('');
                   }}
-                  options={JOB_ROLES}
-                  placeholder="Select a target role..."
-                  icon={Briefcase}
+                  className="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3.5 pr-10 text-sm font-semibold text-slate-800 outline-none focus:bg-white focus:border-primary focus:ring-3 focus:ring-primary/10 transition-all cursor-pointer appearance-none"
+                >
+                  <option value="" disabled>
+                    Select your target engineering or tech role...
+                  </option>
+                  {JOB_ROLES.map((r) => (
+                    <option key={r} value={r} className="text-slate-800">
+                      {r}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  size={16}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
                 />
-                <AnimatePresence>
-                  {role === 'Other' && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                      animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
-                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                      style={{ overflow: 'hidden' }}
-                    >
-                      <input
-                        type="text"
-                        value={customRole}
-                        onChange={(e) => setCustomRole(e.target.value)}
-                        placeholder="Specify your target role (e.g. Game Developer, Cloud Architect)..."
-                        maxLength={60}
-                        style={{
-                          width: '100%',
-                          padding: '14px 18px',
-                          borderRadius: 14,
-                          background: '#fff',
-                          border: '2px solid var(--primary)',
-                          fontSize: 14,
-                          fontWeight: 600,
-                          color: 'var(--text)',
-                          outline: 'none',
-                          boxShadow: '0 4px 14px rgba(128,103,232,0.15)',
-                        }}
-                        autoFocus
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </FormField>
+              </div>
 
-              <FormField label="Experience Level" delay={0.3}>
-                <StyledSelect
-                  value={experience}
-                  onChange={(v) => setExperience(v as ExperienceLevel)}
-                  options={EXPERIENCE_LEVELS}
-                  placeholder="Select your experience..."
-                  icon={TrendingUp}
-                />
-              </FormField>
+              {/* Custom Role Input when 'Other' selected */}
+              <AnimatePresence>
+                {role === 'Other' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden pt-1"
+                  >
+                    <input
+                      type="text"
+                      value={customRole}
+                      onChange={(e) => setCustomRole(e.target.value)}
+                      placeholder="Specify role title (e.g. MLOps Specialist, Site Reliability Engineer)..."
+                      maxLength={60}
+                      autoFocus
+                      className="w-full bg-white border-2 border-primary/40 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 outline-none focus:border-primary focus:ring-3 focus:ring-primary/10 transition-all shadow-xs"
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
-            <AnimatePresence>
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                  animate={{ opacity: 1, height: 'auto', marginTop: 24 }}
-                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                  style={{ overflow: 'hidden' }}
-                >
-                  <div style={{ padding: '14px 18px', borderRadius: 12, background: 'var(--danger-soft)', border: '1px solid rgba(217,87,87,0.3)', color: 'var(--danger-text)', fontSize: 14, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <div style={{ width: 20, height: 20, borderRadius: '50%', background: 'var(--danger)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 900 }}>!</div>
-                    {error}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Field 3: Seniority Experience Tier */}
+            <div className="flex flex-col gap-2.5">
+              <label className="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                <TrendingUp size={14} className="text-success" />
+                <span>Seniority & Experience Level</span>
+                <span className="text-danger">*</span>
+              </label>
 
+              <div className="grid grid-cols-2 gap-2.5">
+                {EXPERIENCE_LEVELS.map((lvl) => {
+                  const isSelected = experience === lvl;
+                  return (
+                    <button
+                      key={lvl}
+                      type="button"
+                      onClick={() => setExperience(lvl)}
+                      className={`p-3.5 rounded-2xl border text-left flex flex-col gap-1 transition-all cursor-pointer ${
+                        isSelected
+                          ? 'border-primary bg-primary-soft/40 shadow-xs ring-2 ring-primary/20'
+                          : 'border-slate-200 bg-slate-50/70 hover:bg-slate-100/70 hover:border-slate-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-extrabold text-slate-800">
+                          {lvl} Level
+                        </span>
+                        {isSelected && (
+                          <div className="w-4 h-4 rounded-full bg-primary text-white flex items-center justify-center">
+                            <Check size={11} strokeWidth={3} />
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-slate-500 font-medium leading-tight">
+                        {EXPERIENCE_DESCRIPTIONS[lvl] || `${lvl} engineering interview track`}
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Error Message */}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="overflow-hidden"
+              >
+                <div className="p-3.5 rounded-xl bg-danger-soft border border-danger/30 text-danger text-xs font-semibold flex items-center gap-2">
+                  <AlertCircle size={16} className="flex-shrink-0" />
+                  <span>{error}</span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Primary Submit CTA */}
+          <div className="pt-2">
             <motion.button
+              type="button"
               onClick={handleStart}
               disabled={!isValid || isLoading}
-              whileHover={isValid && !isLoading ? { scale: 1.02, boxShadow: '0 12px 24px rgba(233,119,63,0.3)' } : {}}
+              whileHover={isValid && !isLoading ? { scale: 1.02, y: -1 } : {}}
               whileTap={isValid && !isLoading ? { scale: 0.98 } : {}}
-              style={{
-                width: '100%', marginTop: 40, padding: '18px', borderRadius: 16,
-                background: (!isValid || isLoading) ? 'var(--surface-muted)' : 'linear-gradient(135deg, #FF6B6B 0%, #E9773F 100%)',
-                color: (!isValid || isLoading) ? 'var(--text-light)' : '#fff',
-                fontSize: 16, fontWeight: 800, border: 'none', cursor: (!isValid || isLoading) ? 'not-allowed' : 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
-                transition: 'background 0.3s, color 0.3s',
-              }}
+              className={`w-full py-4 rounded-2xl text-sm font-extrabold text-white flex items-center justify-center gap-2.5 transition-all shadow-md ${
+                !isValid || isLoading
+                  ? 'bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-300/60 shadow-none'
+                  : 'cursor-pointer hover:shadow-lg hover:shadow-primary/25'
+              }`}
+              style={
+                isValid && !isLoading
+                  ? {
+                      background: 'linear-gradient(135deg, #8067e8 0%, #5d45c7 100%)',
+                      boxShadow: '0 8px 24px rgba(128, 103, 232, 0.35)',
+                    }
+                  : undefined
+              }
             >
               {isLoading ? (
                 <>
-                  <LoaderIcon /> Authenticating & Starting...
+                  <Loader2 size={18} className="animate-spin text-white" />
+                  <span>Initializing Voice Engine & Session...</span>
                 </>
               ) : (
-                <>Start AI Interview <ArrowRight size={18} strokeWidth={2.5} /></>
+                <>
+                  <span>Begin AI Mock Interview</span>
+                  <ArrowRight size={18} strokeWidth={2.5} />
+                </>
               )}
             </motion.button>
-          </motion.div>
+          </div>
+        </motion.div>
 
-          {/* Right Sidebar */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2, type: 'spring' }}
-            className="lg:col-span-5"
-            style={{ display: 'flex', flexDirection: 'column', gap: 24 }}
-          >
-            {/* Pro Tip Card */}
-            <div style={{
-              background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)',
-              borderRadius: 24, padding: 32, position: 'relative', overflow: 'hidden',
-              boxShadow: '0 20px 40px rgba(49,46,129,0.2)', border: '1px solid rgba(255,255,255,0.1)'
-            }}>
-              <div style={{ position: 'absolute', right: -20, top: -20, opacity: 0.1 }}>
-                <Mic size={140} color="#fff" />
+        {/* ── Right Column: Session Blueprint & Expectations (5 cols) ── */}
+        <motion.div
+          initial={{ opacity: 0, x: 14 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="lg:col-span-5 flex flex-col gap-5"
+        >
+          {/* Session Expectations Card */}
+          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-7 flex flex-col gap-5">
+            <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+              <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                <Sliders size={16} />
               </div>
-              <div style={{ position: 'relative', zIndex: 1 }}>
-                <div style={{ display: 'inline-block', padding: '6px 12px', background: 'rgba(255,255,255,0.2)', borderRadius: 100, fontSize: 11, fontWeight: 800, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 16 }}>
-                  Pro Tip
-                </div>
-                <h3 style={{ fontSize: 20, fontWeight: 800, color: '#fff', marginBottom: 12, lineHeight: 1.3 }}>
-                  Speak naturally, no need to rush.
+              <div>
+                <h3 className="text-xs font-black uppercase tracking-wider text-slate-800">
+                  Session Blueprint
                 </h3>
-                <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, margin: 0 }}>
-                  Our AI uses state-of-the-art Groq Whisper models to transcribe your speech perfectly. Take your time to formulate great answers.
-                </p>
+                <p className="text-[11px] text-slate-400 font-medium">What happens after you start</p>
               </div>
             </div>
 
-            {/* What to expect */}
-            <div style={{
-              background: 'var(--surface-solid)', borderRadius: 24, padding: 32,
-              border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)'
-            }}>
-              <h3 style={{ fontSize: 16, fontWeight: 800, color: 'var(--text)', marginBottom: 24 }}>What to expect</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                {PREP_TIPS.map(({ icon: Icon, text, color }, idx) => (
-                  <motion.div 
-                    key={text} 
-                    initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 + (idx * 0.1) }}
-                    style={{ display: 'flex', alignItems: 'center', gap: 16 }}
+            <div className="flex flex-col gap-4">
+              {SESSION_HIGHLIGHTS.map(({ icon: Icon, title, desc, color }) => (
+                <div key={title} className="flex items-start gap-3.5">
+                  <div
+                    className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
+                    style={{ background: `${color}15`, color }}
                   >
-                    <div style={{ width: 44, height: 44, borderRadius: 14, background: `${color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: color, flexShrink: 0 }}>
-                      <Icon size={20} strokeWidth={2.5} />
-                    </div>
-                    <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>{text}</span>
-                  </motion.div>
-                ))}
+                    <Icon size={17} strokeWidth={2.2} />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-800">{title}</h4>
+                    <p className="text-[11px] text-slate-500 font-medium leading-relaxed">{desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* AI Evaluator Persona Preview */}
+          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-primary-soft/80 border border-primary/20 text-primary flex items-center justify-center flex-shrink-0 shadow-2xs font-black text-sm">
+                EV
+              </div>
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-extrabold text-slate-800">Dr. Elena Vance</span>
+                  <span className="text-[10px] font-bold text-success bg-success-soft px-1.5 py-0.5 rounded-md border border-success/20">
+                    Active
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-400 font-medium">Lead AI Evaluator • Career R&I</p>
               </div>
             </div>
-          </motion.div>
 
-        </div>
+            <p className="text-xs text-slate-600 leading-relaxed font-medium bg-slate-50 p-3.5 rounded-2xl border border-slate-100 italic">
+              "We will begin with an optional 60-second warmup self-introduction to verify your audio levels, then proceed through 5 structured questions with instant feedback."
+            </p>
+
+            <div className="flex items-center justify-between text-[11px] text-slate-400 font-medium pt-1">
+              <span className="flex items-center gap-1">
+                <ShieldCheck size={13} className="text-success" />
+                Private & confidential
+              </span>
+              <span>Groq Llama-3 + Whisper</span>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </div>
-  );
-}
-
-function LoaderIcon() {
-  return (
-    <svg className="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none">
-      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeOpacity="0.3" />
-      <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-    </svg>
   );
 }

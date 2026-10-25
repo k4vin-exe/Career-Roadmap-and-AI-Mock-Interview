@@ -500,9 +500,23 @@ export default function InterviewPage() {
 
             {/* Error alerts */}
             {micError && (
-              <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-danger-soft border border-danger/20 text-danger text-xs font-semibold">
-                <AlertCircle size={15} className="flex-shrink-0" />
-                <span>{micError}</span>
+              <div className="flex items-start justify-between gap-3 p-3.5 rounded-2xl bg-danger-soft border border-danger/20 text-xs">
+                <div className="flex items-start gap-2.5 text-danger font-medium">
+                  <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="font-bold">Microphone Note:</strong> {micError}
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      You can type your answer directly in the editor below at any time.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingTranscript(true)}
+                  className="px-3 py-1.5 rounded-xl bg-white border border-danger/30 text-danger font-bold text-xs hover:bg-danger-soft transition-colors flex-shrink-0 cursor-pointer shadow-2xs"
+                >
+                  Type Answer
+                </button>
               </div>
             )}
             {submitError && (
@@ -519,7 +533,9 @@ export default function InterviewPage() {
                 <div className="flex items-center gap-2">
                   <span
                     className={`w-2 h-2 rounded-full ${
-                      isListening
+                      isSubmitting
+                        ? 'bg-primary animate-ping'
+                        : isListening
                         ? 'bg-danger animate-ping'
                         : isTranscribing
                         ? 'bg-primary animate-pulse'
@@ -529,7 +545,9 @@ export default function InterviewPage() {
                     }`}
                   />
                   <span className="text-xs font-black uppercase tracking-wider text-slate-800">
-                    {isListening
+                    {isSubmitting
+                      ? 'AI Evaluator Scoring...'
+                      : isListening
                       ? 'Recording Spoken Response'
                       : isTranscribing
                       ? 'Whisper AI Transcribing...'
@@ -568,7 +586,7 @@ export default function InterviewPage() {
                   )}
 
                   {/* Edit Toggle */}
-                  {currentAnswerText.trim().length > 0 && !isListening && !isTranscribing && (
+                  {currentAnswerText.trim().length > 0 && !isListening && !isTranscribing && !isSubmitting && (
                     <button
                       onClick={() => setIsEditingTranscript((e) => !e)}
                       className="text-xs font-bold px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors flex items-center gap-1 cursor-pointer ml-1"
@@ -596,7 +614,28 @@ export default function InterviewPage() {
 
               {/* Transcript Viewport */}
               <div className="min-h-[110px] flex flex-col justify-center">
-                {isTranscribing ? (
+                {isSubmitting ? (
+                  <div className="flex flex-col items-center justify-center py-8 gap-3.5 text-center">
+                    <div className="relative flex items-center justify-center">
+                      <motion.div
+                        className="w-16 h-16 rounded-full border-2 border-primary/30"
+                        animate={{ scale: [1, 1.35, 1], opacity: [0.8, 0.2, 0.8] }}
+                        transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+                      />
+                      <div className="absolute w-12 h-12 rounded-2xl bg-primary-soft flex items-center justify-center text-primary shadow-xs">
+                        <Bot size={22} className="animate-pulse" />
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-sm font-extrabold text-slate-800 tracking-tight">
+                        AI Principal Evaluator Analyzing Response...
+                      </p>
+                      <p className="text-xs text-slate-400 mt-1 max-w-md">
+                        Evaluating technical accuracy, architectural trade-offs, and communication delivery metrics
+                      </p>
+                    </div>
+                  </div>
+                ) : isTranscribing ? (
                   <div className="flex flex-col items-center justify-center py-6 gap-2 text-center">
                     <Loader2 size={22} className="animate-spin text-primary" />
                     <p className="text-xs font-bold text-slate-700">Whisper AI is processing your speech...</p>
