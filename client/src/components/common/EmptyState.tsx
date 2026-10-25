@@ -1,6 +1,6 @@
 /** EmptyState — Illustrated empty state with icon, title, body, and CTA */
 
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface EmptyStateProps {
   icon: ReactNode;

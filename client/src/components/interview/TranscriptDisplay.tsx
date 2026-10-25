@@ -12,7 +12,7 @@ interface TranscriptDisplayProps {
 export default function TranscriptDisplay({
   transcript,
   isListening,
-  isTranscribing,
+  isTranscribing: _isTranscribing,
   onTranscriptChange,
 }: TranscriptDisplayProps) {
   const [isEditing, setIsEditing] = useState(false);

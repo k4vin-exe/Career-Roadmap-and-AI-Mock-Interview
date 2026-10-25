@@ -9,7 +9,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
-  Loader2,
   Trophy,
   Target,
   TrendingUp,

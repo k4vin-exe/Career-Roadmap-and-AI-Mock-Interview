@@ -10,17 +10,16 @@ import {
 
 import multer from 'multer';
 import os from 'os';
-import path from 'path';
 
 const router = Router();
 
 // Configure multer for audio uploads (disk storage for Groq API streaming)
 // We MUST preserve the file extension so Groq/OpenAI SDK can infer the mime type
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: (_req, _file, cb) => {
     cb(null, os.tmpdir());
   },
-  filename: (req, file, cb) => {
+  filename: (_req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     cb(null, file.fieldname + '-' + uniqueSuffix + '.webm');
   }

@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { BrainCircuit, Map, User, LogOut, LayoutDashboard } from 'lucide-react';
+import { BrainCircuit, Map, LogOut, LayoutDashboard } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../ui/Button';
 

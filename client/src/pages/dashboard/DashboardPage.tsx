@@ -223,7 +223,7 @@ export default function DashboardPage() {
               />
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {data.roadmaps.map((rm, i) => (
+                {data.roadmaps.map((rm) => (
                   <Link
                     key={rm.id}
                     to={`/roadmap/${rm.id}`}

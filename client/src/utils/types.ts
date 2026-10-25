@@ -31,6 +31,7 @@ export const JOB_ROLES = [
   // Other Engineering
   'Blockchain Developer',
   'Embedded Systems Engineer',
+  'Other',
 ] as const;
 
 export type JobRole = (typeof JOB_ROLES)[number];

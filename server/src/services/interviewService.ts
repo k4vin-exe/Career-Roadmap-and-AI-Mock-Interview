@@ -3,7 +3,6 @@ import type { JobRole, ExperienceLevel, IEvaluation } from '../models/index.js';
 import GroqService from './groqService.js';
 import { generateQuestionPrompt } from '../prompts/questionGeneration.js';
 import { generateAnswerEvaluationPrompt } from '../prompts/answerEvaluation.js';
-import { generateReportPrompt } from '../prompts/reportGeneration.js';
 import { generateWarmupEvaluationPrompt } from '../prompts/warmupEvaluation.js';
 
 interface StartInterviewInput {
@@ -262,7 +261,6 @@ class InterviewService {
     const session = await InterviewSession.findById(sessionId);
     if (!session) throw new Error('Session not found');
 
-    const questions = await Question.find({ sessionId }).sort({ index: 1 });
     const responses = await Response.find({ sessionId }).sort({ questionIndex: 1 });
 
     if (responses.length === 0) throw new Error('No responses found for this session');

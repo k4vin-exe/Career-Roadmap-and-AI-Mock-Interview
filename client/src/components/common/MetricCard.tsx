@@ -1,6 +1,6 @@
 /** MetricCard — Pastel stat card with icon, metric value, label, and trend */
 
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 
 interface MetricCardProps {

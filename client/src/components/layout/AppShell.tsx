@@ -3,18 +3,16 @@
  * All authenticated pages render inside this shell.
  */
 
-import { ReactNode } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import type { ReactNode } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   LayoutDashboard,
   Map,
   BrainCircuit,
-  FileText,
   ShieldAlert,
   LogOut,
   Bell,
-  ChevronRight,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -35,7 +33,6 @@ const NAV_ITEMS: NavItem[] = [
 
 function NavLink({ item }: { item: NavItem }) {
   const location = useLocation();
-  const prefix = item.matchPrefix ?? item.to;
   const isActive = location.pathname === item.to ||
     (item.matchPrefix ? location.pathname.startsWith(item.matchPrefix) : false);
   const Icon = item.icon;
@@ -62,7 +59,6 @@ interface AppShellProps {
 export function AppShell({ children, pageTitle }: AppShellProps) {
   const { user, logout } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
 
   const visibleNavItems = NAV_ITEMS.filter(
     (item) => !item.adminOnly || user?.role === 'admin'
@@ -70,7 +66,6 @@ export function AppShell({ children, pageTitle }: AppShellProps) {
 
   // Derive a page title from the current path
   const currentNav = NAV_ITEMS.find((item) => {
-    const prefix = item.matchPrefix ?? item.to;
     return location.pathname === item.to ||
       (item.matchPrefix ? location.pathname.startsWith(item.matchPrefix) : false);
   });
@@ -302,7 +297,6 @@ export function AppShell({ children, pageTitle }: AppShellProps) {
       <nav className="mobile-nav" aria-label="Mobile navigation">
         {visibleNavItems.map((item) => {
           const Icon = item.icon;
-          const prefix = item.matchPrefix ?? item.to;
           const isActive =
             location.pathname === item.to ||
             (item.matchPrefix

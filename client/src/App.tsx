@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { InterviewProvider } from './context/InterviewContext';
 import { RoadmapProvider } from './context/RoadmapContext';
 import LandingPage from './pages/LandingPage';

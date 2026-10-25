@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -8,7 +8,7 @@ import {
 import { useInterview } from '../context/InterviewContext';
 import { startInterview } from '../services/api';
 import { JOB_ROLES, EXPERIENCE_LEVELS } from '../utils/types';
-import type { JobRole, ExperienceLevel } from '../utils/types';
+import type { ExperienceLevel } from '../utils/types';
 
 const PREP_TIPS = [
   { icon: Clock,       text: '~15 minutes per session', color: '#6366f1' },
@@ -92,14 +92,24 @@ export default function SetupPage() {
   const fromRoadmap   = searchParams.get('from') === 'roadmap';
 
   const [name,       setName]       = useState('');
-  const [role,       setRole]       = useState<JobRole | ''>(JOB_ROLES.includes(prefilledRole as JobRole) ? prefilledRole as JobRole : '');
+  const [role,       setRole]       = useState<string>(
+    JOB_ROLES.includes(prefilledRole as any)
+      ? prefilledRole
+      : prefilledRole
+      ? 'Other'
+      : ''
+  );
+  const [customRole, setCustomRole] = useState(
+    !JOB_ROLES.includes(prefilledRole as any) && prefilledRole ? prefilledRole : ''
+  );
   const [experience, setExperience] = useState<ExperienceLevel | ''>('');
   const [isLoading,  setIsLoading]  = useState(false);
   const [error,      setError]      = useState('');
 
   const [isNameFocused, setIsNameFocused] = useState(false);
 
-  const isValid = name.trim().length >= 2 && role !== '' && experience !== '';
+  const effectiveRole = role === 'Other' ? customRole.trim() : role;
+  const isValid = name.trim().length >= 2 && effectiveRole.length >= 2 && experience !== '';
 
   const handleStart = async () => {
     if (!isValid) return;
@@ -114,7 +124,7 @@ export default function SetupPage() {
     } catch { /* ignored */ }
 
     try {
-      const session = await startInterview(name.trim(), role, experience);
+      const session = await startInterview(name.trim(), effectiveRole, experience);
       dispatch({ type: 'START_SESSION', payload: session });
       navigate('/warmup');
     } catch (err: any) {
@@ -215,11 +225,45 @@ export default function SetupPage() {
               <FormField label="Target Job Role" delay={0.2}>
                 <StyledSelect
                   value={role}
-                  onChange={(v) => setRole(v as JobRole)}
+                  onChange={(v) => {
+                    setRole(v);
+                    if (v !== 'Other') setCustomRole('');
+                  }}
                   options={JOB_ROLES}
                   placeholder="Select a target role..."
                   icon={Briefcase}
                 />
+                <AnimatePresence>
+                  {role === 'Other' && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                      animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
+                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                      style={{ overflow: 'hidden' }}
+                    >
+                      <input
+                        type="text"
+                        value={customRole}
+                        onChange={(e) => setCustomRole(e.target.value)}
+                        placeholder="Specify your target role (e.g. Game Developer, Cloud Architect)..."
+                        maxLength={60}
+                        style={{
+                          width: '100%',
+                          padding: '14px 18px',
+                          borderRadius: 14,
+                          background: '#fff',
+                          border: '2px solid var(--primary)',
+                          fontSize: 14,
+                          fontWeight: 600,
+                          color: 'var(--text)',
+                          outline: 'none',
+                          boxShadow: '0 4px 14px rgba(128,103,232,0.15)',
+                        }}
+                        autoFocus
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </FormField>
 
               <FormField label="Experience Level" delay={0.3}>

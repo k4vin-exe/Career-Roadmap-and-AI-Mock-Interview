@@ -23,6 +23,7 @@ const DESIRED_ROLES = [
   'React Native Developer', 'UI/UX Designer', 'Product Manager',
   'Data Analyst', 'Cybersecurity Engineer', 'Blockchain Developer',
   'Embedded Systems Engineer', 'Site Reliability Engineer',
+  'Other',
 ];
 
 const STEPS = [
@@ -259,15 +260,30 @@ export default function RoadmapOnboardingPage() {
     desiredRole: '',
   });
 
+  const [isOtherUg, setIsOtherUg] = useState(false);
+  const [customUg, setCustomUg] = useState('');
+
+  const [isOtherPg, setIsOtherPg] = useState(false);
+  const [customPg, setCustomPg] = useState('');
+
+  const [isOtherRole, setIsOtherRole] = useState(false);
+  const [customRole, setCustomRole] = useState('');
+
   const updateField = useCallback(<K extends keyof UserProfile>(key: K, value: UserProfile[K]) => {
     setProfile((p) => ({ ...p, [key]: value }));
     setError('');
   }, []);
 
   const canProceed = () => {
-    if (step === 0) return profile.name.trim().length >= 2 && profile.workExperience !== '';
-    if (step === 1) return profile.ugField !== '';
-    if (step === 2) return profile.desiredRole !== '';
+    if (step === 0) return profile.name.trim().length >= 2 && Boolean(profile.workExperience);
+    if (step === 1) {
+      if (isOtherUg) return customUg.trim().length >= 2;
+      return profile.ugField.trim() !== '';
+    }
+    if (step === 2) {
+      if (isOtherRole) return customRole.trim().length >= 2;
+      return profile.desiredRole.trim() !== '';
+    }
     return true;
   };
 
@@ -288,10 +304,18 @@ export default function RoadmapOnboardingPage() {
   const handleGenerate = async () => {
     setIsLoading(true);
     setError('');
-    dispatch({ type: 'SET_PROFILE', payload: profile });
+
+    const finalProfile: UserProfile = {
+      ...profile,
+      ugField: isOtherUg ? (customUg.trim() || 'Other') : profile.ugField,
+      pgField: isOtherPg ? (customPg.trim() || 'Other') : profile.pgField,
+      desiredRole: isOtherRole ? (customRole.trim() || 'Other') : profile.desiredRole,
+    };
+
+    dispatch({ type: 'SET_PROFILE', payload: finalProfile });
     dispatch({ type: 'SET_GENERATING', payload: true });
     try {
-      const roadmap = await generateRoadmap(profile);
+      const roadmap = await generateRoadmap(finalProfile);
       dispatch({ type: 'SET_ROADMAP', payload: roadmap });
       navigate('/roadmap/' + roadmap.profileId);
     } catch (err: any) {
@@ -502,28 +526,98 @@ export default function RoadmapOnboardingPage() {
                       </label>
                       <select
                         className="input-field"
-                        value={profile.ugField}
-                        onChange={(e) => updateField('ugField', e.target.value)}
+                        value={isOtherUg ? 'Other' : profile.ugField}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val === 'Other') {
+                            setIsOtherUg(true);
+                            updateField('ugField', customUg.trim() || 'Other');
+                          } else {
+                            setIsOtherUg(false);
+                            updateField('ugField', val);
+                          }
+                        }}
                         style={{ cursor: 'pointer' }}
                       >
                         <option value="">Select field…</option>
                         {(UG_FIELDS as unknown as readonly string[]).map((f) => <option key={f} value={f}>{f}</option>)}
                       </select>
+
+                      <AnimatePresence>
+                        {isOtherUg && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                            animate={{ opacity: 1, height: 'auto', marginTop: 10 }}
+                            exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                            style={{ overflow: 'hidden' }}
+                          >
+                            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--primary)', marginBottom: 6 }}>
+                              Specify Your UG Field of Study <span style={{ color: 'var(--danger)' }}>*</span>
+                            </label>
+                            <input
+                              className="input-field"
+                              value={customUg}
+                              onChange={(e) => {
+                                setCustomUg(e.target.value);
+                                updateField('ugField', e.target.value.trim() || 'Other');
+                              }}
+                              placeholder="e.g. Biotechnology, Economics, Architecture..."
+                              autoFocus
+                            />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
+
                     <div>
                       <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 8 }}>
                         PG Field of Study <span style={{ fontSize: 11, fontWeight: 400 }}>(if applicable)</span>
                       </label>
                       <select
                         className="input-field"
-                        value={profile.pgField}
-                        onChange={(e) => updateField('pgField', e.target.value)}
+                        value={isOtherPg ? 'Other' : profile.pgField}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val === 'Other') {
+                            setIsOtherPg(true);
+                            updateField('pgField', customPg.trim() || 'Other');
+                          } else {
+                            setIsOtherPg(false);
+                            updateField('pgField', val);
+                          }
+                        }}
                         style={{ cursor: 'pointer' }}
                       >
                         <option value="">Select field…</option>
                         {(PG_FIELDS as unknown as readonly string[]).map((f) => <option key={f} value={f}>{f}</option>)}
                       </select>
+
+                      <AnimatePresence>
+                        {isOtherPg && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                            animate={{ opacity: 1, height: 'auto', marginTop: 10 }}
+                            exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                            style={{ overflow: 'hidden' }}
+                          >
+                            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--primary)', marginBottom: 6 }}>
+                              Specify Your PG Field of Study
+                            </label>
+                            <input
+                              className="input-field"
+                              value={customPg}
+                              onChange={(e) => {
+                                setCustomPg(e.target.value);
+                                updateField('pgField', e.target.value.trim() || 'Other');
+                              }}
+                              placeholder="e.g. Master of Finance, Data Analytics, Robotics..."
+                              autoFocus
+                            />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
+
                     <TagInput
                       label="Current Skills (add up to 15)"
                       tags={profile.skills}
@@ -544,13 +638,21 @@ export default function RoadmapOnboardingPage() {
                       </label>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 10 }}>
                         {DESIRED_ROLES.map((r) => {
-                          const selected = profile.desiredRole === r;
+                          const selected = isOtherRole ? r === 'Other' : profile.desiredRole === r;
                           return (
                             <motion.button
                               key={r}
                               whileHover={{ scale: 1.02 }}
                               whileTap={{ scale: 0.98 }}
-                              onClick={() => updateField('desiredRole', r)}
+                              onClick={() => {
+                                if (r === 'Other') {
+                                  setIsOtherRole(true);
+                                  updateField('desiredRole', customRole.trim() || 'Other');
+                                } else {
+                                  setIsOtherRole(false);
+                                  updateField('desiredRole', r);
+                                }
+                              }}
                               style={{
                                 padding: '13px 16px', borderRadius: 12, cursor: 'pointer',
                                 textAlign: 'left', border: 'none',
@@ -571,9 +673,35 @@ export default function RoadmapOnboardingPage() {
                           );
                         })}
                       </div>
+
+                      <AnimatePresence>
+                        {isOtherRole && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                            animate={{ opacity: 1, height: 'auto', marginTop: 14 }}
+                            exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                            style={{ overflow: 'hidden' }}
+                          >
+                            <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: 'var(--primary)', marginBottom: 8 }}>
+                              Specify Your Target Job Role <span style={{ color: 'var(--danger)' }}>*</span>
+                            </label>
+                            <input
+                              className="input-field"
+                              value={customRole}
+                              onChange={(e) => {
+                                setCustomRole(e.target.value);
+                                updateField('desiredRole', e.target.value.trim() || 'Other');
+                              }}
+                              placeholder="e.g. Game Developer, Cloud Architect, QA Automation Engineer..."
+                              autoFocus
+                            />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
+
                     <AnimatePresence>
-                      {profile.desiredRole && (
+                      {(isOtherRole ? customRole.trim() : profile.desiredRole) && (
                         <motion.div
                           initial={{ opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -586,7 +714,7 @@ export default function RoadmapOnboardingPage() {
                         >
                           <Target size={18} style={{ color: 'var(--primary)', flexShrink: 0 }} />
                           <p style={{ fontSize: 14, color: 'var(--primary-text)', fontWeight: 600 }}>
-                            AI will generate a personalised roadmap for <strong>{profile.desiredRole}</strong>
+                            AI will generate a personalised roadmap for <strong>{isOtherRole ? customRole.trim() : profile.desiredRole}</strong>
                           </p>
                         </motion.div>
                       )}
@@ -609,9 +737,9 @@ export default function RoadmapOnboardingPage() {
                         { label: 'Name',        value: profile.name },
                         { label: 'Experience',  value: EXPERIENCE_OPTIONS.find((o) => o.value === profile.workExperience)?.label || '' },
                         { label: 'Current Role',value: profile.currentRole || 'N/A' },
-                        { label: 'UG Field',    value: profile.ugField },
-                        { label: 'PG Field',    value: profile.pgField || 'N/A' },
-                        { label: 'Desired Role',value: profile.desiredRole },
+                        { label: 'UG Field',    value: isOtherUg ? (customUg || 'Other') : profile.ugField },
+                        { label: 'PG Field',    value: isOtherPg ? (customPg || 'Other') : (profile.pgField || 'N/A') },
+                        { label: 'Desired Role',value: isOtherRole ? (customRole || 'Other') : profile.desiredRole },
                       ].map(({ label, value }) => (
                         <div key={label} style={{
                           padding: '14px 18px', borderRadius: 14,

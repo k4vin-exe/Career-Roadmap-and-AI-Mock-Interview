@@ -3,7 +3,7 @@
  * Preserves all navigation calls and feature content.
  */
 
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Mic, Brain, BarChart3, Sparkles, ArrowRight, Map,

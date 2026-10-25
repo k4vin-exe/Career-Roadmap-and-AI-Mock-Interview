@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShieldAlert, Users, BrainCircuit, Map, ArrowLeft, Activity } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import { MetricCard } from '../../components/common/MetricCard';
 import { SkeletonCard, Skeleton } from '../../components/common/Skeleton';
@@ -29,7 +28,6 @@ interface RecentUser {
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [stats,       setStats]       = useState<AdminStats | null>(null);
   const [recentUsers, setRecentUsers] = useState<RecentUser[]>([]);
   const [loading,     setLoading]     = useState(true);
