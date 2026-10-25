@@ -14,18 +14,17 @@ export class InterviewController {
    * POST /api/interview/transcribe
    * Transcribes an uploaded audio file using Groq Whisper.
    */
-  async transcribeAudio(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      if (!req.file) {
-        res.status(400).json({ success: false, error: 'No audio file provided' });
-        return;
-      }
+  async transcribeAudio(req: Request, res: Response, _next: NextFunction): Promise<void> {
+    const file = req.file || (req.files && Array.isArray(req.files) ? req.files[0] : undefined);
+    if (!file) {
+      res.status(400).json({ success: false, error: 'No audio file provided' });
+      return;
+    }
 
-      const filePath = req.file.path;
-      console.log(`📁 Received audio file: ${filePath} (${req.file.size} bytes)`);
-      
+    const filePath = file.path;
+    try {
+      console.log(`📁 Received audio file: ${filePath} (${file.size} bytes)`);
       const groqService = GroqService.getInstance();
-      // Pass the file path — groqService internally wraps it with toFile
       const transcript = await groqService.transcribeAudio(filePath);
 
       // Clean up temp file
@@ -34,13 +33,13 @@ export class InterviewController {
       });
 
       res.status(200).json({ success: true, text: transcript });
-    } catch (error) {
-      // Ensure temp file is cleaned up on error too
-      if (req.file) {
-        fs.unlink(req.file.path, () => {});
-      }
-      console.error('transcribeAudio controller error:', (error as Error).message);
-      next(createAppError((error as Error).message, 500));
+    } catch (error: any) {
+      fs.unlink(filePath, () => {});
+      console.error('transcribeAudio error:', error?.message || error);
+      res.status(500).json({
+        success: false,
+        error: error?.message || 'Audio transcription service error',
+      });
     }
   }
 

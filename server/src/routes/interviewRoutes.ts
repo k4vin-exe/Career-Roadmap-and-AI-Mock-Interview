@@ -33,10 +33,21 @@ const upload = multer({
 // Apply auth middleware to all interview routes
 router.use(requireAuth);
 
-// Transcribe audio using Groq Whisper API
+// Transcribe audio using Groq Whisper API (accepts 'file', 'audio', or any multipart field)
 router.post(
   '/transcribe',
-  upload.single('file'),
+  (req, res, next) => {
+    upload.any()(req, res, (err: any) => {
+      if (err) {
+        console.error('Multer file upload error:', err);
+        return res.status(400).json({ success: false, error: err.message });
+      }
+      if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+        req.file = req.files[0];
+      }
+      next();
+    });
+  },
   interviewController.transcribeAudio.bind(interviewController)
 );
 
