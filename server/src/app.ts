@@ -74,19 +74,18 @@ app.use('/api/user', userRoutes);
 // Roadmap routes
 app.use('/api/roadmap', roadmapRoutes);
 
-// ────────────────────────────── Static Frontend (Production) ────────────────
 // ────────────────────────────── Static Frontend ──────────────────────────────
 const clientDist = path.resolve(__dirname, '../../client/dist');
 if (fs.existsSync(clientDist)) {
   console.log(`📦 Serving static client from: ${clientDist}`);
   app.use(express.static(clientDist));
 
-  // SPA fallback for non-API client routes (e.g. /setup, /interview, /dashboard)
-  app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api')) {
-      return next();
+  // SPA fallback for non-API client routes (compatible with Express 5)
+  app.use((req, res, next) => {
+    if (req.method === 'GET' && !req.path.startsWith('/api')) {
+      return res.sendFile(path.join(clientDist, 'index.html'));
     }
-    res.sendFile(path.join(clientDist, 'index.html'));
+    next();
   });
 } else {
   console.log(`ℹ️  client/dist not found at ${clientDist}, frontend static serving skipped.`);
